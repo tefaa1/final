@@ -1,0 +1,184 @@
+{
+  "realm": "mscms",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": false,
+  "accessTokenLifespan": 604800,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      { "name": "ADMIN", "description": "Administrator role" },
+      { "name": "COACH", "description": "Coach role" },
+      { "name": "PLAYER", "description": "Player role" },
+      { "name": "SCOUT", "description": "Scout role" },
+      { "name": "SPONSOR", "description": "Sponsor role" },
+      { "name": "FAN", "description": "Fan role" },
+      { "name": "STAFF", "description": "Staff role" },
+      { "name": "SPORT_MANAGER", "description": "Sport Manager role" },
+      { "name": "TEAM_MANAGER", "description": "Team Manager role" },
+      { "name": "HEAD_COACH", "description": "Head Coach role" },
+      { "name": "ASSISTANT_COACH", "description": "Assistant Coach role" },
+      { "name": "SPECIFIC_COACH", "description": "Specific Coach role" },
+      { "name": "DOCTOR", "description": "Doctor role" },
+      { "name": "PHYSIOTHERAPIST", "description": "Physiotherapist role" },
+      { "name": "FITNESS_COACH", "description": "Fitness Coach role" },
+      { "name": "PERFORMANCE_ANALYST", "description": "Performance Analyst role" },
+      { "name": "TEAM_DOCTOR", "description": "Team Doctor role" },
+      { "name": "NATIONAL_TEAM", "description": "National Team role" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "mscms-frontend",
+      "name": "MSCMS Frontend App",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:5173/*",
+        "http://localhost:4200/*",
+        "http://localhost:8080/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:4200",
+        "http://localhost:8080",
+        "*"
+      ],
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "username": "admin", "email": "admin@mscms.com", "firstName": "Admin", "lastName": "User",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "admin123", "temporary": false }],
+      "realmRoles": ["ADMIN"],
+      "clientRoles": {
+        "realm-management": ["realm-admin","manage-users","query-users","query-groups","manage-clients","view-users"]
+      }
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000010",
+      "username": "sportmanager", "email": "sportmanager@mscms.com", "firstName": "Samir", "lastName": "Manager",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["SPORT_MANAGER"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000011",
+      "username": "teammanager", "email": "teammanager@mscms.com", "firstName": "Tarek", "lastName": "Manager",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["TEAM_MANAGER"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000020",
+      "username": "headcoach", "email": "headcoach@mscms.com", "firstName": "Hassan", "lastName": "Coach",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["STAFF", "HEAD_COACH", "COACH"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000021",
+      "username": "headcoach2", "email": "headcoach2@mscms.com", "firstName": "Karim", "lastName": "BasketCoach",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["STAFF", "HEAD_COACH", "COACH"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000030",
+      "username": "doctor", "email": "doctor@mscms.com", "firstName": "Dalia", "lastName": "Doctor",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["STAFF", "TEAM_DOCTOR", "DOCTOR"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000031",
+      "username": "physio", "email": "physio@mscms.com", "firstName": "Pierre", "lastName": "Physio",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["STAFF", "PHYSIOTHERAPIST"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000032",
+      "username": "fitness", "email": "fitness@mscms.com", "firstName": "Fadi", "lastName": "Fitness",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["STAFF", "FITNESS_COACH"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000040",
+      "username": "scout", "email": "scout@mscms.com", "firstName": "Sami", "lastName": "Scout",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["SCOUT"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000041",
+      "username": "sponsor", "email": "sponsor@mscms.com", "firstName": "Sara", "lastName": "Sponsor",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["SPONSOR"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000042",
+      "username": "fan", "email": "fan@mscms.com", "firstName": "Farid", "lastName": "Fan",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["FAN"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000101",
+      "username": "player1", "email": "player1@mscms.com", "firstName": "Mohamed", "lastName": "Salah",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["PLAYER"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000102",
+      "username": "player2", "email": "player2@mscms.com", "firstName": "Ahmed", "lastName": "Hegazy",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["PLAYER"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000103",
+      "username": "player3", "email": "player3@mscms.com", "firstName": "Omar", "lastName": "Defender",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["PLAYER"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000104",
+      "username": "player4", "email": "player4@mscms.com", "firstName": "Mahmoud", "lastName": "Keeper",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["PLAYER"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000105",
+      "username": "player5", "email": "player5@mscms.com", "firstName": "Yousef", "lastName": "Basket",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["PLAYER"]
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000000106",
+      "username": "player6", "email": "player6@mscms.com", "firstName": "Layla", "lastName": "Tennis",
+      "enabled": true, "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "password123", "temporary": false }],
+      "realmRoles": ["PLAYER"]
+    }
+  ]
+}

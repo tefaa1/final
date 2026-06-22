@@ -1,0 +1,285 @@
+services:
+  # --- Infrastructure ---
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: embarkx
+      POSTGRES_PASSWORD: embarkx
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U embarkx"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mscms-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - mscms-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    ports:
+      - "9092:9092"
+    networks:
+      - mscms-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.5
+    container_name: keycloak
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin123
+    command: ["start-dev", "--import-realm"]
+    volumes:
+      - ./keycloak/mscms-realm.json:/opt/keycloak/data/import/mscms-realm.json
+    ports:
+      - "8443:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo done"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks:
+      - mscms-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - mscms-network
+
+  # --- Spring Cloud Infrastructure ---
+  eureka-server:
+    image: ghcr.io/tefaa1/mscms/eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mscms-network
+
+  config-server:
+    image: ghcr.io/tefaa1/mscms/config-server:latest
+    container_name: config-server
+    ports:
+      - "8082:8082"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mscms-network
+
+  gateway-service:
+    image: ghcr.io/tefaa1/mscms/gateway-service:latest
+    container_name: gateway-service
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - SPRING_DATA_REDIS_HOST=redis
+    depends_on:
+      config-server:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - mscms-network
+
+  # --- Microservices ---
+  user-management-service:
+    image: ghcr.io/tefaa1/mscms/user-management-service:latest
+    container_name: user-management-service
+    restart: on-failure
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_user
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin123
+      - KEYCLOAK_REALM=mscms
+      - APP_ADMIN_KEYCLOAK_ID=00000000-0000-0000-0000-000000000001
+      - APP_ADMIN_FIRST_NAME=Admin
+      - APP_ADMIN_LAST_NAME=User
+      - APP_ADMIN_USERNAME=admin
+      - APP_ADMIN_EMAIL=admin@mscms.com
+      - APP_ADMIN_PASSWORD=admin123
+      - APP_ADMIN_PHONE=0000000000
+      - APP_ADMIN_AGE=30
+      - APP_ADMIN_GENDER=MALE
+      - APP_ADMIN_ADDRESS=System
+      - APP_ADMIN_BLOOD_TYPE=O_POSITIVE
+      - APP_ADMIN_ROLE=ADMIN
+      - APP_ADMIN_CREATE_DEFAULT=true
+      - APP_SEED_ENABLED=true
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - mscms-network
+
+  player-management-service:
+    image: ghcr.io/tefaa1/mscms/player-management-service:latest
+    container_name: player-management-service
+    restart: on-failure
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_player
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - APP_SEED_ENABLED=true
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - mscms-network
+
+  training-match-service:
+    image: ghcr.io/tefaa1/mscms/training-match-service:latest
+    container_name: training-match-service
+    restart: on-failure
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_training
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - APP_SEED_ENABLED=true
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - mscms-network
+
+  medical-fitness-service:
+    image: ghcr.io/tefaa1/mscms/medical-fitness-service:latest
+    container_name: medical-fitness-service
+    restart: on-failure
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_medical
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - APP_SEED_ENABLED=true
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - mscms-network
+
+  notification-mail-service:
+    image: ghcr.io/tefaa1/mscms/notification-mail-service:latest
+    container_name: notification-mail-service
+    restart: on-failure
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_notification
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - mscms-network
+
+  reports-analytics-service:
+    image: ghcr.io/tefaa1/mscms/reports-analytics-service:latest
+    container_name: reports-analytics-service
+    restart: on-failure
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8082
+      - DB_URI=jdbc:postgresql://postgres:5432/mscms_reports
+      - DB_USER=embarkx
+      - DB_PASSWORD=embarkx
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - APP_SEED_ENABLED=true
+    depends_on:
+      config-server:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - mscms-network
+
+  # --- Machine Learning Models (Python / FastAPI) ---
+  # Both containers share the same image but run different FastAPI apps
+  # selected by working_dir. Exposed only inside mscms-network — the gateway
+  # is the public entry point (JWT + RBAC). Host ports are kept for direct
+  # debugging via Swagger UI.
+  ml-match-predictor:
+    image: shahod/sportify:latest
+    container_name: ml-match-predictor
+    working_dir: "/app/Predict Matches"
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "9000:8000"
+    networks:
+      - mscms-network
+
+  ml-player-rating:
+    image: shahod/sportify:latest
+    container_name: ml-player-rating
+    working_dir: "/app/Evaluate Players"
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "9001:8000"
+    networks:
+      - mscms-network
+
+networks:
+  mscms-network:
+    driver: bridge

@@ -1,0 +1,18 @@
+services:
+  predict-api:
+    image: shahod/sportify:latest
+    container_name: sportify_predict_api
+    working_dir: "/app/Predict Matches"
+    command: uvicorn app:app --host 0.0.0.0 --port 8000
+    ports:
+      - "9000:8000"
+    restart: always
+
+  evaluate-api:
+    image: shahod/sportify:latest
+    container_name: sportify_evaluate_api
+    working_dir: "/app/Evaluate Players"
+    command: uvicorn app:app --host 0.0.0.0 --port 8000
+    ports:
+      - "9001:8000"
+    restart: always

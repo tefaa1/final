@@ -1,0 +1,27 @@
+package com.example.trainingmatchservice.model.match.enums;
+
+public enum EventType {
+
+    // Common (all sports)
+    SUBSTITUTION, YELLOW_CARD, RED_CARD, INJURY, END_OF_PERIOD,
+
+    // Football
+    GOAL, ASSIST, OWN_GOAL, PENALTY_SCORED, PENALTY_MISSED,
+    CORNER_KICK, FREE_KICK, VAR_REVIEW, OFFSIDE,
+
+    // Basketball
+    BASKET_2PT, BASKET_3PT, FREE_THROW_MADE, FREE_THROW_MISSED,
+    TIMEOUT, PERSONAL_FOUL, TECHNICAL_FOUL, FLAGRANT_FOUL,
+
+    // Tennis
+    ACE, DOUBLE_FAULT, BREAK_OF_SERVE, GAME_WON, SET_WON, MATCH_WON,
+
+    // Swimming
+    RACE_START, RACE_FINISH, DISQUALIFICATION_SWIM,
+
+    // Volleyball
+    POINT_WON, SET_WON_VB, ACE_VB, BLOCK_POINT,
+
+    // Handball
+    GOAL_HB, SEVEN_METER_THROW, GOALKEEPER_SAVE, TWO_MINUTE_SUSPENSION
+}

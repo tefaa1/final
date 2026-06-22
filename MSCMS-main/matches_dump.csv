@@ -1,0 +1,51 @@
+Match_ID,Date,Competition,Venue,Opponent,Barca_Goals,Opp_Goals,Result,Barca_Possession%,Opp_Possession%,Barca_Shots,Opp_Shots,Barca_SoT,Opp_SoT,Barca_xG,Opp_xG,Barca_Corners,Opp_Corners,Barca_Fouls,Opp_Fouls,Barca_Yellow,Opp_Yellow,Barca_Red,Opp_Red,Barca_PPDA,Referee
+FCB-2300,2024-12-28,La Liga,Home,Real Madrid,5,0,W,69.5,30.5,21,9,5,2,1.48,0.69,6,3,10,17,1,3,1,1,13.6,Gil Manzano
+FCB-2301,2024-12-25,La Liga,Home,Atletico Madrid,4,1,W,56.7,43.3,13,8,7,4,2.7,1.62,9,2,11,20,2,4,0,1,7,De Burgos Bengoetxea
+FCB-2302,2024-06-28,La Liga,Home,Sevilla,3,3,D,60,40,21,10,10,5,2.01,1.59,11,5,8,18,0,4,0,0,12.6,De Burgos Bengoetxea
+FCB-2303,2024-02-02,La Liga,Home,Valencia,2,2,D,69.3,30.7,16,12,9,2,3.01,1.92,7,3,17,14,2,0,0,1,9.5,Jesús Gil
+FCB-2304,2024-09-20,La Liga,Home,Villarreal,4,2,W,56.5,43.5,12,6,11,7,1.89,0.74,10,3,9,20,1,0,1,0,11.6,Gil Manzano
+FCB-2305,2024-03-19,La Liga,Home,Athletic Bilbao,4,0,W,68.3,31.7,18,5,6,4,1.95,1.31,5,4,15,19,3,3,1,1,13.4,Jesús Gil
+FCB-2306,2024-12-01,La Liga,Home,Real Sociedad,4,0,W,60.7,39.3,21,9,10,4,2.98,1.83,5,5,9,12,1,5,1,1,11.7,Del Cerro Grande
+FCB-2307,2024-09-14,La Liga,Home,Osasuna,2,0,W,66.7,33.3,18,9,7,4,2.98,1.84,6,5,13,17,3,1,0,0,8.2,Cuadra Fernández
+FCB-2308,2024-07-06,UCL,Home,Girona,3,2,W,63.7,36.3,21,5,7,4,2.84,1.68,12,7,15,16,0,0,1,1,9.8,Del Cerro Grande
+FCB-2309,2024-03-08,UCL,Home,Rayo Vallecano,5,3,W,70.2,29.8,17,8,11,6,2.29,1.07,10,2,9,11,3,0,0,0,5.4,Munuera Montero
+FCB-2310,2024-03-13,La Liga,Away,Getafe,4,1,W,70.4,29.6,21,7,12,5,3.36,0.42,4,6,12,18,1,3,1,1,7.9,Jesús Gil
+FCB-2311,2024-04-21,La Liga,Away,Celta Vigo,2,1,W,67.7,32.3,20,5,9,6,2.08,0.31,12,5,14,17,1,2,1,0,8.2,Mateu Lahoz
+FCB-2312,2024-08-24,La Liga,Away,Espanyol,5,1,W,58.4,41.6,12,8,7,3,1.72,1.57,11,2,16,19,0,3,1,0,12.5,Hernández Hernández
+FCB-2313,2024-02-18,La Liga,Away,Betis,1,3,L,71.6,28.4,12,11,11,4,1.34,1.56,10,7,17,16,0,2,0,0,11.6,Jesús Gil
+FCB-2314,2024-12-01,La Liga,Away,Almeria,3,0,W,68.8,31.2,15,8,7,3,1.99,1.13,4,7,15,20,2,5,0,1,11.6,De Burgos Bengoetxea
+FCB-2315,2024-07-19,La Liga,Away,Porto,5,3,W,71.7,28.3,21,9,7,2,2.29,1.89,7,4,10,11,0,2,1,0,11.8,Mateu Lahoz
+FCB-2316,2024-12-01,La Liga,Away,Napoli,1,2,L,59,41,16,12,9,6,1.45,1.45,7,2,14,17,2,0,0,1,9.7,De Burgos Bengoetxea
+FCB-2317,2024-01-03,La Liga,Away,Shakhtar,4,3,W,57.9,42.1,12,8,6,3,2.96,0.95,11,8,18,19,2,2,0,0,10.1,Jesús Gil
+FCB-2318,2024-04-01,UCL,Away,PSG,4,2,W,57.7,42.3,22,8,11,2,3.29,1.04,9,6,10,16,2,3,0,0,11.9,De Burgos Bengoetxea
+FCB-2319,2024-10-16,UCL,Away,Porto,1,2,L,69.2,30.8,17,14,10,6,2.47,0.98,7,4,12,19,2,1,1,0,13.9,Hernández Hernández
+FCB-2320,2025-02-12,La Liga,Home,Girona,3,2,W,55.8,44.2,16,11,6,1,3.28,0.26,11,1,12,19,3,2,0,0,10.6,Munuera Montero
+FCB-2321,2024-11-06,La Liga,Home,Cadiz,2,1,W,70.7,29.3,12,9,7,2,2.18,1.19,5,4,9,19,3,1,0,0,5.6,Del Cerro Grande
+FCB-2322,2025-02-17,La Liga,Home,Las Palmas,2,0,W,71,29,14,14,7,3,2.13,1.26,11,4,18,13,1,1,0,0,13,Gil Manzano
+FCB-2323,2025-01-24,La Liga,Home,Mallorca,3,0,W,65.9,34.1,22,9,4,4,3.26,1.38,10,5,17,15,1,0,0,0,13.1,Soto Grado
+FCB-2324,2024-11-18,La Liga,Home,Valladolid,1,0,W,55.6,44.4,12,11,5,3,1.62,1.17,10,7,18,22,1,4,0,0,7.1,Cuadra Fernández
+FCB-2325,2024-10-27,La Liga,Home,Granada,2,0,W,57.8,42.2,18,5,7,4,1.84,1.12,9,5,12,19,1,2,0,0,9.6,De Burgos Bengoetxea
+FCB-2326,2025-01-14,La Liga,Home,Alaves,2,2,D,56.3,43.7,12,5,11,1,1.91,1.5,8,4,11,15,1,0,0,0,10,Gil Manzano
+FCB-2327,2024-12-16,La Liga,Home,Leganes,1,1,D,64.9,35.1,12,13,5,1,1.98,1.16,5,1,18,19,2,1,0,0,11.1,Cuadra Fernández
+FCB-2328,2024-09-15,La Liga,Home,Celta Vigo,2,0,W,66.9,33.1,17,10,9,5,3.3,0.87,6,3,9,19,0,2,0,0,12.4,Cuadra Fernández
+FCB-2329,2024-09-09,La Liga,Home,Getafe,2,1,W,67.1,32.9,20,8,6,3,2.76,0.61,9,2,8,16,0,3,0,0,6,Del Cerro Grande
+FCB-2330,2025-01-27,La Liga,Away,Real Madrid,2,1,W,58.2,41.8,18,13,10,6,2.13,0.7,3,4,9,16,0,0,0,0,6,Del Cerro Grande
+FCB-2331,2025-01-19,La Liga,Away,Atletico,3,2,W,60,40,19,14,6,5,1.99,0.82,4,1,14,21,3,3,0,0,5.4,Mateu Lahoz
+FCB-2332,2025-03-13,La Liga,Away,Sevilla,1,0,W,59.6,40.4,18,5,4,6,3,1.89,6,5,15,19,0,0,0,0,6.1,Hernández Hernández
+FCB-2333,2025-03-16,La Liga,Away,Valencia,5,0,W,70.5,29.5,16,11,7,5,1.92,0.53,8,5,17,13,2,2,0,0,9.8,Cuadra Fernández
+FCB-2334,2024-08-11,La Liga,Away,Villarreal,6,1,W,67.5,32.5,17,12,6,4,1.75,0.84,4,7,9,15,3,4,0,0,5.6,Del Cerro Grande
+FCB-2335,2025-02-14,La Liga,Away,Athletic Bilbao,3,0,W,58.3,41.7,20,12,5,2,2.2,1.49,11,4,9,20,0,3,0,0,12.5,Soto Grado
+FCB-2336,2025-02-27,La Liga,Away,Real Sociedad,3,2,W,59.3,40.7,13,7,5,3,1.51,0.71,7,6,15,13,2,3,0,0,12.5,Cuadra Fernández
+FCB-2337,2024-12-20,La Liga,Away,Girona,2,1,W,71.4,28.6,16,9,7,5,1.56,1.7,3,6,11,20,2,0,0,0,5,Hernández Hernández
+FCB-2338,2024-11-23,La Liga,Away,Osasuna,2,3,L,68.4,31.6,21,11,10,2,1.96,1.8,5,5,16,11,2,2,0,0,6.3,Gil Manzano
+FCB-2339,2024-10-26,La Liga,Away,Rayo Vallecano,2,3,L,66.1,33.9,12,8,6,3,3.12,0.48,10,3,18,14,2,4,0,0,14,Gil Manzano
+FCB-2340,2024-12-09,UCL,Home,Inter Milan,1,1,D,64.6,35.4,17,12,9,2,3.21,0.99,7,6,17,23,3,0,0,0,11.1,Munuera Montero
+FCB-2341,2024-12-18,UCL,Home,Bayern Munich,2,0,W,64.8,35.2,15,8,10,4,1.95,1.2,11,4,16,11,1,2,0,0,11.4,Hernández Hernández
+FCB-2342,2025-02-16,UCL,Home,Dortmund,2,0,W,64,36,16,11,11,4,3.29,1.02,4,6,9,19,2,2,0,0,8.2,De Burgos Bengoetxea
+FCB-2343,2024-10-23,UCL,Home,Man City,3,1,W,57.1,42.9,18,13,11,2,1.84,1.21,10,7,12,22,3,1,0,0,7.2,Ortiz Arias
+FCB-2344,2024-08-14,UCL,Home,Arsenal,2,3,L,66.6,33.4,19,6,4,2,2.7,1.05,10,3,17,20,1,1,0,0,8.8,Gil Manzano
+FCB-2345,2025-01-18,UCL,Away,Inter Milan,1,2,L,68.5,31.5,22,9,5,5,2.85,0.8,5,5,16,16,1,4,0,0,12.7,Munuera Montero
+FCB-2346,2024-10-12,UCL,Away,Bayern Munich,1,1,D,69.3,30.7,16,6,6,5,2.15,1.06,12,2,10,16,2,4,0,0,10,Jesús Gil
+FCB-2347,2025-03-25,UCL,Away,Dortmund,2,0,W,60,40,13,7,11,4,1.82,0.95,12,4,15,21,1,0,0,0,5.4,Ortiz Arias
+FCB-2348,2024-11-14,Copa del Rey,Home,Osasuna,6,0,W,57.8,42.2,15,4,7,1,3.17,1.05,6,6,13,19,1,3,0,0,11.3,Cuadra Fernández
+FCB-2349,2025-02-15,Copa del Rey,Away,Real Madrid,6,0,W,71.6,28.4,16,11,11,6,2.37,1.54,3,7,16,23,0,4,0,0,13.3,Hernández Hernández

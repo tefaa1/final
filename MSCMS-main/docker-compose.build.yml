@@ -1,0 +1,29 @@
+# Override that forces every app service to be BUILT from local source
+# instead of pulling the prebuilt images from GHCR / Docker Hub.
+#
+# The 6 domain microservices already declare `build:` in docker-compose.full.yml,
+# so this file only needs to add `build:` to the services that were image-only:
+# eureka-server, config-server, gateway-service, and the two ML services.
+#
+# Usage (run from the MSCMS-main folder):
+#   docker compose -f docker-compose.full.yml -f docker-compose.build.yml up -d --build
+#
+# Note: the infrastructure images (postgres, kafka, rabbitmq, keycloak) are
+# official base images and are always pulled — there is no local source for them.
+services:
+  eureka-server:
+    build: ./eureka-server
+
+  config-server:
+    build: ./config-server
+
+  gateway-service:
+    build: ./gateway-service
+
+  # The ML services live in the sibling repo ../sportify-main.
+  # Remove these two blocks if you'd rather pull the published shahod/sportify image.
+  ml-match-predictor:
+    build: ../sportify-main
+
+  ml-player-rating:
+    build: ../sportify-main

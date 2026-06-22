@@ -1,0 +1,149 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:14
+    mem_limit: 700m
+    environment:
+      POSTGRES_USER: embarkx
+      POSTGRES_PASSWORD: embarkx
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_mscms:/data/postgres
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    mem_limit: 700m
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin_mscms:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - backend
+    restart: unless-stopped
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: embarkx
+      RABBITMQ_DEFAULT_PASS: embarkx
+    ports:
+      - "5672:5672"   # RabbitMQ Message Broker
+      - "15672:15672" # RabbitMQ Management UI (http://localhost:15672)
+    networks:
+      - backend
+    restart: unless-stopped
+
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:26.2.5
+    mem_limit: 700m
+    ports:
+      - "8443:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin123
+    command: [ "start-dev", "--import-realm" ]
+    volumes:
+      - keycloak_data_mscms:/opt/keycloak/data
+      - ./keycloak/mscms-realm.json:/opt/keycloak/data/import/mscms-realm.json
+    networks:
+      - backend
+
+  redis:
+    container_name: redis
+    image: redis:7-alpine
+    mem_limit: 500m
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_mscms:/data
+    networks:
+      - backend
+    restart: unless-stopped
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    mem_limit: 512m
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_SYNC_LIMIT: 2
+    volumes:
+      - zookeeper_data_mscms:/var/lib/zookeeper/data
+      - zookeeper_log_mscms:/var/lib/zookeeper/log
+    networks:
+      - backend
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    mem_limit: 1024m
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_CLEANUP_POLICY: delete
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - kafka_data_mscms:/var/lib/kafka/data
+    depends_on:
+      - zookeeper
+    networks:
+      - backend
+    restart: unless-stopped
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    mem_limit: 512m
+    ports:
+      - "8089:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      KAFKA_CLUSTERS_0_READONLY: "false"
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - backend
+    restart: unless-stopped
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_mscms:
+  pgadmin_mscms:
+  keycloak_data_mscms:
+  redis_data_mscms:
+  zookeeper_data_mscms:
+  zookeeper_log_mscms:
+  kafka_data_mscms:

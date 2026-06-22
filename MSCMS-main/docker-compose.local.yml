@@ -1,0 +1,34 @@
+# Override for rebuilding ONLY the locally-changed services from host-built jars.
+# Use when the in-container Maven build can't reach Maven Central (TLS
+# interception). Build the jars first on the host:
+#   mvn -o -DskipTests package   (in each changed service dir)
+# Then:
+#   docker compose -f docker-compose.full.yml -f docker-compose.local.yml build \
+#       user-management-service player-management-service notification-mail-service
+#   docker compose -f docker-compose.full.yml -f docker-compose.local.yml up -d
+services:
+  user-management-service:
+    build:
+      context: ./user-management-service
+      dockerfile: Dockerfile.prebuilt
+
+  player-management-service:
+    build:
+      context: ./player-management-service
+      dockerfile: Dockerfile.prebuilt
+
+  notification-mail-service:
+    build:
+      context: ./notification-mail-service
+      dockerfile: Dockerfile.prebuilt
+    # Publish the service port so the browser can open the team-chat WebSocket
+    # directly (ws://localhost:8085/messages/ws), bypassing the gateway's JWT
+    # filter — the native browser WebSocket API cannot send an Authorization
+    # header, and this service is permitAll. REST traffic still goes via :8080.
+    ports:
+      - "8085:8085"
+
+  training-match-service:
+    build:
+      context: ./training-match-service
+      dockerfile: Dockerfile.prebuilt
