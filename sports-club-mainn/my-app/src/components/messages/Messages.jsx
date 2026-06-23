@@ -338,7 +338,9 @@ export default function Messages() {
         return;
       }
       try {
-        const all = await api.getAllMessages();
+        // Fetch the group's whole thread directly (works for every member, not
+        // just admins) instead of pulling all messages and filtering.
+        const all = await api.getMessagesByGroup(groupId).catch(() => api.getAllMessages());
         const { visible } = buildGroupThread(all, groupId, myId);
         setThread(visible);
         // Drop optimistic sends now backed by a persisted copy (match by
@@ -582,7 +584,7 @@ export default function Messages() {
     const gid = activeGroupId;
     try {
       if (existing) {
-        const all = await api.getAllMessages().catch(() => []);
+        const all = await api.getMessagesByGroup(gid).catch(() => []);
         const list = asArray(all);
         const marker = list.find(
           (m) =>

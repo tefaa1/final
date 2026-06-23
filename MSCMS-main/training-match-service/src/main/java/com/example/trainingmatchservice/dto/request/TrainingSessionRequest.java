@@ -47,7 +47,14 @@ public record TrainingSessionRequest(
 
         @NotBlank(groups = Create.class)
         @Size(min = 2, groups = {Create.class, Update.class})
-        String notes
+        String notes,
+
+        // Plan this session fulfils (optional — null = standalone).
+        @Positive(groups = {Create.class, Update.class})
+        Long trainingPlanId,
+
+        // JSON array of assigned player ids, e.g. "[12,13,14]".
+        String playerIds
 ) {
     public TrainingSessionRequest {
         location = location != null ? location.trim() : null;

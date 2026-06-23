@@ -1,6 +1,7 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { api } from "@/src/lib/api";
+import { buildTeamIndex, buildPlayerTeamMap, teamOfPlayer } from "@/src/lib/clubTeams";
 import PlayerCard from "./PlayerCard";
 import PlayerDetailModal from "./PlayerDetailModal";
 import PlayerFilter from "./PlayerFilter";
@@ -70,11 +71,13 @@ const playerFields = [
 
 function Players() {
   const [userRole, setUserRole] = useState("");
-  const sports = ["All Sports", "Football", "Basketball", "Handball"];
+  const sports = ["All Sports", "Football", "Basketball", "Handball", "Tennis"];
   const [selectedSport, setSelectedSport] = useState("All Sports");
   const [search, setSearch] = useState("");
 
   const [players, setPlayers] = useState([]);
+  const [teamsRaw, setTeamsRaw] = useState([]);
+  const [rostersRaw, setRostersRaw] = useState([]);
   const [stats, setStats] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -93,10 +96,12 @@ function Players() {
       // The /players endpoint filters by status, so fetch every status and
       // merge to get the WHOLE squad (available + injured + suspended …).
       const STATUSES = ["AVAILABLE", "INJURED", "ABSENT", "SUSPENDED"];
-      const [statusResults, s, a] = await Promise.all([
+      const [statusResults, s, a, tms, ros] = await Promise.all([
         Promise.all(STATUSES.map((st) => api.getPlayers(st).catch(() => []))),
         api.getPlayerMatchStatistics().catch(() => []),
         api.getPlayerTrainingAssessments().catch(() => []),
+        api.getTeams().catch(() => []),
+        api.getRosters().catch(() => []),
       ]);
       // De-dupe by id in case a player appears under multiple queries.
       const byId = new Map();
@@ -104,6 +109,8 @@ function Players() {
       setPlayers([...byId.values()]);
       setStats(unwrap(s));
       setAssessments(unwrap(a));
+      setTeamsRaw(tms);
+      setRostersRaw(ros);
     } catch (err) {
       console.error("Fetch Error:", err);
       showToast("Failed to load squad", "error");
@@ -120,6 +127,11 @@ function Players() {
 
   const isAdmin = userRole === "admin";
 
+  // Team indexes: map every player to their team, and know which team is the
+  // FIRST vs the SECOND/reserve squad of each sport.
+  const teamIndex = useMemo(() => buildTeamIndex(teamsRaw), [teamsRaw]);
+  const playerTeamMap = useMemo(() => buildPlayerTeamMap(rostersRaw), [rostersRaw]);
+
   // FIX: search now matches the FULL name (first + last), so typing a surname
   // like "lew" correctly finds "Robert Lewandowski".
   const filteredPlayers = (players || []).filter((p) => {
@@ -127,6 +139,39 @@ function Players() {
     const sportOk = selectedSport === "All Sports" || getSportFromPlayer(p) === selectedSport.toLowerCase();
     return sportOk && fullName.includes(search.toLowerCase());
   });
+
+  // Group the filtered squad by sport, then split each sport into first-team and
+  // reserve ("B" team) players — driven entirely by the roster→team mapping.
+  const SPORT_DISPLAY = [
+    { key: "football", label: "Football", emoji: "⚽" },
+    { key: "basketball", label: "Basketball", emoji: "🏀" },
+    { key: "handball", label: "Handball", emoji: "🤾" },
+    { key: "tennis", label: "Tennis", emoji: "🎾" },
+  ];
+  const groupedBySport = useMemo(() => {
+    const out = {};
+    for (const p of filteredPlayers) {
+      const sport = getSportFromPlayer(p);
+      if (!sport) continue;
+      const t = teamOfPlayer(p, playerTeamMap, teamIndex);
+      const tier = t && !t.isFirstTeam ? "reserve" : "first";
+      (out[sport] ||= { first: [], reserve: [] })[tier].push(p);
+    }
+    // sort each bucket by kit number then name for a stable, tidy grid
+    const byKit = (a, b) => (a.kitNumber ?? 999) - (b.kitNumber ?? 999) || `${a.firstName}`.localeCompare(`${b.firstName}`);
+    Object.values(out).forEach((g) => { g.first.sort(byKit); g.reserve.sort(byKit); });
+    return out;
+  }, [filteredPlayers, playerTeamMap, teamIndex]);
+
+  const renderCard = (player) => (
+    <PlayerCard
+      key={player.id}
+      player={player}
+      isAdmin={isAdmin}
+      onOpen={() => setDetailPlayer(player)}
+      onEdit={(p) => { if (isAdmin) setEditItem(p); }}
+    />
+  );
 
   const statsFor = (p) => stats.filter((s) => s.playerId === p.id || s.playerKeycloakId === p.keycloakId);
   const assessmentsFor = (p) => assessments.filter((a) => a.playerId === p.id || a.playerKeycloakId === p.keycloakId);
@@ -216,16 +261,47 @@ function Players() {
           </div>
 
           {filteredPlayers.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
-              {filteredPlayers.map((player) => (
-                <PlayerCard
-                  key={player.id}
-                  player={player}
-                  isAdmin={isAdmin}
-                  onOpen={() => setDetailPlayer(player)}
-                  onEdit={(p) => { if (isAdmin) setEditItem(p); }}
-                />
-              ))}
+            <div className="pb-10 space-y-12">
+              {SPORT_DISPLAY.filter((sp) => groupedBySport[sp.key]).map((sp) => {
+                const g = groupedBySport[sp.key];
+                const reserveTeam = (teamIndex.bySport[sp.key.toUpperCase()] || []).find((t) => !t.isFirstTeam);
+                return (
+                  <section key={sp.key}>
+                    <h2 className="flex items-center gap-2.5 text-lg font-black uppercase tracking-tight text-white mb-5">
+                      <span className="text-2xl">{sp.emoji}</span> {sp.label}
+                      <span className="text-[11px] font-black text-slate-500 normal-case tracking-normal">
+                        {g.first.length + g.reserve.length} player{g.first.length + g.reserve.length === 1 ? "" : "s"}
+                      </span>
+                    </h2>
+
+                    {/* First team */}
+                    {g.first.length > 0 && (
+                      <>
+                        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-400/80 mb-3">First Team</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                          {g.first.map(renderCard)}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Divider + Reserve / B team (the "straight line" separation) */}
+                    {g.reserve.length > 0 && (
+                      <>
+                        <div className="flex items-center gap-4 my-7">
+                          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-slate-700" />
+                          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-sky-300/80 whitespace-nowrap">
+                            {reserveTeam?.name || "Reserve Team"} · B Team
+                          </span>
+                          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-slate-700" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                          {g.reserve.map(renderCard)}
+                        </div>
+                      </>
+                    )}
+                  </section>
+                );
+              })}
             </div>
           ) : (
             <EmptyState icon="👥" title="No players found" />

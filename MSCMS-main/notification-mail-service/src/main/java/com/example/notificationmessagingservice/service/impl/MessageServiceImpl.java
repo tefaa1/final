@@ -87,4 +87,11 @@ public class MessageServiceImpl implements MessageService {
                 .map(messageMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public List<MessageResponse> getByGroup(Long groupId) {
+        return messageRepository.findByGroupIdOrderBySentAtAsc(groupId).stream()
+                .map(messageMapper::toResponse)
+                .toList();
+    }
 }

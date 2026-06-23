@@ -1,0 +1,598 @@
+﻿
+> my-app@0.1.0 dev
+> next dev
+
+node.exe :  ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( ⚠ Warning: Nex...not be correct.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ We detected multiple lockfiles and selected the directory of D:\final\final\sports-club-mainn\package-lock.json as 
+the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if 
+it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * D:\final\final\sports-club-mainn\my-app\package-lock.json
+
+   ▲ Next.js 16.0.7 (Turbopack)
+   - Local:         http://localhost:3000
+   - Network:       http://172.28.64.1:3000
+
+ ✓ Starting...
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: 
+https://nextjs.org/docs/messages/middleware-to-proxy
+ ✓ Ready in 1776ms
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please 
+update: `npm i baseline-browser-mapping@latest -D`
+ ○ Compiling / ...
+ GET / 200 in 4.0s (compile: 3.8s, render: 194ms)
+ GET / 200 in 67ms (compile: 8ms, render: 59ms)
+ ⨯ ./my-app/src/components/Login.jsx:8:1
+Module not found: Can't resolve '@heroicons/react/24/outline'
+[0m [90m  6 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m [33mFeatureCard[39m [36mfrom[39m [32m"./FeatureCard"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m {
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m  9 |[39m   [33mUserGroupIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 10 |[39m   [33mChartBarIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 11 |[39m   [33mShieldCheckIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 12 |[39m   [33mTrophyIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 13 |[39m } [36mfrom[39m [32m"@heroicons/react/24/outline"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39
+m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[
+39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 14 |[39m [36mimport[39m { setToken } [36mfrom[39m [32m"@/src/lib/auth"[39m[33m;[39m 
+ [90m 15 |[39m [36mimport[39m { jwtDecode } [36mfrom[39m [32m"jwt-decode"[39m[33m;[39m
+ [90m 16 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./my-app/src/components/Login.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./my-app/src/components/Login.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./my-app/src/components/Login.jsx:8:1
+Module not found: Can't resolve '@heroicons/react/24/outline'
+[0m [90m  6 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m [33mFeatureCard[39m [36mfrom[39m [32m"./FeatureCard"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m {
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m  9 |[39m   [33mUserGroupIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 10 |[39m   [33mChartBarIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 11 |[39m   [33mShieldCheckIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 12 |[39m   [33mTrophyIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 13 |[39m } [36mfrom[39m [32m"@heroicons/react/24/outline"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39
+m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[
+39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 14 |[39m [36mimport[39m { setToken } [36mfrom[39m [32m"@/src/lib/auth"[39m[33m;[39m 
+ [90m 15 |[39m [36mimport[39m { jwtDecode } [36mfrom[39m [32m"jwt-decode"[39m[33m;[39m
+ [90m 16 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./my-app/src/components/Login.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./my-app/src/components/Login.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /login 500 in 3.3s (compile: 3.0s, proxy.ts: 85ms, render: 183ms)
+ ⨯ ./my-app/src/components/Login.jsx:8:1
+Module not found: Can't resolve '@heroicons/react/24/outline'
+[0m [90m  6 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m [33mFeatureCard[39m [36mfrom[39m [32m"./FeatureCard"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m {
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m  9 |[39m   [33mUserGroupIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 10 |[39m   [33mChartBarIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 11 |[39m   [33mShieldCheckIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 12 |[39m   [33mTrophyIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 13 |[39m } [36mfrom[39m [32m"@heroicons/react/24/outline"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39
+m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[
+39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 14 |[39m [36mimport[39m { setToken } [36mfrom[39m [32m"@/src/lib/auth"[39m[33m;[39m 
+ [90m 15 |[39m [36mimport[39m { jwtDecode } [36mfrom[39m [32m"jwt-decode"[39m[33m;[39m
+ [90m 16 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./my-app/src/components/Login.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./my-app/src/components/Login.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./my-app/src/components/Login.jsx:8:1
+Module not found: Can't resolve '@heroicons/react/24/outline'
+[0m [90m  6 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m [33mFeatureCard[39m [36mfrom[39m [32m"./FeatureCard"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m {
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m  9 |[39m   [33mUserGroupIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 10 |[39m   [33mChartBarIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 11 |[39m   [33mShieldCheckIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 12 |[39m   [33mTrophyIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 13 |[39m } [36mfrom[39m [32m"@heroicons/react/24/outline"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39
+m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[
+39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 14 |[39m [36mimport[39m { setToken } [36mfrom[39m [32m"@/src/lib/auth"[39m[33m;[39m 
+ [90m 15 |[39m [36mimport[39m { jwtDecode } [36mfrom[39m [32m"jwt-decode"[39m[33m;[39m
+ [90m 16 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./my-app/src/components/Login.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./my-app/src/components/Login.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /login 500 in 59ms (compile: 37ms, proxy.ts: 7ms, render: 15ms)
+ ⨯ ./my-app/src/components/Login.jsx:8:1
+Module not found: Can't resolve '@heroicons/react/24/outline'
+[0m [90m  6 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m [33mFeatureCard[39m [36mfrom[39m [32m"./FeatureCard"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m {
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m  9 |[39m   [33mUserGroupIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 10 |[39m   [33mChartBarIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 11 |[39m   [33mShieldCheckIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 12 |[39m   [33mTrophyIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 13 |[39m } [36mfrom[39m [32m"@heroicons/react/24/outline"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39
+m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[
+39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 14 |[39m [36mimport[39m { setToken } [36mfrom[39m [32m"@/src/lib/auth"[39m[33m;[39m 
+ [90m 15 |[39m [36mimport[39m { jwtDecode } [36mfrom[39m [32m"jwt-decode"[39m[33m;[39m
+ [90m 16 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./my-app/src/components/Login.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./my-app/src/components/Login.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+./my-app/src/components/Login.jsx:8:1
+Module not found: Can't resolve '@heroicons/react/24/outline'
+[0m [90m  6 |[39m [36mimport[39m [33mLink[39m [36mfrom[39m [32m"next/link"[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m [33mFeatureCard[39m [36mfrom[39m [32m"./FeatureCard"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m {
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m  9 |[39m   [33mUserGroupIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 10 |[39m   [33mChartBarIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 11 |[39m   [33mShieldCheckIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 12 |[39m   [33mTrophyIcon[39m[33m,[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m>[22m[39m[90m 13 |[39m } [36mfrom[39m [32m"@heroicons/react/24/outline"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39
+m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[
+39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 14 |[39m [36mimport[39m { setToken } [36mfrom[39m [32m"@/src/lib/auth"[39m[33m;[39m 
+ [90m 15 |[39m [36mimport[39m { jwtDecode } [36mfrom[39m [32m"jwt-decode"[39m[33m;[39m
+ [90m 16 |[39m [36mimport[39m [33mCookies[39m [36mfrom[39m [32m"js-cookie"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./my-app/src/components/Login.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Client Component Browser]
+    ./my-app/app/login/page.jsx [Server Component]
+
+  Client Component SSR:
+    ./my-app/src/components/Login.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Client Component SSR]
+    ./my-app/app/login/page.jsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /login 500 in 46ms (compile: 30ms, proxy.ts: 4ms, render: 12ms)
+ ✓ Compiled in 3.6s
+ GET / 200 in 97ms (compile: 21ms, render: 76ms)
+ GET /login 200 in 425ms (compile: 237ms, proxy.ts: 6ms, render: 182ms)
+ GET /signup 200 in 878ms (compile: 819ms, render: 58ms)
+ GET /login 200 in 52ms (compile: 9ms, proxy.ts: 6ms, render: 37ms)
+ GET / 200 in 107ms (compile: 12ms, render: 95ms)
+ GET /login 200 in 119ms (compile: 11ms, proxy.ts: 9ms, render: 99ms)
+ GET /login 200 in 68ms (compile: 15ms, proxy.ts: 10ms, render: 43ms)
+ ○ Compiling /dashboard ...
+ GET /dashboard 200 in 3.8s (compile: 3.4s, proxy.ts: 11ms, render: 389ms)
+ GET /dashboard/club 200 in 692ms (compile: 627ms, proxy.ts: 4ms, render: 60ms)
+ GET /dashboard/users 200 in 832ms (compile: 758ms, proxy.ts: 4ms, render: 70ms)
+ GET /dashboard/players 200 in 1276ms (compile: 1225ms, proxy.ts: 5ms, render: 46ms)
+ GET /dashboard/staff 200 in 2.2s (compile: 2.1s, proxy.ts: 6ms, render: 54ms)
+ GET /dashboard/staff 200 in 43ms (compile: 9ms, proxy.ts: 5ms, render: 28ms)
+ GET /dashboard/staff 200 in 44ms (compile: 9ms, proxy.ts: 3ms, render: 32ms)
+ GET /dashboard 200 in 30ms (compile: 8ms, proxy.ts: 4ms, render: 19ms)
+ GET /dashboard/scouting 200 in 734ms (compile: 688ms, proxy.ts: 3ms, render: 43ms)
+ GET /dashboard 200 in 42ms (compile: 9ms, proxy.ts: 4ms, render: 29ms)
+ GET /dashboard/club 200 in 38ms (compile: 10ms, proxy.ts: 3ms, render: 25ms)
+ GET /dashboard/trophies 200 in 664ms (compile: 614ms, proxy.ts: 4ms, render: 46ms)
+ GET /dashboard/world-cup 200 in 664ms (compile: 615ms, proxy.ts: 3ms, render: 46ms)
+ GET /dashboard/world-cup 200 in 134ms (compile: 9ms, proxy.ts: 6ms, render: 119ms)
+ GET /dashboard/players 200 in 36ms (compile: 9ms, proxy.ts: 5ms, render: 22ms)
+ GET /dashboard/club 200 in 34ms (compile: 7ms, proxy.ts: 3ms, render: 23ms)
+ GET /dashboard/trophies 200 in 33ms (compile: 7ms, proxy.ts: 4ms, render: 22ms)
+ GET /dashboard/world-cup 200 in 42ms (compile: 8ms, proxy.ts: 6ms, render: 28ms)
+ GET /dashboard/players 200 in 36ms (compile: 9ms, proxy.ts: 4ms, render: 23ms)
+ GET /dashboard/medical 200 in 615ms (compile: 563ms, proxy.ts: 3ms, render: 50ms)
+ GET /dashboard/matches 200 in 1151ms (compile: 1100ms, proxy.ts: 4ms, render: 47ms)
+ GET /dashboard/medical 200 in 34ms (compile: 7ms, proxy.ts: 5ms, render: 22ms)
+ GET /dashboard 200 in 34ms (compile: 7ms, proxy.ts: 4ms, render: 22ms)
+ GET /dashboard/users 200 in 38ms (compile: 10ms, proxy.ts: 3ms, render: 25ms)
+ GET /dashboard/messages 200 in 1047ms (compile: 998ms, proxy.ts: 3ms, render: 46ms)
+ GET /dashboard/alerts 200 in 807ms (compile: 753ms, proxy.ts: 6ms, render: 48ms)
+ GET /dashboard/settings 200 in 1097ms (compile: 1041ms, proxy.ts: 4ms, render: 52ms)
+ GET /dashboard 200 in 32ms (compile: 8ms, proxy.ts: 4ms, render: 20ms)
+ GET /dashboard/trophies 200 in 45ms (compile: 11ms, proxy.ts: 4ms, render: 29ms)
+ GET /dashboard/competitions 200 in 626ms (compile: 574ms, proxy.ts: 3ms, render: 49ms)
+ GET /dashboard/competitions 200 in 42ms (compile: 8ms, proxy.ts: 3ms, render: 31ms)
+ GET /dashboard/medical 200 in 42ms (compile: 9ms, proxy.ts: 4ms, render: 29ms)
+ GET /dashboard 200 in 40ms (compile: 8ms, proxy.ts: 3ms, render: 29ms)
+ GET /dashboard 200 in 93ms (compile: 9ms, proxy.ts: 5ms, render: 79ms)
+ GET /dashboard/matches 200 in 42ms (compile: 10ms, proxy.ts: 7ms, render: 26ms)
+ GET /dashboard/matches 200 in 131ms (compile: 8ms, proxy.ts: 5ms, render: 118ms)
+ GET /dashboard 200 in 38ms (compile: 10ms, proxy.ts: 4ms, render: 24ms)
+ GET /dashboard/competitions 200 in 39ms (compile: 8ms, proxy.ts: 4ms, render: 28ms)
+ GET /dashboard/competitions 200 in 35ms (compile: 10ms, proxy.ts: 3ms, render: 22ms)
+ GET /dashboard/competitions 200 in 36ms (compile: 8ms, proxy.ts: 3ms, render: 26ms)
+ GET /dashboard/messages 200 in 38ms (compile: 11ms, proxy.ts: 3ms, render: 24ms)
+ GET /dashboard/medical 200 in 41ms (compile: 9ms, proxy.ts: 3ms, render: 29ms)
+ GET /dashboard 200 in 36ms (compile: 9ms, proxy.ts: 4ms, render: 22ms)
+ GET /dashboard/contracts 200 in 715ms (compile: 669ms, proxy.ts: 4ms, render: 42ms)
+ GET /dashboard/sponsors 200 in 542ms (compile: 496ms, proxy.ts: 3ms, render: 43ms)
+ GET /dashboard/contracts 200 in 43ms (compile: 9ms, proxy.ts: 4ms, render: 30ms)
+ GET /dashboard/analytics 200 in 2.7s (compile: 2.7s, proxy.ts: 3ms, render: 47ms)
+ GET /dashboard/contracts 200 in 36ms (compile: 10ms, proxy.ts: 4ms, render: 22ms)
+ GET /dashboard/scouting 200 in 39ms (compile: 11ms, proxy.ts: 4ms, render: 24ms)
+ GET /dashboard/trophies 200 in 37ms (compile: 10ms, proxy.ts: 3ms, render: 25ms)
+ GET /dashboard/club 200 in 43ms (compile: 9ms, proxy.ts: 3ms, render: 31ms)
+ GET /dashboard 200 in 34ms (compile: 9ms, proxy.ts: 3ms, render: 22ms)
+ GET /dashboard/club 200 in 34ms (compile: 8ms, proxy.ts: 3ms, render: 24ms)
+ GET /dashboard/matches 200 in 36ms (compile: 8ms, proxy.ts: 4ms, render: 24ms)
+ GET /dashboard/club 200 in 42ms (compile: 9ms, proxy.ts: 3ms, render: 30ms)
+ GET /dashboard/trophies 200 in 37ms (compile: 8ms, proxy.ts: 4ms, render: 25ms)
+ GET /dashboard/teams 200 in 666ms (compile: 613ms, proxy.ts: 3ms, render: 50ms)
+ GET /dashboard/teams 200 in 102ms (compile: 8ms, proxy.ts: 5ms, render: 89ms)
+ GET /dashboard/players 200 in 69ms (compile: 22ms, proxy.ts: 5ms, render: 42ms)
+ GET /dashboard/players 200 in 129ms (compile: 10ms, proxy.ts: 4ms, render: 115ms)
+ GET /dashboard/staff 200 in 46ms (compile: 12ms, proxy.ts: 4ms, render: 29ms)
+ GET /dashboard/staff 200 in 332ms (compile: 11ms, proxy.ts: 4ms, render: 316ms)
+ GET /dashboard/players 200 in 36ms (compile: 10ms, proxy.ts: 5ms, render: 22ms)
+ GET /dashboard/players 200 in 84ms (compile: 8ms, proxy.ts: 5ms, render: 71ms)
+ ✓ Compiled in 482ms
+ GET /dashboard/medical 200 in 729ms (compile: 297ms, proxy.ts: 6ms, render: 426ms)
+ ○ Compiling /dashboard/training ...
+ GET /dashboard/training 200 in 5.4s (compile: 5.3s, proxy.ts: 3ms, render: 122ms)
+ GET /dashboard/matches/new/lineup 200 in 1653ms (compile: 1510ms, proxy.ts: 2ms, render: 141ms)
+ GET /dashboard/medical 200 in 87ms (compile: 9ms, proxy.ts: 4ms, render: 74ms)
+ GET /dashboard/training 200 in 58ms (compile: 6ms, proxy.ts: 4ms, render: 48ms)
+ ✓ Compiled in 370ms
+ GET /dashboard/players 200 in 5.2s (compile: 1880ms, proxy.ts: 146ms, render: 3.2s)
+ GET /dashboard/staff 200 in 864ms (compile: 188ms, proxy.ts: 4ms, render: 673ms)
+ GET /dashboard/trophies 200 in 483ms (compile: 239ms, proxy.ts: 3ms, render: 241ms)
+ GET /dashboard/players 200 in 65ms (compile: 8ms, proxy.ts: 5ms, render: 53ms)
+ GET /dashboard/staff 200 in 53ms (compile: 6ms, proxy.ts: 3ms, render: 44ms)
+ GET /dashboard/trophies 200 in 69ms (compile: 15ms, proxy.ts: 4ms, render: 49ms)
+ GET /dashboard/teams 200 in 835ms (compile: 380ms, proxy.ts: 6ms, render: 450ms)
+ GET /dashboard/teams 200 in 78ms (compile: 9ms, proxy.ts: 5ms, render: 64ms)
+ GET /dashboard/club 200 in 540ms (compile: 266ms, proxy.ts: 5ms, render: 269ms)
+ GET /dashboard/club 200 in 88ms (compile: 9ms, proxy.ts: 8ms, render: 71ms)
+ GET /dashboard 200 in 499ms (compile: 149ms, proxy.ts: 4ms, render: 346ms)
+ GET /dashboard/matches 200 in 567ms (compile: 239ms, proxy.ts: 3ms, render: 326ms)
+ GET /dashboard/matches/new 200 in 3.1s (compile: 3.0s, proxy.ts: 2ms, render: 78ms)
+ GET /dashboard/matches/new/lineup 200 in 420ms (compile: 168ms, proxy.ts: 4ms, render: 248ms)
+ GET /dashboard/medical 200 in 426ms (compile: 194ms, proxy.ts: 3ms, render: 229ms)
+ GET /dashboard/training 200 in 578ms (compile: 201ms, proxy.ts: 2ms, render: 374ms)
+ GET /dashboard/players 200 in 71ms (compile: 26ms, proxy.ts: 3ms, render: 42ms)
+ GET /dashboard/staff 200 in 65ms (compile: 24ms, proxy.ts: 3ms, render: 38ms)
+ GET /dashboard/trophies 200 in 70ms (compile: 27ms, proxy.ts: 2ms, render: 41ms)
+ GET /dashboard/teams 200 in 67ms (compile: 10ms, proxy.ts: 3ms, render: 53ms)
+ GET /dashboard/club 200 in 117ms (compile: 13ms, proxy.ts: 5ms, render: 99ms)
+ GET /dashboard/messages 200 in 445ms (compile: 188ms, proxy.ts: 2ms, render: 254ms)
+ GET / 200 in 151ms (compile: 54ms, render: 97ms)
+ GET /dashboard 200 in 118ms (compile: 10ms, proxy.ts: 6ms, render: 102ms)
+ GET /dashboard 200 in 76ms (compile: 16ms, proxy.ts: 6ms, render: 55ms)
+ GET /login 200 in 204ms (compile: 66ms, proxy.ts: 6ms, render: 133ms)
+ GET /dashboard 200 in 72ms (compile: 8ms, proxy.ts: 4ms, render: 60ms)
+ GET /dashboard/competitions 200 in 256ms (compile: 170ms, proxy.ts: 3ms, render: 83ms)
+ GET /dashboard 200 in 93ms (compile: 9ms, proxy.ts: 4ms, render: 80ms)
+ GET /dashboard/club 200 in 39ms (compile: 12ms, proxy.ts: 5ms, render: 22ms)
+ GET /dashboard/trophies 200 in 33ms (compile: 8ms, proxy.ts: 3ms, render: 22ms)
+ GET /dashboard/world-cup 200 in 259ms (compile: 183ms, proxy.ts: 3ms, render: 73ms)
+ GET /dashboard/players 200 in 38ms (compile: 10ms, proxy.ts: 5ms, render: 24ms)
+ GET /dashboard/users 200 in 244ms (compile: 172ms, proxy.ts: 4ms, render: 68ms)
+ GET /dashboard/staff 200 in 38ms (compile: 7ms, proxy.ts: 2ms, render: 28ms)
+ GET /dashboard/teams 200 in 37ms (compile: 10ms, proxy.ts: 3ms, render: 24ms)
+ GET /dashboard/messages 200 in 39ms (compile: 10ms, proxy.ts: 4ms, render: 25ms)
+ GET /dashboard/messages 200 in 93ms (compile: 9ms, proxy.ts: 3ms, render: 81ms)
+ GET /dashboard/training 200 in 49ms (compile: 10ms, proxy.ts: 3ms, render: 36ms)
+ GET /dashboard/training 200 in 84ms (compile: 11ms, proxy.ts: 5ms, render: 69ms)
+ GET /dashboard/training 200 in 83ms (compile: 12ms, proxy.ts: 5ms, render: 66ms)
+ GET /dashboard/training 200 in 80ms (compile: 9ms, proxy.ts: 4ms, render: 67ms)
+ ✓ Compiled in 2.2s
+ GET /dashboard/training 200 in 2.2s (compile: 279ms, proxy.ts: 45ms, render: 1892ms)
+ GET /dashboard/training 200 in 53ms (compile: 7ms, proxy.ts: 3ms, render: 43ms)
+ GET /dashboard/training-analytics 200 in 1315ms (compile: 1257ms, proxy.ts: 6ms, render: 52ms)
+ GET / 200 in 89ms (compile: 13ms, render: 75ms)
+ GET /dashboard 200 in 72ms (compile: 7ms, proxy.ts: 4ms, render: 62ms)
+ GET /dashboard 200 in 50ms (compile: 11ms, proxy.ts: 3ms, render: 35ms)
+ GET /dashboard/training 200 in 38ms (compile: 9ms, proxy.ts: 3ms, render: 26ms)
+ GET /dashboard/training 200 in 104ms (compile: 13ms, proxy.ts: 4ms, render: 86ms)
+ GET /dashboard/players 200 in 86ms (compile: 52ms, proxy.ts: 5ms, render: 29ms)
+ GET /dashboard/training 200 in 39ms (compile: 11ms, proxy.ts: 4ms, render: 24ms)
+ GET /dashboard/training 200 in 94ms (compile: 26ms, proxy.ts: 4ms, render: 64ms)
+ GET /dashboard/contracts 200 in 584ms (compile: 499ms, proxy.ts: 3ms, render: 82ms)
+ GET /dashboard/medical 200 in 155ms (compile: 120ms, proxy.ts: 3ms, render: 33ms)
+ GET /dashboard/medical 200 in 82ms (compile: 11ms, proxy.ts: 4ms, render: 67ms)
+ GET /dashboard/training 200 in 38ms (compile: 9ms, proxy.ts: 3ms, render: 26ms)
+ GET /dashboard/medical 200 in 37ms (compile: 7ms, proxy.ts: 3ms, render: 26ms)
+ ✓ Compiled in 391ms
+ ✓ Compiled in 540ms
+ ✓ Compiled in 2.8s
+ ✓ Compiled in 563ms
+ ✓ Compiled in 297ms
+ ✓ Compiled in 268ms
+ ✓ Compiled in 260ms
+ ✓ Compiled in 338ms
+ ✓ Compiled in 297ms
+ GET /dashboard/medical 200 in 1276ms (compile: 226ms, proxy.ts: 5ms, render: 1045ms)
+ GET /dashboard/medical 200 in 51ms (compile: 6ms, proxy.ts: 3ms, render: 42ms)
+ GET /dashboard/players 200 in 1432ms (compile: 208ms, proxy.ts: 3ms, render: 1221ms)
+ GET /dashboard/players 200 in 38ms (compile: 10ms, proxy.ts: 4ms, render: 24ms)
+ GET /dashboard/medical 200 in 44ms (compile: 7ms, proxy.ts: 12ms, render: 25ms)
+ GET /dashboard/medical 200 in 35ms (compile: 8ms, proxy.ts: 4ms, render: 23ms)
+ GET /dashboard/scouting 200 in 307ms (compile: 239ms, proxy.ts: 3ms, render: 65ms)
+ GET /dashboard/scouting 200 in 308ms (compile: 8ms, proxy.ts: 3ms, render: 297ms)
+ GET /dashboard/analytics 200 in 2.4s (compile: 1874ms, proxy.ts: 133ms, render: 363ms)
+ GET /dashboard/analytics 200 in 171ms (compile: 23ms, proxy.ts: 8ms, render: 140ms)
+ GET /dashboard/analytics 200 in 111ms (compile: 19ms, proxy.ts: 9ms, render: 84ms)
+ GET /dashboard/training-analytics 200 in 730ms (compile: 637ms, proxy.ts: 6ms, render: 87ms)
+ GET /dashboard/training-analytics 200 in 3.6s (compile: 12ms, proxy.ts: 6ms, render: 3.5s)
+ GET /dashboard/training-analytics 200 in 142ms (compile: 27ms, proxy.ts: 15ms, render: 100ms)
+ GET /dashboard/training 200 in 253ms (compile: 171ms, proxy.ts: 7ms, render: 76ms)
+ ○ Compiling /dashboard/reports ...
+ GET /dashboard/reports 200 in 3.4s (compile: 3.3s, proxy.ts: 4ms, render: 122ms)
+ GET /dashboard/reports 200 in 90ms (compile: 9ms, proxy.ts: 4ms, render: 77ms)
+ GET /dashboard/reports 200 in 60ms (compile: 9ms, proxy.ts: 4ms, render: 47ms)
+ ✓ Compiled in 841ms
+ ✓ Compiled in 180ms
+ ✓ Compiled in 388ms
+ ✓ Compiled in 259ms
+ ✓ Compiled in 340ms
+ ✓ Compiled in 547ms
+ ✓ Compiled in 352ms
+ ✓ Compiled in 391ms
+ ✓ Compiled in 359ms
+ GET /dashboard/scouting 200 in 611ms (compile: 243ms, proxy.ts: 5ms, render: 364ms)
+ GET /dashboard/scouting 200 in 63ms (compile: 9ms, proxy.ts: 3ms, render: 51ms)
+ GET /dashboard/sponsors 200 in 632ms (compile: 341ms, proxy.ts: 5ms, render: 285ms)
+ GET /dashboard/sponsors 200 in 90ms (compile: 12ms, proxy.ts: 5ms, render: 73ms)
+ GET /dashboard/contracts 200 in 588ms (compile: 405ms, proxy.ts: 16ms, render: 167ms)
+ GET /dashboard/scouting 200 in 68ms (compile: 16ms, proxy.ts: 6ms, render: 46ms)
+ GET /dashboard/sponsors 200 in 138ms (compile: 24ms, proxy.ts: 10ms, render: 104ms)
+ GET /dashboard/reports 200 in 552ms (compile: 385ms, proxy.ts: 12ms, render: 154ms)
+ GET /dashboard/training-analytics 200 in 130ms (compile: 27ms, proxy.ts: 13ms, render: 90ms)
+ GET /dashboard/reports 200 in 66ms (compile: 9ms, proxy.ts: 6ms, render: 50ms)
+ GET /dashboard/ml-predict 200 in 1340ms (compile: 1238ms, proxy.ts: 7ms, render: 95ms)
+ GET /dashboard/reports 200 in 78ms (compile: 20ms, proxy.ts: 15ms, render: 43ms)
+ GET /dashboard/reports 200 in 75ms (compile: 15ms, proxy.ts: 13ms, render: 47ms)
+ GET /dashboard/training-analytics 200 in 76ms (compile: 12ms, proxy.ts: 12ms, render: 52ms)
+ GET /dashboard/training 200 in 128ms (compile: 42ms, proxy.ts: 13ms, render: 73ms)
+ GET /dashboard/training-analytics 200 in 70ms (compile: 13ms, proxy.ts: 9ms, render: 48ms)
+ GET /dashboard/training 200 in 146ms (compile: 23ms, proxy.ts: 10ms, render: 113ms)
+ GET /dashboard/training 200 in 154ms (compile: 33ms, proxy.ts: 15ms, render: 106ms)
+ GET /dashboard/training-analytics 200 in 65ms (compile: 9ms, proxy.ts: 6ms, render: 51ms)
+ GET /dashboard/training 200 in 108ms (compile: 25ms, proxy.ts: 17ms, render: 66ms)
+ GET /dashboard/training-analytics 200 in 88ms (compile: 16ms, proxy.ts: 7ms, render: 65ms)
+ GET /dashboard/training 200 in 170ms (compile: 32ms, proxy.ts: 27ms, render: 110ms)
+ ✓ Compiled in 2.9s
+ ✓ Compiled in 1926ms
+ ✓ Compiled in 1735ms
+ ✓ Compiled in 2.7s
+ ✓ Compiled in 1862ms
+ ✓ Compiled in 1599ms
+ ✓ Compiled in 1699ms
+ ✓ Compiled in 3.6s
+ ✓ Compiled in 342ms
+ GET /dashboard/training 200 in 4.2s (compile: 270ms, proxy.ts: 6ms, render: 3.9s)
+ GET /dashboard/training 200 in 60ms (compile: 9ms, proxy.ts: 4ms, render: 46ms)
+ GET /dashboard/training-analytics 200 in 720ms (compile: 233ms, proxy.ts: 5ms, render: 483ms)
+ GET /dashboard/training-analytics 200 in 63ms (compile: 10ms, proxy.ts: 5ms, render: 48ms)
+ GET /dashboard/training 200 in 109ms (compile: 10ms, proxy.ts: 11ms, render: 88ms)
+ GET /dashboard/training-analytics 200 in 53ms (compile: 12ms, proxy.ts: 5ms, render: 36ms)
+ GET /dashboard/training 200 in 76ms (compile: 9ms, proxy.ts: 5ms, render: 62ms)
+ GET /dashboard/training-analytics 200 in 61ms (compile: 11ms, proxy.ts: 7ms, render: 43ms)
+ GET /dashboard/reports 200 in 88ms (compile: 20ms, proxy.ts: 6ms, render: 62ms)
+ GET /dashboard/training-analytics 200 in 142ms (compile: 20ms, proxy.ts: 14ms, render: 108ms)
+ ✓ Compiled in 709ms
+ ✓ Compiled in 457ms
+ ✓ Compiled in 204ms
+ ✓ Compiled in 119ms
+ ✓ Compiled in 2.4s
+ ✓ Compiled in 1889ms
+ ✓ Compiled in 2.6s
+ ✓ Compiled in 1943ms
+ ✓ Compiled in 2.2s
+ ✓ Compiled in 2.2s
+ GET /dashboard/training 200 in 912ms (compile: 151ms, proxy.ts: 4ms, render: 757ms)
+ GET /dashboard/training 200 in 67ms (compile: 10ms, proxy.ts: 5ms, render: 52ms)
+ ✓ Compiled in 442ms
+ ✓ Compiled in 313ms
+ ✓ Compiled in 812ms
+ ✓ Compiled in 653ms
+ ✓ Compiled in 349ms
+ ✓ Compiled in 695ms
+ GET /dashboard/reports 200 in 1327ms (compile: 256ms, proxy.ts: 9ms, render: 1063ms)
+ GET /dashboard/reports 200 in 90ms (compile: 10ms, proxy.ts: 5ms, render: 75ms)
+ GET /dashboard/training 200 in 85ms (compile: 8ms, proxy.ts: 3ms, render: 74ms)
+ GET /dashboard/training 200 in 116ms (compile: 10ms, proxy.ts: 5ms, render: 101ms)
+ GET /dashboard/training-analytics 200 in 97ms (compile: 13ms, proxy.ts: 10ms, render: 74ms)
+ GET /dashboard/training-analytics 200 in 252ms (compile: 25ms, proxy.ts: 13ms, render: 215ms)
+ GET /dashboard/training 200 in 48ms (compile: 10ms, proxy.ts: 4ms, render: 34ms)
+ GET /dashboard/reports 200 in 36ms (compile: 8ms, proxy.ts: 4ms, render: 24ms)
+ GET /dashboard/training-analytics 200 in 40ms (compile: 9ms, proxy.ts: 4ms, render: 27ms)
+ GET /dashboard/training 200 in 35ms (compile: 8ms, proxy.ts: 4ms, render: 24ms)
+ GET /dashboard/training 200 in 36ms (compile: 8ms, proxy.ts: 3ms, render: 25ms)
+ GET /dashboard/training-analytics 200 in 38ms (compile: 8ms, proxy.ts: 4ms, render: 26ms)
+ GET /dashboard/reports 200 in 41ms (compile: 7ms, proxy.ts: 3ms, render: 31ms)
+ GET /dashboard/training-analytics 200 in 35ms (compile: 8ms, proxy.ts: 3ms, render: 24ms)
+ GET /dashboard/medical 200 in 110ms (compile: 65ms, proxy.ts: 4ms, render: 40ms)
+ GET /dashboard/training-analytics 200 in 38ms (compile: 9ms, proxy.ts: 4ms, render: 25ms)

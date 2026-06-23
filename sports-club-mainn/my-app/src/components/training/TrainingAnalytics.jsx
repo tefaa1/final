@@ -70,7 +70,10 @@ export default function TrainingAnalytics() {
         if (st === "INJURED") g.injuries += 1;
       });
       (drillBySession[String(s.id)] || []).forEach((d) => {
-        if (d.intensity != null) { g.intensitySum += Number(d.intensity); g.intensityN += 1; }
+        // Only RATED drills (intensity > 0) count toward performance. Drills are
+        // created unrated (0) and scored when the coach completes the session,
+        // so performance reflects actually-completed sessions.
+        if (d.intensity != null && Number(d.intensity) > 0) { g.intensitySum += Number(d.intensity); g.intensityN += 1; }
       });
     });
 

@@ -3,9 +3,32 @@ import React, { useState, useEffect } from "react";
 import { FiSearch } from "react-icons/fi";
 import { api } from "@/src/lib/api";
 
+// Sport manager who receives a mail/alert whenever a new report is filed.
+const SPORT_MANAGER_KC = "00000000-0000-0000-0000-000000000010";
+
+const SPORTS = ["FOOTBALL", "BASKETBALL", "HANDBALL", "TENNIS", "VOLLEYBALL", "SWIMMING"];
+const POSITIONS_BY_SPORT = {
+  FOOTBALL: ["GOALKEEPER", "RIGHT_BACK", "LEFT_BACK", "CENTER_BACK", "DEFENSIVE_MID", "CENTRAL_MID", "ATTACKING_MID", "RIGHT_WING", "LEFT_WING", "STRIKER"],
+  BASKETBALL: ["POINT_GUARD", "SHOOTING_GUARD", "SMALL_FORWARD", "POWER_FORWARD", "CENTER"],
+  HANDBALL: ["HB_GOALKEEPER", "HB_LEFT_WING", "HB_RIGHT_WING", "HB_LEFT_BACK", "HB_RIGHT_BACK", "HB_CENTRE_BACK", "HB_PIVOT"],
+  TENNIS: ["SINGLES_PLAYER", "DOUBLES_PLAYER"],
+  VOLLEYBALL: ["SETTER", "OUTSIDE_HITTER", "OPPOSITE_HITTER", "MIDDLE_BLOCKER", "LIBERO", "DEFENSIVE_SPECIALIST"],
+  SWIMMING: ["FREESTYLE_SWIMMER", "BACKSTROKE_SWIMMER", "BREASTSTROKE_SWIMMER", "BUTTERFLY_SWIMMER", "MEDLEY_SWIMMER"],
+};
+const COUNTRIES = [
+  "Spain", "France", "Germany", "England", "Portugal", "Italy", "Netherlands", "Belgium", "Croatia", "Brazil",
+  "Argentina", "Uruguay", "Colombia", "Mexico", "USA", "Morocco", "Egypt", "Senegal", "Nigeria", "Ghana",
+  "Denmark", "Norway", "Sweden", "Poland", "Serbia", "Slovenia", "Georgia", "Lithuania", "Czechia", "Austria",
+  "Switzerland", "Japan", "South Korea", "Australia", "Canada", "Ireland", "Scotland", "Wales", "Turkey", "Greece", "Other",
+];
+
 const defaultForm = {
   scoutKeycloakId: "",
   outerPlayerId: "",
+  sportType: "FOOTBALL",
+  playerCountry: "",
+  playerPosition: "",
+  playerClub: "",
   technicalRating: 5,
   physicalRating: 5,
   tacticalRating: 5,
@@ -81,6 +104,10 @@ export default function ScoutingModal({ open, onClose, onSaved, editData = null 
       setForm({
         scoutKeycloakId: editData.scoutKeycloakId || "",
         outerPlayerId:   editData.outerPlayerId ?? "",
+        sportType:       editData.sportType || "FOOTBALL",
+        playerCountry:   editData.playerCountry || "",
+        playerPosition:  editData.playerPosition || "",
+        playerClub:      editData.playerClub || "",
         technicalRating: editData.technicalRating ?? 5,
         physicalRating:  editData.physicalRating ?? 5,
         tacticalRating:  editData.tacticalRating ?? 5,
@@ -108,7 +135,9 @@ export default function ScoutingModal({ open, onClose, onSaved, editData = null 
   const validate = () => {
     const e = {};
     if (!String(form.scoutKeycloakId).trim()) e.scoutKeycloakId = "Please select a scout";
-    if (form.outerPlayerId === "" || isNaN(Number(form.outerPlayerId))) e.outerPlayerId = "Please select a tracked player";
+    if (!form.sportType) e.sportType = "Select the player's sport";
+    if (!form.playerCountry) e.playerCountry = "Select the player's country";
+    if (!form.playerPosition) e.playerPosition = "Select the player's position";
     if (!form.overallAssessment.trim()) e.overallAssessment = "Overall assessment is required";
     return e;
   };
@@ -122,7 +151,11 @@ export default function ScoutingModal({ open, onClose, onSaved, editData = null 
     try {
       const payload = {
         scoutKeycloakId:  String(form.scoutKeycloakId).trim(),
-        outerPlayerId:    Number(form.outerPlayerId),
+        outerPlayerId:    form.outerPlayerId === "" || isNaN(Number(form.outerPlayerId)) ? null : Number(form.outerPlayerId),
+        sportType:        form.sportType,
+        playerCountry:    form.playerCountry,
+        playerPosition:   form.playerPosition,
+        playerClub:       form.playerClub.trim() || null,
         technicalRating:  form.technicalRating,
         physicalRating:   form.physicalRating,
         tacticalRating:   form.tacticalRating,
@@ -138,6 +171,13 @@ export default function ScoutingModal({ open, onClose, onSaved, editData = null 
         await api.updateScoutReport(editData.id, payload);
       } else {
         await api.createScoutReport(payload);
+        // Notify the sport manager (in-app alert + email) about the new report.
+        const pos = prettyPosition(form.playerPosition);
+        const club = form.playerClub.trim() ? ` (${form.playerClub.trim()})` : "";
+        const title = `New scout report · ${form.playerCountry} ${pos}`;
+        const msg = `A ${form.sportType.toLowerCase()} ${pos} from ${form.playerCountry}${club} was scouted — ${form.recommendSigning ? "RECOMMENDED to sign" : "not recommended"}. ${form.overallAssessment.trim()}`;
+        try { await api.createNotification({ recipientUserKeycloakId: SPORT_MANAGER_KC, notificationType: "BOTH", category: "REPORT_READY", status: "PENDING", title, message: msg, relatedEntityType: "SCOUT_REPORT", emailSubject: title, emailBody: msg, actionUrl: "/dashboard/scouting" }); } catch (err) { console.error("sport manager notify failed", err); }
+        try { await api.createAlert({ targetUserKeycloakId: SPORT_MANAGER_KC, title, message: msg, description: msg, alertType: "SCOUT_REPORT_SUBMITTED", priority: "MEDIUM", relatedEntityType: "SCOUT_REPORT" }); } catch (err) { console.error("sport manager alert failed", err); }
       }
 
       onSaved?.();
@@ -207,13 +247,38 @@ export default function ScoutingModal({ open, onClose, onSaved, editData = null 
             </select>
           </Field>
 
-          <Field label="Tracked Player *" error={errors.outerPlayerId} full>
+          <Field label="Sport *" error={errors.sportType}>
+            <select className={inputCls("sportType")} value={form.sportType}
+              onChange={(e) => { set("sportType", e.target.value); set("playerPosition", ""); }}>
+              {SPORTS.map((s) => <option key={s} value={s} className="bg-slate-900">{prettyPosition(s)}</option>)}
+            </select>
+          </Field>
+
+          <Field label="Country *" error={errors.playerCountry}>
+            <select className={inputCls("playerCountry")} value={form.playerCountry} onChange={(e) => set("playerCountry", e.target.value)}>
+              <option value="">Select country…</option>
+              {COUNTRIES.map((c) => <option key={c} value={c} className="bg-slate-900">{c}</option>)}
+            </select>
+          </Field>
+
+          <Field label="Position *" error={errors.playerPosition}>
+            <select className={inputCls("playerPosition")} value={form.playerPosition} onChange={(e) => set("playerPosition", e.target.value)}>
+              <option value="">Select position…</option>
+              {(POSITIONS_BY_SPORT[form.sportType] || []).map((p) => <option key={p} value={p} className="bg-slate-900">{prettyPosition(p)}</option>)}
+            </select>
+          </Field>
+
+          <Field label="Current Club (optional)">
+            <input className={inputCls("playerClub")} placeholder="e.g. Real Madrid CF" value={form.playerClub} onChange={(e) => set("playerClub", e.target.value)} />
+          </Field>
+
+          <Field label="Tracked Player (optional)" error={errors.outerPlayerId} full>
             <select
               className={inputCls("outerPlayerId")}
               value={form.outerPlayerId}
               onChange={(e) => set("outerPlayerId", e.target.value)}
             >
-              <option value="">Select a tracked player…</option>
+              <option value="">— none / external prospect —</option>
               {outerPlayers.map((p) => (
                 <option key={p.id} value={p.id} className="bg-slate-900">
                   {outerPlayerLabel(p)}

@@ -45,11 +45,9 @@ const homeOf = (m) => {
   const t = lookupTeam(m.homeTeamId);
   return { name: t?.name || BARCA.name, short: t?.short || BARCA.short, crest: t?.crestUrl || BARCA_CREST };
 };
-const awayOf = (m) => ({
-  name: m.opponentName || "Opponent",
-  short: (m.opponentName || "OPP").slice(0, 3).toUpperCase(),
-  crest: m.opponentCrest || null,
-});
+// Opponent resolution lives inside the component (it needs the outer-teams map),
+// see `awayOf` defined there. A match's opponent can be a free-typed name
+// (opponentName) OR a seeded rival club referenced by outerTeamId.
 const resultOf = (m) => {
   const h = m.homeTeamScore ?? 0, a = m.awayTeamScore ?? 0;
   return h > a ? "W" : h < a ? "L" : "D";
@@ -109,6 +107,7 @@ function Dashboard() {
   const [players, setPlayers] = useState([]);
   const [teams, setTeams] = useState([]);
   const [matches, setMatches] = useState([]);
+  const [outerTeams, setOuterTeams] = useState([]);
   const [standings, setStandings] = useState([]);
   const [activityItems, setActivityItems] = useState([]);
   const [loadError, setLoadError] = useState("");
@@ -119,12 +118,13 @@ function Dashboard() {
 
     (async () => {
       const unwrap = (res) => (Array.isArray(res) ? res : res?.content || res?.data || []);
-      const [playersR, teamsR, notifR, matchesR, standingsR] = await Promise.allSettled([
-        api.getPlayers(), api.getTeams(), api.getNotifications(), api.getMatches(), api.getStandings("PD"),
+      const [playersR, teamsR, notifR, matchesR, standingsR, outerR] = await Promise.allSettled([
+        api.getPlayers(), api.getTeams(), api.getNotifications(), api.getMatches(), api.getStandings("PD"), api.getOuterTeams(),
       ]);
       setPlayers(playersR.status === "fulfilled" ? unwrap(playersR.value) : []);
       setTeams(teamsR.status === "fulfilled" ? unwrap(teamsR.value) : []);
       setMatches(matchesR.status === "fulfilled" ? unwrap(matchesR.value) : []);
+      setOuterTeams(outerR.status === "fulfilled" ? unwrap(outerR.value) : []);
       setStandings(standingsR.status === "fulfilled"
         ? (Array.isArray(standingsR.value) ? standingsR.value : unwrap(standingsR.value)) : []);
       const notifications = notifR.status === "fulfilled" ? unwrap(notifR.value) : [];
@@ -139,9 +139,27 @@ function Dashboard() {
 
   const isAdmin = userRole === "admin";
 
-  // ── derived match data (only real fixtures with opponent info) ───────
+  // Resolve an opponent for a match: either a free-typed name, or a seeded rival
+  // club referenced by outerTeamId (e.g. the El Clásico result is stored with
+  // outerTeamId → "Real Madrid CF", not opponentName).
+  const outerMap = useMemo(() => {
+    const m = {};
+    outerTeams.forEach((t) => { m[t.id] = t; });
+    return m;
+  }, [outerTeams]);
+  const awayOf = (m) => {
+    const outer = m.outerTeamId != null ? outerMap[m.outerTeamId] : null;
+    const name = m.opponentName || outer?.name || "Opponent";
+    return {
+      name,
+      short: name.slice(0, 3).toUpperCase(),
+      crest: m.opponentCrest || outer?.crestUrl || null,
+    };
+  };
+
+  // ── derived match data (real fixtures: have an opponent name OR an outer team) ─
   const { live, finished, upcoming, featured } = useMemo(() => {
-    const real = matches.filter((m) => m.opponentName);
+    const real = matches.filter((m) => m.opponentName || m.outerTeamId);
     const live = real.filter((m) => isLive(m.status));
     const finished = real
       .filter((m) => isFinished(m.status))

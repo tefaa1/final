@@ -3,6 +3,7 @@ package com.example.trainingmatchservice.dto.request;
 import com.example.trainingmatchservice.dto.validation.Create;
 import com.example.trainingmatchservice.dto.validation.Update;
 import com.example.trainingmatchservice.model.training.enums.PlanStatus;
+import com.example.trainingmatchservice.model.training.enums.TrainingType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -42,7 +43,13 @@ public record TrainingPlanRequest(
 
         @NotBlank(groups = Create.class)
         @Size(min = 2, groups = {Create.class, Update.class})
-        String focus
+        String focus,
+
+        // The plan's training type (sessions must match it to attach).
+        TrainingType trainingType,
+
+        // JSON list of lightweight session slots created with the plan.
+        String sessionSlots
 ) {
     public TrainingPlanRequest {
         title = title != null ? title.trim() : null;

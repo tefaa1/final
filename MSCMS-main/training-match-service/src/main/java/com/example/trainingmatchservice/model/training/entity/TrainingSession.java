@@ -44,6 +44,15 @@ public class TrainingSession {
     private String description;
     private String notes;  // Post-training notes
 
+    // Plan this session fulfils (null = standalone session).
+    private Long trainingPlanId;
+
+    // The players assigned to this session, stored as a JSON array of ids:
+    // "[12,13,14]". Used to email/alert them on creation and to drive the
+    // bulk attendance screen.
+    @Column(columnDefinition = "TEXT")
+    private String playerIds;
+
     // Reverse @OneToMany sides — hide from JSON so a stray entity
     // serialisation doesn't loop back through each child's
     // @ManyToOne trainingSession. Each collection is exposed via its

@@ -12,4 +12,9 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findByRecipientUserKeycloakId(String keycloakId);
 
     List<Message> findBySenderUserKeycloakId(String keycloakId);
+
+    // A group conversation stores one row per sent message (tagged with groupId).
+    // Fetching by groupId returns the whole thread so EVERY member sees it —
+    // delivery is no longer tied to a single recipient.
+    List<Message> findByGroupIdOrderBySentAtAsc(Long groupId);
 }

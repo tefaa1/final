@@ -11,6 +11,7 @@ public record SponsorContractOfferRequest(
         @NotNull(groups = Create.class) @Positive(groups = Create.class) Long teamId,
         @NotNull(groups = Create.class) Double offerAmount,
         @NotNull(groups = Create.class) @Positive(groups = Create.class) Integer contractDurationMonths,
+        Double negotiatedAmount,
         String terms,
         String status,
         LocalDateTime offeredAt,

@@ -2,32 +2,66 @@
 
 import React, { useMemo, useState } from "react";
 
-// ── FC Barcelona honours — each gets its OWN distinct trophy silhouette. ──────
+// ── FC Barcelona honours per SPORT — each trophy gets its own silhouette. ─────
 // Curated historical facts (counts & years) presented as a museum cabinet.
-const HONOURS = {
-  european: {
-    label: "European Honours",
-    accent: "amber",
-    items: [
-      { name: "European Cup / Champions League", count: 5, years: "1992 · 2006 · 2009 · 2011 · 2015", recent: "2015", shape: "ucl", tone: "from-amber-300 to-amber-600" },
-      { name: "UEFA Cup Winners' Cup", count: 4, years: "1979 · 1982 · 1989 · 1997", recent: "1997", shape: "cupwinners", tone: "from-amber-300 to-amber-600" },
-      { name: "UEFA Super Cup", count: 5, years: "1992 · 1997 · 2009 · 2011 · 2015", recent: "2015", shape: "supercup", tone: "from-amber-200 to-amber-500" },
+// The cabinet is shown one sport at a time via the sport selector.
+const HONOURS_BY_SPORT = {
+  FOOTBALL: {
+    label: "Football", emoji: "⚽",
+    sections: [
+      { label: "European Honours", accent: "amber", items: [
+        { name: "European Cup / Champions League", count: 5, years: "1992 · 2006 · 2009 · 2011 · 2015", shape: "ucl" },
+        { name: "UEFA Cup Winners' Cup", count: 4, years: "1979 · 1982 · 1989 · 1997", shape: "cupwinners" },
+        { name: "UEFA Super Cup", count: 5, years: "1992 · 1997 · 2009 · 2011 · 2015", shape: "supercup" },
+      ]},
+      { label: "World Honours", accent: "sky", items: [
+        { name: "FIFA Club World Cup", count: 3, years: "2009 · 2011 · 2015", shape: "globe" },
+      ]},
+      { label: "Domestic Honours", accent: "emerald", items: [
+        { name: "La Liga", count: 27, years: "Record · most recent 2024–25", shape: "laliga" },
+        { name: "Copa del Rey", count: 31, years: "All-time record holders", shape: "copa" },
+        { name: "Supercopa de España", count: 14, years: "Record · most recent 2025", shape: "supercopa" },
+      ]},
     ],
   },
-  international: {
-    label: "World Honours",
-    accent: "sky",
-    items: [
-      { name: "FIFA Club World Cup", count: 3, years: "2009 · 2011 · 2015", recent: "2015", shape: "globe", tone: "from-sky-200 to-sky-500" },
+  BASKETBALL: {
+    label: "Basketball", emoji: "🏀",
+    sections: [
+      { label: "European Honours", accent: "amber", items: [
+        { name: "EuroLeague", count: 2, years: "2003 · 2010", shape: "ucl" },
+        { name: "Saporta Cup", count: 2, years: "1985 · 1986", shape: "cupwinners" },
+        { name: "Korać Cup", count: 1, years: "1987", shape: "supercup" },
+      ]},
+      { label: "Domestic Honours", accent: "emerald", items: [
+        { name: "Liga ACB", count: 19, years: "Record · most recent 2021", shape: "laliga" },
+        { name: "Copa del Rey", count: 28, years: "Record holders", shape: "copa" },
+        { name: "Supercopa de España", count: 6, years: "most recent 2024", shape: "supercopa" },
+      ]},
     ],
   },
-  domestic: {
-    label: "Domestic Honours",
-    accent: "emerald",
-    items: [
-      { name: "La Liga", count: 27, years: "Record · most recent 2024–25", recent: "2025", shape: "laliga", tone: "from-emerald-300 to-emerald-600" },
-      { name: "Copa del Rey", count: 31, years: "All-time record holders", recent: "2025", shape: "copa", tone: "from-emerald-300 to-emerald-600" },
-      { name: "Supercopa de España", count: 14, years: "Record · most recent 2025", recent: "2025", shape: "supercopa", tone: "from-emerald-200 to-emerald-500" },
+  HANDBALL: {
+    label: "Handball", emoji: "🤾",
+    sections: [
+      { label: "European Honours", accent: "amber", items: [
+        { name: "EHF Champions League", count: 11, years: "Record · most recent 2024", shape: "ucl" },
+        { name: "EHF Cup Winners' Cup", count: 5, years: "1984 → 1995", shape: "cupwinners" },
+        { name: "EHF Super Cup", count: 6, years: "most recent 2004", shape: "supercup" },
+      ]},
+      { label: "Domestic Honours", accent: "emerald", items: [
+        { name: "Liga ASOBAL", count: 31, years: "Record · most recent 2025", shape: "laliga" },
+        { name: "Copa del Rey", count: 26, years: "Record holders", shape: "copa" },
+        { name: "Copa ASOBAL", count: 22, years: "Record holders", shape: "supercopa" },
+      ]},
+    ],
+  },
+  TENNIS: {
+    label: "Tennis", emoji: "🎾",
+    sections: [
+      { label: "Academy Honours", accent: "sky", items: [
+        { name: "ITF Junior Titles", count: 18, years: "Academy programme", shape: "globe" },
+        { name: "National Team Titles", count: 7, years: "Catalan & Spanish series", shape: "supercup" },
+        { name: "ATP/WTA Titles (members)", count: 12, years: "Affiliated professionals", shape: "laliga" },
+      ]},
     ],
   },
 };
@@ -284,17 +318,22 @@ const CASE_CONFETTI = Array.from({ length: 14 }).map((_, i) => ({
   size: 4 + (i % 3) * 2,
 }));
 
+const SPORT_ORDER = ["FOOTBALL", "BASKETBALL", "HANDBALL", "TENNIS"];
+
 export default function TrophyRoom() {
-  const sections = [HONOURS.european, HONOURS.international, HONOURS.domestic];
+  const [sport, setSport] = useState("FOOTBALL");
+  const active = HONOURS_BY_SPORT[sport];
+  const sections = active.sections;
   const { total, cabinets, european, domestic } = useMemo(() => {
     const all = sections.flatMap((s) => s.items);
+    const sumWhere = (pred) => sections.filter(pred).flatMap((s) => s.items).reduce((s, t) => s + t.count, 0);
     return {
       total: all.reduce((s, t) => s + t.count, 0),
       cabinets: all.length,
-      european: HONOURS.european.items.reduce((s, t) => s + t.count, 0),
-      domestic: HONOURS.domestic.items.reduce((s, t) => s + t.count, 0),
+      european: sumWhere((s) => /european|world|academy/i.test(s.label)),
+      domestic: sumWhere((s) => /domestic/i.test(s.label)),
     };
-  }, []);
+  }, [sections]);
 
   return (
     <div className="fade-in min-h-screen bg-slate-950">
@@ -358,6 +397,22 @@ export default function TrophyRoom() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ── Sport selector ─────────────────────────────────────────────────── */}
+      <div className="mb-8 flex flex-wrap justify-center gap-2.5">
+        {SPORT_ORDER.map((s) => {
+          const on = s === sport;
+          const meta = HONOURS_BY_SPORT[s];
+          return (
+            <button key={s} onClick={() => setSport(s)}
+              className={`flex items-center gap-2 rounded-2xl border px-5 py-2.5 text-[12px] font-black uppercase tracking-widest transition-all
+                ${on ? "border-amber-400/50 bg-amber-400/10 text-amber-300 shadow-lg shadow-amber-500/10"
+                     : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"}`}>
+              <span className="text-base">{meta.emoji}</span> {meta.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* ── Cabinets ───────────────────────────────────────────────────────── */}

@@ -279,6 +279,76 @@ public class UserDataSeeder implements CommandLineRunner {
         savePlayer(SeedIds.TN_BAUTISTA, "roberto.bautista", "Roberto", "Bautista Agut", "roberto.bautista@fcbarcelona.com",
                 "+34600000246", 38, Gender.MALE, "Barcelona", LocalDate.of(1988, 4, 14), "Spanish", Position.SINGLES_PLAYER, 3_500_000L, null, 48L, 48L, PH_BAUTISTA, StatusOfPlayer.AVAILABLE);
 
+        // ═══ SECOND TEAMS (reserve squads) — data-only profiles, no photos ═════
+        // These MUST stay in this exact order: ids 66..89 are referenced by the
+        // player-management roster seed to attach them to the reserve teams.
+        // photoUrl=null → the UI renders the colored initials avatar.
+
+        // ── FC Barcelona Atlètic (football B, team 6) — ids 66..76 ───────────
+        savePlayer(SeedIds.FBB_KOCHEN, "diego.kochen", "Diego", "Kochen", "diego.kochen@fcbarcelona.com",
+                "+34600000301", 19, Gender.MALE, "Barcelona", LocalDate.of(2006, 1, 23), "American", Position.GOALKEEPER, 2_000_000L, 26, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_FORT, "hector.fort", "Héctor", "Fort", "hector.fort@fcbarcelona.com",
+                "+34600000302", 18, Gender.MALE, "Barcelona", LocalDate.of(2006, 8, 2), "Spanish", Position.RIGHT_BACK, 4_000_000L, 28, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_CUENCA, "andres.cuenca", "Andrés", "Cuenca", "andres.cuenca@fcbarcelona.com",
+                "+34600000303", 18, Gender.MALE, "Barcelona", LocalDate.of(2006, 5, 12), "Spanish", Position.CENTER_BACK, 1_500_000L, 33, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_FAYE, "mikayil.faye", "Mikayil", "Faye", "mikayil.faye@fcbarcelona.com",
+                "+34600000304", 20, Gender.MALE, "Barcelona", LocalDate.of(2004, 7, 5), "Senegalese", Position.CENTER_BACK, 6_000_000L, 35, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_MARTIN, "gerard.martin", "Gerard", "Martín", "gerard.martin@fcbarcelona.com",
+                "+34600000305", 22, Gender.MALE, "Barcelona", LocalDate.of(2002, 2, 7), "Spanish", Position.LEFT_BACK, 3_000_000L, 30, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_BERNAL, "marc.bernal", "Marc", "Bernal", "marc.bernal@fcbarcelona.com",
+                "+34600000306", 17, Gender.MALE, "Barcelona", LocalDate.of(2007, 5, 17), "Spanish", Position.DEFENSIVE_MID, 12_000_000L, 32, null, null, null, StatusOfPlayer.INJURED);
+        savePlayer(SeedIds.FBB_PRIM, "pau.prim", "Pau", "Prim", "pau.prim@fcbarcelona.com",
+                "+34600000307", 18, Gender.MALE, "Barcelona", LocalDate.of(2006, 1, 16), "Spanish", Position.CENTRAL_MID, 4_000_000L, 36, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_UNAI, "unai.hernandez", "Unai", "Hernández", "unai.hernandez@fcbarcelona.com",
+                "+34600000308", 19, Gender.MALE, "Barcelona", LocalDate.of(2005, 2, 16), "Spanish", Position.ATTACKING_MID, 5_000_000L, 27, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_TONI, "toni.fernandez", "Toni", "Fernández", "toni.fernandez@fcbarcelona.com",
+                "+34600000309", 17, Gender.MALE, "Barcelona", LocalDate.of(2007, 3, 20), "Spanish", Position.RIGHT_WING, 4_000_000L, 39, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_DANI, "dani.rodriguez", "Dani", "Rodríguez", "dani.rodriguez.b@fcbarcelona.com",
+                "+34600000310", 18, Gender.MALE, "Barcelona", LocalDate.of(2006, 9, 10), "Spanish", Position.LEFT_WING, 2_500_000L, 37, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.FBB_VICTOR, "pau.victor", "Pau", "Víctor", "pau.victor@fcbarcelona.com",
+                "+34600000311", 23, Gender.MALE, "Barcelona", LocalDate.of(2001, 12, 26), "Spanish", Position.STRIKER, 5_000_000L, 19, null, null, null, StatusOfPlayer.AVAILABLE);
+
+        // ── FC Barcelona Bàsquet B (basketball B, team 7) — ids 77..82 ───────
+        savePlayer(SeedIds.BBB_MOLINS, "pol.molins", "Pol", "Molins", "pol.molins@fcbarcelona.com",
+                "+34600000321", 20, Gender.MALE, "Barcelona", LocalDate.of(2004, 4, 4), "Spanish", Position.POINT_GUARD, 400_000L, 4, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.BBB_MARA, "aday.mara", "Aday", "Mara", "aday.mara@fcbarcelona.com",
+                "+34600000322", 19, Gender.MALE, "Barcelona", LocalDate.of(2005, 8, 6), "Spanish", Position.CENTER, 900_000L, 13, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.BBB_CANO, "marcos.cano", "Marcos", "Cano", "marcos.cano@fcbarcelona.com",
+                "+34600000323", 19, Gender.MALE, "Barcelona", LocalDate.of(2005, 2, 18), "Spanish", Position.SHOOTING_GUARD, 350_000L, 9, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.BBB_KEITA, "sayon.keita", "Sayon", "Keita", "sayon.keita@fcbarcelona.com",
+                "+34600000324", 20, Gender.MALE, "Barcelona", LocalDate.of(2004, 6, 30), "Malian", Position.POWER_FORWARD, 500_000L, 21, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.BBB_HALPIN, "ben.halpin", "Ben", "Halpin", "ben.halpin@fcbarcelona.com",
+                "+34600000325", 19, Gender.MALE, "Barcelona", LocalDate.of(2005, 11, 2), "Irish", Position.SMALL_FORWARD, 300_000L, 24, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.BBB_ESPINET, "hugo.espinet", "Hugo", "Espinet", "hugo.espinet@fcbarcelona.com",
+                "+34600000326", 18, Gender.MALE, "Barcelona", LocalDate.of(2006, 3, 14), "Spanish", Position.POINT_GUARD, 300_000L, 5, null, null, null, StatusOfPlayer.AVAILABLE);
+
+        // ── FC Barcelona Handbol B (handball B, team 8) — ids 83..89 ─────────
+        savePlayer(SeedIds.HBB_MESTRE, "marc.mestre", "Marc", "Mestre", "marc.mestre@fcbarcelona.com",
+                "+34600000331", 20, Gender.MALE, "Barcelona", LocalDate.of(2004, 1, 9), "Spanish", Position.HB_GOALKEEPER, 250_000L, 12, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.HBB_VALERA, "pol.valera", "Pol", "Valera", "pol.valera@fcbarcelona.com",
+                "+34600000332", 19, Gender.MALE, "Barcelona", LocalDate.of(2005, 5, 22), "Spanish", Position.HB_LEFT_WING, 200_000L, 17, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.HBB_GURRI, "jan.gurri", "Jan", "Gurri", "jan.gurri@fcbarcelona.com",
+                "+34600000333", 20, Gender.MALE, "Barcelona", LocalDate.of(2004, 9, 1), "Spanish", Position.HB_RIGHT_WING, 220_000L, 24, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.HBB_REY, "oriol.rey", "Oriol", "Rey", "oriol.rey@fcbarcelona.com",
+                "+34600000334", 21, Gender.MALE, "Barcelona", LocalDate.of(2003, 7, 19), "Spanish", Position.HB_LEFT_BACK, 240_000L, 27, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.HBB_BARRUFET, "ian.barrufet", "Ian", "Barrufet", "ian.barrufet@fcbarcelona.com",
+                "+34600000335", 19, Gender.MALE, "Barcelona", LocalDate.of(2005, 3, 28), "Spanish", Position.HB_CENTRE_BACK, 230_000L, 29, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.HBB_CANELLAS, "marc.canellas", "Marc", "Cañellas", "marc.canellas@fcbarcelona.com",
+                "+34600000336", 20, Gender.MALE, "Barcelona", LocalDate.of(2004, 11, 11), "Spanish", Position.HB_RIGHT_BACK, 210_000L, 33, null, null, null, StatusOfPlayer.AVAILABLE);
+        savePlayer(SeedIds.HBB_RIBAS, "pau.ribas", "Pau", "Ribas", "pau.ribas.hb@fcbarcelona.com",
+                "+34600000337", 21, Gender.MALE, "Barcelona", LocalDate.of(2003, 12, 4), "Spanish", Position.HB_PIVOT, 260_000L, 44, null, null, null, StatusOfPlayer.AVAILABLE);
+
+        // ── Second-team head coaches (ids 90..92) ────────────────────────────
+        saveHeadCoach(SeedIds.HEAD_COACH_FBB, "coach.atletic", "Juliano", "Belletti",
+                "coach.atletic@fcbarcelona.com", "+34600000350", 49, Gender.MALE, "Barcelona",
+                1L, 6L, teamManager, 8, "UEFA A");
+        saveHeadCoach(SeedIds.HEAD_COACH_BBB, "coach.basquetb", "Albert", "Oliver",
+                "coach.basquetb@fcbarcelona.com", "+34600000351", 47, Gender.MALE, "Barcelona",
+                2L, 7L, teamManager, 6, "FIBA Level 2");
+        saveHeadCoach(SeedIds.HEAD_COACH_HBB, "coach.handbolb", "Edu", "Castellanos",
+                "coach.handbolb@fcbarcelona.com", "+34600000352", 45, Gender.MALE, "Barcelona",
+                6L, 8L, teamManager, 7, "EHF Master Coach");
+
         log.info("[SEED] user-management seeded: total users = {}", userRepository.count());
     }
 

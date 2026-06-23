@@ -17,6 +17,8 @@ public record TrainingSessionResponse(
         Long specificCoachId,
         String objectives,
         String description,
-        String notes
+        String notes,
+        Long trainingPlanId,
+        String playerIds
 ) {}
 

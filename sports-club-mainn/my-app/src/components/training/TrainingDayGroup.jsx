@@ -2,7 +2,7 @@ import React from 'react';
 import TrainingCard from './TrainingCard';
 import { CalendarDays } from 'lucide-react';
 
-const TrainingDayGroup = ({ date, sessions }) => {
+const TrainingDayGroup = ({ date, sessions, onView }) => {
   return (
     <div className="rounded-xl overflow-hidden">
 
@@ -15,7 +15,7 @@ const TrainingDayGroup = ({ date, sessions }) => {
 
       <div className="p-2 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
         {sessions.map(session => (
-          <TrainingCard key={session.id} session={session} />
+          <TrainingCard key={session.id} session={session} onView={onView} />
         ))}
       </div>
     </div>

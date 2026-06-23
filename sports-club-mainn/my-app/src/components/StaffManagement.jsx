@@ -5,6 +5,7 @@ import { api } from "@/src/lib/api";
 import { FormModal, PageHeader, AddButton, FilterTabs, Toast, EmptyState, Avatar, StatCard } from "@/src/components/shared/SharedComponents";
 import PlayerAvatar, { roleTone } from "@/src/components/shared/PlayerAvatar";
 import { lookupTeam } from "@/src/lib/teamDirectory";
+import { buildTeamIndex, SPORT_META } from "@/src/lib/clubTeams";
 const SPORT_NAME = { 1: "Football", 2: "Basketball", 3: "Tennis", 6: "Handball" };
 import { AiFillEdit } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -66,6 +67,7 @@ export default function StaffManagement() {
   const [staff, setStaff] = useState([]);
   const [scouts, setScouts] = useState([]);
   const [managers, setManagers] = useState([]);
+  const [teamsRaw, setTeamsRaw] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
@@ -75,9 +77,19 @@ export default function StaffManagement() {
   const showToast = (msg, type = "success") => setToast({ msg, type });
   const unwrap = (r) => (Array.isArray(r) ? r : r?.data || r?.content || []);
 
+  const teamIndex = buildTeamIndex(teamsRaw);
+  // Resolve a staff member's team into { name, tier, sport } — works for the
+  // reserve ("B") teams too, not just the hard-coded first teams.
+  const staffTeam = (s) => {
+    const t = teamIndex.byId[Number(s?.teamId)];
+    if (t) return { name: t.name, tier: t.isFirstTeam ? "First Team" : "Reserve Team", sport: SPORT_META[t.sportType]?.label || t.sportType };
+    return { name: lookupTeam(s?.teamId)?.name || "Club", tier: null, sport: SPORT_NAME[Number(s?.sportId)] || "" };
+  };
+
   const loadData = async () => {
     setLoading(true);
     try {
+      api.getTeams().then((r) => setTeamsRaw(r)).catch(() => {});
       if (tab === "staff") setStaff(unwrap(await api.getStaff()));
       else if (tab === "scouts") setScouts(unwrap(await api.getScouts()));
       else if (tab === "managers") setManagers(unwrap(await api.getSportManagers()));
@@ -220,16 +232,22 @@ export default function StaffManagement() {
                         <span className={`inline-block mt-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border ${tone}`}>{prettyRole(s.staffRole)}</span>
                       </div>
                     </div>
+                    {(() => { const st = staffTeam(s); return (
                     <div className="grid grid-cols-2 gap-3 mt-4">
                       <div className="bg-slate-950/40 rounded-xl border border-slate-800/40 p-2.5 text-center">
                         <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Team</p>
-                        <p className="text-sm font-bold text-slate-200 truncate">{lookupTeam(s.teamId)?.short || "Club"}</p>
+                        <p className="text-[13px] font-bold text-slate-200 truncate" title={st.name}>{st.name}</p>
+                        <div className="flex items-center justify-center gap-1 mt-1">
+                          {st.sport && <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">{st.sport}</span>}
+                          {st.tier && <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded ${st.tier === "First Team" ? "text-emerald-300 bg-emerald-500/10" : "text-sky-300 bg-sky-500/10"}`}>{st.tier === "First Team" ? "1st" : "B"}</span>}
+                        </div>
                       </div>
                       <div className="bg-slate-950/40 rounded-xl border border-slate-800/40 p-2.5 text-center">
                         <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Age</p>
                         <p className="text-sm font-bold text-slate-200">{s.age ?? "—"}</p>
                       </div>
                     </div>
+                    ); })()}
                     <Contact email={s.email} phone={s.phone} />
                   </div>
                 );

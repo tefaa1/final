@@ -74,11 +74,20 @@ function PlayerCard({ player, onEdit, onOpen, isAdmin }) {
       ? player.nationality
       : "International";
 
+  const injured = String(player?.status || "").toUpperCase() === "INJURED";
+
   return (
     <div
       onClick={() => onOpen?.(player)}
-      className="bg-slate-900/40 backdrop-blur-md rounded-3xl p-6 border border-slate-800/50 transition-all duration-300 hover:border-emerald-500/40 hover:translate-y-[-4px] group overflow-hidden shadow-lg relative cursor-pointer"
+      className={`bg-slate-900/40 backdrop-blur-md rounded-3xl p-6 border transition-all duration-300 hover:translate-y-[-4px] group overflow-hidden shadow-lg relative cursor-pointer ${injured ? "border-rose-500/40 hover:border-rose-500/60" : "border-slate-800/50 hover:border-emerald-500/40"}`}
     >
+      {/* Injury flag — visible everywhere an injured player appears */}
+      {injured && (
+        <span className="absolute top-3 left-3 z-10 inline-flex items-center gap-1 rounded-full bg-rose-500/15 border border-rose-500/40 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-rose-300">
+          🩹 Injured
+        </span>
+      )}
+
       {/* Click hint */}
       <span className="absolute bottom-3 right-4 text-[9px] font-bold uppercase tracking-widest text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity">
         View profile →

@@ -91,14 +91,17 @@ public class TrainingMatchDataSeeder implements CommandLineRunner {
         // ─── Training Plans ─────────────────────────────────────────────────
         savePlan("Pre-Clásico Tactical Block", TEAM_FB, HEAD_COACH_FB,
                 now.toLocalDate().minusDays(7), now.toLocalDate().plusDays(7), PlanStatus.ACTIVE,
+                TrainingType.TACTICAL,
                 "Sharpen high-press triggers and rotational defending ahead of El Clásico.",
                 "High pressing, rest defence");
         savePlan("Mid-Season Fitness Cycle", TEAM_FB, HEAD_COACH_FB,
                 now.toLocalDate().minusDays(30), now.toLocalDate().plusDays(14), PlanStatus.ACTIVE,
+                TrainingType.FITNESS,
                 "Mid-season conditioning to maintain peak fitness through congested fixtures.",
                 "VO2 max, sprint repeatability");
         savePlan("Basketball Pre-Season Build-Up", TEAM_BB, HEAD_COACH_BB,
                 now.toLocalDate().minusDays(60), now.toLocalDate().minusDays(20), PlanStatus.COMPLETED,
+                TrainingType.TECHNICAL,
                 "Off-season build-up — strength, set plays and pick & roll patterns.",
                 "Pick & roll, transition defence");
 
@@ -217,7 +220,7 @@ public class TrainingMatchDataSeeder implements CommandLineRunner {
 
     private TrainingPlan savePlan(String title, long teamId, long coachId,
                                   LocalDate start, LocalDate end, PlanStatus status,
-                                  String description, String focus) {
+                                  TrainingType type, String description, String focus) {
         TrainingPlan p = new TrainingPlan();
         p.setTitle(title);
         p.setTeamId(teamId);
@@ -225,10 +228,29 @@ public class TrainingMatchDataSeeder implements CommandLineRunner {
         p.setStartDate(start);
         p.setEndDate(end);
         p.setStatus(status);
+        p.setTrainingType(type);
+        p.setSessionSlots(buildSlots(start, end, 5));
         p.setDescription(description);
         p.setGoals(description);
         p.setFocus(focus);
         return trainingPlanRepository.save(p);
+    }
+
+    // Auto-generate up to `count` lightweight session slots evenly spread across
+    // the plan's date range (stored as JSON the frontend reads). The slot's
+    // sessionId is filled later when a real session is attached.
+    private String buildSlots(LocalDate start, LocalDate end, int count) {
+        long totalDays = java.time.temporal.ChronoUnit.DAYS.between(start, end) + 1;
+        int n = (int) Math.max(1, Math.min(count, totalDays));
+        double step = (double) totalDays / n;
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < n; i++) {
+            LocalDate d = start.plusDays((long) Math.floor(i * step));
+            if (i > 0) sb.append(",");
+            sb.append("{\"name\":\"Session ").append(i + 1)
+              .append("\",\"date\":\"").append(d).append("\",\"sessionId\":null}");
+        }
+        return sb.append("]").toString();
     }
 
     private TrainingDrill saveDrill(TrainingSession session, String name, DrillCategory category,

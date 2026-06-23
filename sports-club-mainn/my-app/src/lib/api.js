@@ -205,7 +205,8 @@ export const api = {
     // in one call. Schema is the 17-field DTO documented in Swagger.
     createPlayer: (data) => apiFetch(`${API_BASE}/players`, { method: 'POST', body: JSON.stringify(data) }),
     updatePlayer: (id, data) => apiFetch(`${API_BASE}/players/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-    updatePlayerStatus: (id, status) => apiFetch(`${API_BASE}/players/${id}/status?status=${status}`, { method: 'PUT' }),
+    // Backend expects a JSON body { status } (PlayerStatusUpdateRequest), not a query param.
+    updatePlayerStatus: (id, status) => apiFetch(`${API_BASE}/players/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
     assignRosterToPlayer: (id, rosterId) => apiFetch(`${API_BASE}/players/${id}/assign-roster/${rosterId}`, { method: 'PUT' }),
     assignContractToPlayer: (id, contractId) => apiFetch(`${API_BASE}/players/${id}/assign-contract/${contractId}`, { method: 'PUT' }),
     getNationalTeams: () => apiFetch(`${API_BASE}/national-teams`),
@@ -280,6 +281,9 @@ export const api = {
     getMessageById: (id) => apiFetch(`${API_BASE}/messages/${id}`),
     getMessagesBySender: (keycloakId) => apiFetch(`${API_BASE}/messages/sender/${keycloakId}`),
     getMessagesByRecipient: (keycloakId) => apiFetch(`${API_BASE}/messages/recipient/${keycloakId}`),
+    // Whole conversation for a group — every member gets the same thread, so a
+    // group message reaches ALL members (not just one sentinel recipient).
+    getMessagesByGroup: (groupId) => apiFetch(`${API_BASE}/messages/group/${groupId}`),
     createMessage: (data) => apiFetch(`${API_BASE}/messages`, { method: 'POST', body: JSON.stringify(data) }),
     updateMessage: (id, data) => apiFetch(`${API_BASE}/messages/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     deleteMessage: (id) => apiFetch(`${API_BASE}/messages/${id}`, { method: 'DELETE' }),

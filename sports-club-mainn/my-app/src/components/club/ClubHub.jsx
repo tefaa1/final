@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/src/lib/api";
 import { lookupTeam, lookupOuterTeam } from "@/src/lib/teamDirectory";
 import { resolveSport } from "@/src/lib/playerSport";
+import { buildTeamIndex, buildPlayerTeamMap, SPORT_META, VISIBLE_SPORTS } from "@/src/lib/clubTeams";
 import PlayerFace from "./PlayerFace";
 import {
   FiMapPin, FiUsers, FiCalendar, FiAward, FiActivity, FiArrowRight,
@@ -88,9 +89,11 @@ export default function ClubHub() {
   const [players, setPlayers] = useState([]);
   const [staff, setStaff] = useState([]);
   const [matches, setMatches] = useState([]);
+  const [teamsRaw, setTeamsRaw] = useState([]);
+  const [rostersRaw, setRostersRaw] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [activeSport, setActiveSport] = useState("Football");
+  const [selectedTeamId, setSelectedTeamId] = useState(null); // null until teams load → defaults to first football team
 
   useEffect(() => {
     let mounted = true;
@@ -98,10 +101,12 @@ export default function ClubHub() {
       const unwrap = (r) => (Array.isArray(r) ? r : r?.content || r?.data || []);
       const STATUSES = ["AVAILABLE", "INJURED", "ABSENT", "SUSPENDED"];
       try {
-        const [pl, st, mt] = await Promise.all([
+        const [pl, st, mt, tm, ros] = await Promise.all([
           Promise.all(STATUSES.map((s) => api.getPlayers(s).catch(() => []))),
           api.getStaff().catch(() => []),
           api.getMatches().catch(() => []),
+          api.getTeams().catch(() => []),
+          api.getRosters().catch(() => []),
         ]);
         if (!mounted) return;
         const byId = new Map();
@@ -109,6 +114,8 @@ export default function ClubHub() {
         setPlayers([...byId.values()]);
         setStaff(unwrap(st));
         setMatches(unwrap(mt));
+        setTeamsRaw(tm);
+        setRostersRaw(ros);
       } catch {
         if (mounted) setError(true);
       } finally {
@@ -118,31 +125,38 @@ export default function ClubHub() {
     return () => { mounted = false; };
   }, []);
 
-  // ── Squad grouped by sport (sport derived from preferredPosition). ────────
-  const squadBySport = useMemo(() => {
-    const groups = {};
-    for (const p of players) {
-      const sport = resolveSport(p.preferredPosition);
-      (groups[sport] ||= []).push(p);
+  // ── Team model: every club team (first + reserve) across all sports ────────
+  const teamIndex = useMemo(() => buildTeamIndex(teamsRaw), [teamsRaw]);
+  const playerTeamMap = useMemo(() => buildPlayerTeamMap(rostersRaw), [rostersRaw]);
+  // Ordered list of teams for the selector: by sport order, first team then reserves.
+  const clubTeams = useMemo(() => {
+    const out = [];
+    for (const sp of VISIBLE_SPORTS) for (const t of teamIndex.bySport[sp] || []) out.push(t);
+    return out;
+  }, [teamIndex]);
+  // Default selection = the first football team (lowest id) once teams load.
+  useEffect(() => {
+    if (selectedTeamId == null && clubTeams.length) {
+      const firstFootball = (teamIndex.bySport.FOOTBALL || [])[0];
+      setSelectedTeamId((firstFootball || clubTeams[0]).id);
     }
-    // sensible order: GK-ish first then kit number.
-    for (const k of Object.keys(groups)) {
-      groups[k].sort((a, b) => (a.kitNumber ?? 999) - (b.kitNumber ?? 999));
-    }
-    return groups;
-  }, [players]);
+  }, [clubTeams, teamIndex, selectedTeamId]);
+  const selectedTeam = selectedTeamId != null ? teamIndex.byId[selectedTeamId] : null;
+  const activeSportType = selectedTeam?.sportType || "FOOTBALL";
+  const activeSportLabel = SPORT_META[activeSportType]?.label || "Football";
 
-  const sportTabs = useMemo(
-    () => SPORTS.filter((s) => (squadBySport[s] || []).length > 0),
-    [squadBySport]
-  );
+  // ── Squad of the SELECTED team (resolved via the roster → team mapping). ──
+  const teamPlayers = useMemo(() => {
+    const list = players.filter((p) => playerTeamMap[Number(p.id)] === Number(selectedTeamId));
+    return list.sort((a, b) => (a.kitNumber ?? 999) - (b.kitNumber ?? 999));
+  }, [players, playerTeamMap, selectedTeamId]);
 
-  const footballSquad = squadBySport.Football || [];
   const headCoach =
-    staff.find((s) => String(s.staffRole).toUpperCase() === "HEAD_COACH" && Number(s.teamId) === FOOTBALL_TEAM_ID) ||
+    staff.find((s) => String(s.staffRole).toUpperCase() === "HEAD_COACH" && Number(s.teamId) === Number(selectedTeamId)) ||
+    staff.find((s) => String(s.staffRole).toUpperCase() === "HEAD_COACH" && Number(s.sportId) === Number(selectedTeam?.sportId)) ||
     staff.find((s) => String(s.staffRole).toUpperCase() === "HEAD_COACH") ||
     staff[0];
-  const injured = players.filter((p) => p.status === "INJURED" && resolveSport(p.preferredPosition) === "Football");
+  const injured = teamPlayers.filter((p) => p.status === "INJURED");
 
   // ── Match helpers ─────────────────────────────────────────────────────────
   // Opponent: external matches carry name+crest; seeded ones resolve via outerTeamId.
@@ -156,24 +170,28 @@ export default function ClubHub() {
     return hs > as ? "W" : hs < as ? "L" : "D";
   };
 
-  // Only the first-team football fixtures headline the club page.
-  const footballMatches = useMemo(
-    () => matches.filter((m) => Number(m.homeTeamId) === FOOTBALL_TEAM_ID || String(m.sportType).toUpperCase() === "FOOTBALL"),
-    [matches]
+  // Fixtures for the SELECTED team: matches tagged with its homeTeamId, plus —
+  // for a first team — any match of that sport (the seeded fixtures carry the
+  // first team's id / sportType). Reserve teams only show their own fixtures.
+  const teamMatches = useMemo(
+    () => matches.filter((m) =>
+      Number(m.homeTeamId) === Number(selectedTeamId) ||
+      (selectedTeam?.isFirstTeam && String(m.sportType).toUpperCase() === activeSportType)),
+    [matches, selectedTeamId, selectedTeam, activeSportType]
   );
 
-  const liveMatches = footballMatches.filter((m) => isLive(m.status));
+  const liveMatches = teamMatches.filter((m) => isLive(m.status));
   const upcoming = useMemo(
     () =>
-      footballMatches
+      teamMatches
         .filter((m) => !isLive(m.status) && !isFinished(m.status))
         .sort((a, b) => new Date(a.kickoffTime || 0) - new Date(b.kickoffTime || 0))
         .slice(0, 5),
-    [footballMatches]
+    [teamMatches]
   );
   const finishedSorted = useMemo(
-    () => footballMatches.filter((m) => isFinished(m.status)).sort((a, b) => new Date(b.kickoffTime || 0) - new Date(a.kickoffTime || 0)),
-    [footballMatches]
+    () => teamMatches.filter((m) => isFinished(m.status)).sort((a, b) => new Date(b.kickoffTime || 0) - new Date(a.kickoffTime || 0)),
+    [teamMatches]
   );
 
   // Overall recent form (newest → oldest displayed left=oldest).
@@ -223,8 +241,6 @@ export default function ClubHub() {
       </div>
     );
   }
-
-  const sportSquad = squadBySport[activeSport] || [];
 
   return (
     <div className="fade-in space-y-8">
@@ -276,9 +292,28 @@ export default function ClubHub() {
         </div>
       </div>
 
+      {/* ── Team selector: every sport, first AND reserve teams ─────────────── */}
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+        <p className="mb-3 text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">Viewing</p>
+        <div className="flex flex-wrap gap-2">
+          {clubTeams.map((t) => {
+            const on = Number(t.id) === Number(selectedTeamId);
+            return (
+              <button key={t.id} onClick={() => setSelectedTeamId(t.id)}
+                className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-black uppercase tracking-widest transition-all ${
+                  on ? "bg-emerald-500 text-slate-950" : "border border-slate-700 bg-slate-950/40 text-slate-400 hover:border-slate-600 hover:text-slate-200"}`}>
+                <span>{SPORT_META[t.sportType]?.emoji}</span>
+                {t.name}
+                <span className={`text-[8px] px-1 py-0.5 rounded ${on ? "bg-slate-900/30 text-slate-900" : "bg-slate-800 text-slate-500"}`}>{t.isFirstTeam ? "1st" : "B"}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* ── Key stats ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard icon={<FiUsers size={18} />} label="First-team Squad" value={`${footballSquad.length}`} sub="football players" />
+        <StatCard icon={<FiUsers size={18} />} label="Squad" value={`${teamPlayers.length}`} sub={`${activeSportLabel} · ${selectedTeam?.tier || ""}`} />
         <StatCard
           icon={<FiTrendingUp size={18} />}
           label="Form (W-D-L)"
@@ -289,7 +324,7 @@ export default function ClubHub() {
           icon={<FiActivity size={18} />}
           label="Head Coach"
           value={headCoach ? `${headCoach.firstName} ${headCoach.lastName}` : "—"}
-          sub="First team"
+          sub={selectedTeam?.name || ""}
         />
         <StatCard icon={<FiMapPin size={18} />} label="Capacity" value={CLUB.stadium.capacity.toLocaleString()} sub={CLUB.stadium.name} />
       </div>
@@ -441,7 +476,7 @@ export default function ClubHub() {
               <h2 className="mb-3 text-sm font-black uppercase tracking-widest text-slate-300">Dugout</h2>
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 overflow-hidden rounded-xl">
-                  <PlayerFace name={`${headCoach.firstName} ${headCoach.lastName}`} sport="Football" className="h-full w-full" textClass="text-sm" />
+                  <PlayerFace name={`${headCoach.firstName} ${headCoach.lastName}`} sport={activeSportLabel} className="h-full w-full" textClass="text-sm" />
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-black text-slate-100">{headCoach.firstName} {headCoach.lastName}</p>
@@ -469,40 +504,21 @@ export default function ClubHub() {
         </div>
       </div>
 
-      {/* ── Squad — filterable by sport ────────────────────────────────────── */}
+      {/* ── Squad of the selected team ─────────────────────────────────────── */}
       <section className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-sm font-black uppercase tracking-widest text-slate-300">The Squad</h2>
+          <h2 className="text-sm font-black uppercase tracking-widest text-slate-300">
+            {selectedTeam?.name || "The Squad"}
+            <span className="ml-2 text-[10px] font-black text-slate-500">{activeSportLabel} · {selectedTeam?.tier}</span>
+          </h2>
           <Link href="/dashboard/players" className="flex items-center gap-1 text-[11px] font-bold text-emerald-400 hover:text-emerald-300">
             Full squad <FiArrowRight size={12} />
           </Link>
         </div>
 
-        {/* Sport tabs */}
-        {sportTabs.length > 1 && (
-          <div className="mb-5 flex flex-wrap gap-2">
-            {sportTabs.map((s) => {
-              const active = s === activeSport;
-              return (
-                <button
-                  key={s}
-                  onClick={() => setActiveSport(s)}
-                  className={`rounded-full px-4 py-1.5 text-[11px] font-black uppercase tracking-widest transition-all ${
-                    active
-                      ? "bg-emerald-500 text-slate-950"
-                      : "border border-slate-700 bg-slate-950/40 text-slate-400 hover:border-slate-600 hover:text-slate-200"
-                  }`}
-                >
-                  {s} <span className={active ? "text-slate-900/70" : "text-slate-600"}>{(squadBySport[s] || []).length}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {sportSquad.length ? (
+        {teamPlayers.length ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {sportSquad.slice(0, 18).map((p) => (
+            {teamPlayers.slice(0, 18).map((p) => (
               <div
                 key={p.id}
                 className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/40 transition-all hover:border-emerald-500/40"
@@ -533,15 +549,15 @@ export default function ClubHub() {
             ))}
           </div>
         ) : (
-          <p className="py-6 text-center text-xs italic text-slate-600">No players registered for {activeSport}.</p>
+          <p className="py-6 text-center text-xs italic text-slate-600">No players registered for {selectedTeam?.name || activeSportLabel}.</p>
         )}
 
-        {sportSquad.length > 18 && (
+        {teamPlayers.length > 18 && (
           <Link
             href="/dashboard/players"
             className="mt-4 flex items-center justify-center gap-1 rounded-xl border border-slate-800 bg-slate-950/40 py-2.5 text-[11px] font-black uppercase tracking-widest text-slate-400 transition-all hover:border-emerald-500/40 hover:text-emerald-400"
           >
-            +{sportSquad.length - 18} more players <FiChevronRight size={14} />
+            +{teamPlayers.length - 18} more players <FiChevronRight size={14} />
           </Link>
         )}
       </section>

@@ -118,4 +118,36 @@ public final class SeedIds {
     public static final long TN_MUGURUZA_ID  = 63L;
     public static final long TN_CARRENO_ID   = 64L;
     public static final long TN_BAUTISTA_ID  = 65L;
+
+    // ─── SECOND TEAMS (reserve squads) ──────────────────────────────────────
+    // Reserve players are appended in user-management AFTER the tennis squad
+    // (last id 65), so they receive numeric ids 66..89. Order MUST match the
+    // savePlayer order in UserDataSeeder.
+    // FC Barcelona Atlètic (football B, team 6) — 11 players, ids 66..76
+    public static final long FBB_KOCHEN_ID  = 66L;
+    public static final long FBB_FORT_ID    = 67L;
+    public static final long FBB_CUENCA_ID  = 68L;
+    public static final long FBB_FAYE_ID    = 69L;
+    public static final long FBB_MARTIN_ID  = 70L;
+    public static final long FBB_BERNAL_ID  = 71L;
+    public static final long FBB_PRIM_ID    = 72L;
+    public static final long FBB_UNAI_ID    = 73L;
+    public static final long FBB_TONI_ID    = 74L;
+    public static final long FBB_DANI_ID    = 75L;
+    public static final long FBB_VICTOR_ID  = 76L;
+    // FC Barcelona Bàsquet B (basketball B, team 7) — 6 players, ids 77..82
+    public static final long BBB_MOLINS_ID    = 77L;
+    public static final long BBB_MARA_ID      = 78L;
+    public static final long BBB_CANO_ID      = 79L;
+    public static final long BBB_KEITA_ID     = 80L;
+    public static final long BBB_HALPIN_ID    = 81L;
+    public static final long BBB_ESPINET_ID   = 82L;
+    // FC Barcelona Handbol B (handball B, team 8) — 7 players, ids 83..89
+    public static final long HBB_MESTRE_ID    = 83L;
+    public static final long HBB_VALERA_ID    = 84L;
+    public static final long HBB_GURRI_ID     = 85L;
+    public static final long HBB_REY_ID       = 86L;
+    public static final long HBB_BARRUFET_ID  = 87L;
+    public static final long HBB_CANELLAS_ID  = 88L;
+    public static final long HBB_RIBAS_ID     = 89L;
 }

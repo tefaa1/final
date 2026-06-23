@@ -3,6 +3,9 @@ import React from "react";
 import { FiCheckCircle, FiXCircle, FiEdit2 } from "react-icons/fi";
 import UserChip from "@/src/components/shared/UserChip";
 
+const prettyPosition = (pos) =>
+  pos ? String(pos).replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) : "";
+
 // 1–10 rating shown as a labelled progress bar. Colour tracks the value.
 const RatingBar = ({ label, value }) => {
   const v = Number(value) || 0;
@@ -54,13 +57,19 @@ export default function ScoutingCard({ report, playerLabel, onEdit }) {
     <div className="bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-purple-500/50 transition-all group relative overflow-hidden">
       <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/5 rounded-full blur-3xl group-hover:bg-purple-500/10 transition-all duration-700" />
 
-      {/* Header: player label + recommendation badge */}
+      {/* Header: player descriptors + recommendation badge */}
       <div className="flex justify-between items-start relative z-10">
         <div className="min-w-0">
-          <p className="text-[9px] font-black uppercase tracking-widest text-purple-300/70 mb-1">Tracked Player</p>
+          <p className="text-[9px] font-black uppercase tracking-widest text-purple-300/70 mb-1">
+            {report.playerPosition ? prettyPosition(report.playerPosition) : "Tracked Player"}
+          </p>
           <h3 className="font-black text-slate-100 tracking-tight uppercase text-sm truncate">
-            {playerLabel || `Player #${report.outerPlayerId ?? "—"}`}
+            {report.playerCountry || playerLabel || `Player #${report.outerPlayerId ?? "—"}`}
           </h3>
+          <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+            {report.sportType && <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 bg-slate-800/60 border border-slate-700 rounded px-1.5 py-0.5">{prettyPosition(report.sportType)}</span>}
+            {report.playerClub && <span className="text-[9px] text-slate-500 truncate">📍 {report.playerClub}</span>}
+          </div>
         </div>
 
         {report.recommendSigning ? (

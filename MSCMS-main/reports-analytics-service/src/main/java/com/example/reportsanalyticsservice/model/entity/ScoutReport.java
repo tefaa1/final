@@ -26,6 +26,12 @@ public class ScoutReport {
     // Outer player (not in the club database)
     private Long outerPlayerId;   // optional if you want separate entity
 
+    // Scouted player descriptors
+    private String playerCountry;    // nationality / country
+    private String playerPosition;   // preferred position
+    private String playerClub;       // current club (optional)
+    private String sportType;        // FOOTBALL / BASKETBALL / HANDBALL / TENNIS …
+
     // Evaluation
     private Integer technicalRating;     // 1–10
     private Integer physicalRating;      // 1–10

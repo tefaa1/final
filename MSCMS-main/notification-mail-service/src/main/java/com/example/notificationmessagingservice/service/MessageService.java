@@ -12,4 +12,5 @@ public interface MessageService {
     List<MessageResponse> getAll();
     List<MessageResponse> getByRecipient(String keycloakId);
     List<MessageResponse> getBySender(String keycloakId);
+    List<MessageResponse> getByGroup(Long groupId);
 }

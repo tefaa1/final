@@ -1,6 +1,7 @@
 package com.example.trainingmatchservice.model.training.entity;
 
 import com.example.trainingmatchservice.model.training.enums.PlanStatus;
+import com.example.trainingmatchservice.model.training.enums.TrainingType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,16 @@ public class TrainingPlan {
 
     @Enumerated(EnumType.STRING)
     private PlanStatus status;
+
+    // The plan's training type — a session can only be attached if its type matches.
+    @Enumerated(EnumType.STRING)
+    private TrainingType trainingType;
+
+    // Lightweight session slots created with the plan, stored as JSON:
+    // [{"name":"Session 1","date":"2026-07-02","sessionId":null}, ...]
+    // A slot's "done" flag is derived on the client from its session's status.
+    @Column(columnDefinition = "TEXT")
+    private String sessionSlots;
 
     private String goals;  // Overall plan objectives
     private String focus;  // e.g., "Pre-season preparation"

@@ -28,7 +28,10 @@ public class SponsorContractOffer {
     @Column(columnDefinition = "TEXT")
     private String terms;
 
-    private String status; // e.g., PENDING, ACCEPTED, REJECTED, EXPIRED
+    private String status; // e.g., PENDING, NEGOTIATING, ACCEPTED, REJECTED, EXPIRED
+
+    // Counter-offer salary proposed by the club during negotiation (null = none).
+    private Double negotiatedAmount;
 
     private LocalDateTime offeredAt;
 

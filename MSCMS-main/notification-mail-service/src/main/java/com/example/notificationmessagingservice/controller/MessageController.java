@@ -21,8 +21,13 @@ public class MessageController {
 
     private final MessageService messageService;
 
+    // Anyone in the club can take part in chat (players included) — restricting
+    // create to managers/coaches meant a PLAYER's group message was rejected.
+    private static final String CHAT_ROLES =
+            "hasAnyRole('ADMIN','TEAM_MANAGER','HEAD_COACH','ASSISTANT_COACH','SPECIFIC_COACH','SPORT_MANAGER','DOCTOR','PHYSIOTHERAPIST','FITNESS_COACH','PERFORMANCE_ANALYST','PLAYER','SCOUT','SPONSOR','FAN','NATIONAL_TEAM')";
+
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'TEAM_MANAGER', 'HEAD_COACH', 'SPORT_MANAGER', 'DOCTOR')")
+    @PreAuthorize(CHAT_ROLES)
     public ResponseEntity<MessageResponse> create(@Validated(Create.class) @RequestBody MessageRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(messageService.create(request));
     }
@@ -63,5 +68,14 @@ public class MessageController {
     @PreAuthorize("hasAnyRole('ADMIN', 'TEAM_MANAGER', 'HEAD_COACH', 'SPORT_MANAGER', 'DOCTOR')")
     public ResponseEntity<List<MessageResponse>> getBySender(@PathVariable String keycloakId) {
         return ResponseEntity.ok(messageService.getBySender(keycloakId));
+    }
+
+    // Whole conversation for a group — every member fetches the same thread,
+    // so a message sent to the group is seen by ALL members (not just one
+    // sentinel recipient). Open to all chat participants.
+    @GetMapping("/group/{groupId}")
+    @PreAuthorize(CHAT_ROLES)
+    public ResponseEntity<List<MessageResponse>> getByGroup(@PathVariable Long groupId) {
+        return ResponseEntity.ok(messageService.getByGroup(groupId));
     }
 }

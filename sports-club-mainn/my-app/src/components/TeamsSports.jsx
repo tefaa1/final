@@ -1,12 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { SPORTS, SPORT_ICONS } from "@/src/data/mockData";
 import { api } from "@/src/lib/api";
 import { FormModal, SportBadge, PageHeader, AddButton, FilterTabs, Toast } from "@/src/components/shared/SharedComponents";
+import { buildTeamIndex, buildPlayerTeamMap, SPORT_META, SPORT_BY_ID, VISIBLE_SPORTS } from "@/src/lib/clubTeams";
+import { isInjured } from "@/src/lib/playerStatus";
+import PlayerAvatar from "@/src/components/shared/PlayerAvatar";
 import useRole from "@/src/lib/useRole";
 import { AiFillEdit } from "react-icons/ai";
 import { RiDeleteBin6Line, RiTeamFill } from "react-icons/ri";
 import { MdSportsSoccer } from "react-icons/md";
+import { FiUsers, FiArrowLeft, FiX } from "react-icons/fi";
 
 const BARCA_CREST = "https://crests.football-data.org/81.png";
 const FLAGS = { Spain: "🇪🇸", Uruguay: "🇺🇾", France: "🇫🇷", Brazil: "🇧🇷", Argentina: "🇦🇷", Germany: "🇩🇪", England: "🏴", Portugal: "🇵🇹", Italy: "🇮🇹", Netherlands: "🇳🇱", Morocco: "🇲🇦", Egypt: "🇪🇬" };
@@ -23,13 +27,28 @@ const SPORT_EMOJI2 = { FOOTBALL: "⚽", BASKETBALL: "🏀", HANDBALL: "🤾", TE
 export default function TeamsSports() {
     const [tab, setTab] = useState("teams");
     const [teams, setTeams] = useState([]);
+    const [teamsRaw, setTeamsRaw] = useState([]);
     const [sports, setSports] = useState([]);
     const [nationalTeams, setNational] = useState([]);
+    const [players, setPlayers] = useState([]);
+    const [staff, setStaff] = useState([]);
+    const [rostersRaw, setRostersRaw] = useState([]);
+    const [selectedSport, setSelectedSport] = useState(null); // drill-down: null = sport cards
+    const [membersTeam, setMembersTeam] = useState(null);      // team whose roster modal is open
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editItem, setEditItem] = useState(null);
     const [toast, setToast] = useState(null);
     const { canEdit } = useRole();
+
+    // Team index (first vs reserve per sport) + player→team mapping.
+    const teamIndex = useMemo(() => buildTeamIndex(teamsRaw), [teamsRaw]);
+    const playerTeamMap = useMemo(() => buildPlayerTeamMap(rostersRaw), [rostersRaw]);
+    // Players + staff that belong to a given team id.
+    const teamMembers = (teamId) => ({
+        players: players.filter((p) => playerTeamMap[Number(p.id)] === Number(teamId)),
+        staff: staff.filter((s) => Number(s.teamId) === Number(teamId)),
+    });
 
  
     const teamFields = [
@@ -66,19 +85,29 @@ export default function TeamsSports() {
     const loadAllData = async () => {
         setLoading(true);
         try {
-            const [teamsRes, sportsRes, ntRes] = await Promise.all([
+            const [teamsRes, sportsRes, ntRes, statusLists, staffRes, rostersRes] = await Promise.all([
                 api.getTeams(),
                 api.getSports(),
-                api.getNationalTeams()
+                api.getNationalTeams(),
+                Promise.all(["AVAILABLE", "INJURED", "ABSENT", "SUSPENDED"].map((st) => api.getPlayers(st).catch(() => []))),
+                api.getStaff().catch(() => []),
+                api.getRosters().catch(() => []),
             ]);
             const unwrap = (r) => (Array.isArray(r) ? r : r?.content || r?.data || []);
             const HIDDEN = ["VOLLEYBALL", "SWIMMING"];
             const allSports = unwrap(sportsRes);
             // ids of the sports we don't expose, so we can hide their teams too
             const hiddenIds = new Set(allSports.filter(s => HIDDEN.includes(String(s.sportType).toUpperCase())).map(s => s.id));
+            const visibleTeams = unwrap(teamsRes).filter(t => !hiddenIds.has(t.sportId));
             setSports(allSports.filter(s => !HIDDEN.includes(String(s.sportType).toUpperCase())));
-            setTeams(unwrap(teamsRes).filter(t => !hiddenIds.has(t.sportId)));
+            setTeams(visibleTeams);
+            setTeamsRaw(visibleTeams);
             setNational(unwrap(ntRes));
+            const byId = new Map();
+            statusLists.flatMap(unwrap).forEach((p) => byId.set(p.id, p));
+            setPlayers([...byId.values()]);
+            setStaff(unwrap(staffRes));
+            setRostersRaw(unwrap(rostersRes));
         } catch (err) {
             setToast({ msg: "Error loading data", type: "error" });
         } finally {
@@ -206,43 +235,68 @@ export default function TeamsSports() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mt-4">
 
           
-                {tab === "teams" && teams.map(t => {
-                    const sp = sports.find(s => s.id === Number(t.sportId));
+                {/* ── Club Teams: one page, all sports → drill into a sport → its teams ── */}
+                {/* Level 1 — the four sports */}
+                {tab === "teams" && !selectedSport && VISIBLE_SPORTS
+                    .filter(sp => (teamIndex.bySport[sp] || []).length)
+                    .map(sp => {
+                        const meta = SPORT_META[sp] || { label: sp, emoji: "🏅" };
+                        const spTeams = teamIndex.bySport[sp] || [];
+                        const playerCount = players.filter(p => spTeams.some(t => t.id === playerTeamMap[Number(p.id)])).length;
+                        return (
+                            <button key={sp} onClick={() => setSelectedSport(sp)}
+                                className="group relative text-left bg-slate-900/40 border border-slate-800 p-7 rounded-[2rem] hover:border-emerald-500/50 hover:-translate-y-1 transition-all duration-500 flex flex-col gap-5 min-h-[220px]">
+                                <div className="flex justify-between items-start">
+                                    <div className="w-16 h-16 bg-slate-950 rounded-2xl border border-white/5 flex items-center justify-center text-4xl shadow-2xl group-hover:scale-110 transition-all">{meta.emoji}</div>
+                                    <SportBadge sport={sp} />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-2xl font-black text-white leading-tight group-hover:text-emerald-400 transition-colors">{meta.label}</h3>
+                                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] mt-2">{spTeams.length} team{spTeams.length === 1 ? "" : "s"} · {playerCount} players</p>
+                                </div>
+                                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest group-hover:gap-2 inline-flex items-center gap-1.5">View teams →</span>
+                            </button>
+                        );
+                    })}
+
+                {/* Level 2 — back bar + the selected sport's teams (first + reserve) */}
+                {tab === "teams" && selectedSport && (
+                    <div className="col-span-full flex items-center gap-3">
+                        <button onClick={() => setSelectedSport(null)}
+                            className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors">
+                            <FiArrowLeft /> All sports
+                        </button>
+                        <span className="text-slate-600">/</span>
+                        <span className="text-[11px] font-black uppercase tracking-widest text-emerald-300 inline-flex items-center gap-1.5">
+                            {SPORT_META[selectedSport]?.emoji} {SPORT_META[selectedSport]?.label}
+                        </span>
+                    </div>
+                )}
+                {tab === "teams" && selectedSport && (teamIndex.bySport[selectedSport] || []).map(t => {
+                    const m = teamMembers(t.id);
                     return (
-                        <div key={t.id} className="group relative bg-slate-900/40 border border-slate-800 p-7 rounded-[2rem] hover:border-emerald-500/50 transition-all duration-500 flex flex-col gap-6 min-h-[260px]">
-
-                            {/* الصف العلوي */}
+                        <div key={t.id} className={`group relative bg-slate-900/40 border p-7 rounded-[2rem] transition-all duration-500 flex flex-col gap-5 min-h-[240px] ${t.isFirstTeam ? "border-slate-800 hover:border-emerald-500/50" : "border-slate-800 hover:border-sky-500/50"}`}>
                             <div className="flex justify-between items-start">
-                                <div className={`relative w-16 h-16 bg-slate-950 rounded-2xl border border-white/5 ring-2 ${SPORT_RING[sp?.sportType] || "ring-slate-700/50"} flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all`}>
-                                    <img src={BARCA_CREST} alt="" className="w-11 h-11 object-contain" onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.nextSibling.style.display = "block"; }} />
-                                    <span className="text-3xl hidden">{sp ? SPORT_ICONS[sp.sportType] : "🛡️"}</span>
-                                    <span className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-slate-950 border border-slate-700 flex items-center justify-center text-xs shadow-lg">{SPORT_EMOJI2[sp?.sportType] || "🏟️"}</span>
+                                <div className={`relative w-16 h-16 bg-slate-950 rounded-2xl border border-white/5 ring-2 ${SPORT_RING[selectedSport] || "ring-slate-700/50"} flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all`}>
+                                    <img src={BARCA_CREST} alt="" className="w-11 h-11 object-contain" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                                    <span className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-slate-950 border border-slate-700 flex items-center justify-center text-xs shadow-lg">{SPORT_EMOJI2[selectedSport] || "🏟️"}</span>
                                 </div>
-                                <div className="flex flex-col items-end gap-2">
-                                    <SportBadge sport={sp?.sportType || "N/A"} />
-                                </div>
+                                <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${t.isFirstTeam ? "text-emerald-300 bg-emerald-500/10 border-emerald-500/30" : "text-sky-300 bg-sky-500/10 border-sky-500/30"}`}>{t.tier}</span>
                             </div>
-
-                            {/* الاسم والدولة — يأخذ كل المساحة المتاحة */}
                             <div className="flex-1 space-y-1.5">
-                                <h3 className="text-xl font-black text-white leading-tight group-hover:text-emerald-400 transition-colors">{t.name}</h3>
-                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-1.5">📍 {t.country || "Club Base"}</p>
+                                <h3 className="text-xl font-black text-white leading-tight">{t.name}</h3>
+                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-[0.2em]">{m.players.length} players · {m.staff.length} staff</p>
                             </div>
-
+                            <button onClick={() => setMembersTeam(t)}
+                                className="w-full py-2.5 bg-emerald-500/15 hover:bg-emerald-500 border border-emerald-500/30 hover:border-emerald-500 rounded-xl text-[11px] font-black uppercase tracking-widest text-emerald-300 hover:text-white transition-all flex items-center justify-center gap-2">
+                                <FiUsers size={14} /> View Members
+                            </button>
                             {canEdit && (
-                              <div className="flex gap-2 pt-4 border-t border-white/5">
-                                <button
-                                    onClick={() => { setEditItem(t); setShowModal(true); }}
-                                    className="flex-1 py-2.5 bg-slate-950 hover:bg-emerald-600 border border-slate-800 hover:border-emerald-500 rounded-xl text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all flex items-center justify-center gap-2"
-                                >
-                                    <AiFillEdit size={14} /> Edit
-                                </button>
-                                <button
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(t.id); }}
-                                    className="px-4 py-2.5 bg-slate-950 hover:bg-red-600 border border-slate-800 hover:border-red-500 rounded-xl text-[11px] font-black text-slate-500 hover:text-white transition-all flex items-center justify-center"
-                                >
-                                    <RiDeleteBin6Line size={14} />
-                                </button>
+                              <div className="flex gap-2">
+                                <button onClick={() => { setEditItem(t); setShowModal(true); }}
+                                    className="flex-1 py-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all flex items-center justify-center gap-2"><AiFillEdit size={12} /> Edit</button>
+                                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(t.id); }}
+                                    className="px-4 py-2 bg-slate-950 hover:bg-red-600 border border-slate-800 hover:border-red-500 rounded-xl text-[10px] font-black text-slate-500 hover:text-white transition-all flex items-center justify-center"><RiDeleteBin6Line size={12} /></button>
                               </div>
                             )}
                         </div>
@@ -336,14 +390,71 @@ export default function TeamsSports() {
                     </div>
                 ))}
 
-                {/* زر الإضافة الثابت */}
-                {canEdit && (
+                {/* زر الإضافة الثابت — hidden on the sport-selection level */}
+                {canEdit && !(tab === "teams" && !selectedSport) && (
                   <button onClick={() => { setEditItem(null); setShowModal(true); }} className="group border-2 border-dashed border-slate-800 rounded-[2.5rem] p-8 flex flex-col items-center justify-center gap-4 text-slate-600 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all duration-500 min-h-[300px]">
                     <div className="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center text-3xl group-hover:bg-emerald-500 group-hover:text-white transition-all">+</div>
-                    <span className="text-xs font-black uppercase tracking-[0.3em]">Add New {tab}</span>
+                    <span className="text-xs font-black uppercase tracking-[0.3em]">Add New {tab === "teams" ? "team" : tab}</span>
                   </button>
                 )}
             </div>
+
+            {/* ── View Members modal (players + staff of a team) ──────────────── */}
+            {membersTeam && (() => {
+                const m = teamMembers(membersTeam.id);
+                return (
+                    <div className="fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setMembersTeam(null)}>
+                        <div className="w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-3xl border border-slate-800 bg-slate-950 shadow-2xl">
+                            <div className="sticky top-0 bg-slate-950/95 backdrop-blur px-6 py-5 border-b border-slate-800 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <img src={BARCA_CREST} alt="" className="w-9 h-9 object-contain" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                                    <div>
+                                        <h3 className="font-black text-white text-lg leading-none">{membersTeam.name}</h3>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1">{membersTeam.tier} · {m.players.length} players · {m.staff.length} staff</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => setMembersTeam(null)} className="text-slate-500 hover:text-white p-2"><FiX /></button>
+                            </div>
+                            <div className="p-6 space-y-6">
+                                <div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-400/80 mb-3">Players ({m.players.length})</p>
+                                    {m.players.length ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                            {m.players.map((p) => (
+                                                <div key={p.id} className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 ${isInjured(p) ? "border-rose-500/30 bg-rose-500/[0.05]" : "border-slate-800 bg-slate-900/40"}`}>
+                                                    <PlayerAvatar name={`${p.firstName} ${p.lastName}`} sport={SPORT_META[selectedSport]?.label} size={36} />
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="text-sm font-bold text-slate-200 truncate">{p.firstName} {p.lastName}</p>
+                                                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 truncate">{String(p.preferredPosition || "").replace(/_/g, " ")}</p>
+                                                    </div>
+                                                    {isInjured(p) && <span className="text-rose-400 text-sm" title="Injured">🩹</span>}
+                                                    <span className="text-[10px] font-mono text-slate-500">#{p.kitNumber ?? "—"}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : <p className="text-[12px] text-slate-600 italic">No players on this team yet.</p>}
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-sky-400/80 mb-3">Staff ({m.staff.length})</p>
+                                    {m.staff.length ? (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                            {m.staff.map((s) => (
+                                                <div key={s.id} className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/40 px-3 py-2.5">
+                                                    <PlayerAvatar name={`${s.firstName} ${s.lastName}`} sport="Staff" size={36} />
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="text-sm font-bold text-slate-200 truncate">{s.firstName} {s.lastName}</p>
+                                                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 truncate">{String(s.staffRole || "Staff").replace(/_/g, " ")}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : <p className="text-[12px] text-slate-600 italic">No staff assigned to this team yet.</p>}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* Modal التعديل والإضافة الناقص */}
             {showModal && (

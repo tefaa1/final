@@ -4,7 +4,7 @@ import { FileText, Calendar, Download, TrendingUp, Eye, Users, Activity, DollarS
 import { AiFillEdit } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { api } from "@/src/lib/api";
-import { PageHeader } from "@/src/components/shared/SharedComponents";
+import { PageHeader, FormModal, Toast } from "@/src/components/shared/SharedComponents";
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import ScoutingModal from "@/src/components/scouting/ScoutingModal";
 import useRole from "@/src/lib/useRole";
@@ -85,7 +85,20 @@ export default function ReportsPage() {
   const [showScoutModal, setShowScoutModal] = useState(false);
   const [editReport, setEditReport] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [typeMenu, setTypeMenu] = useState(false);      // "New report" type chooser
+  const [newKind, setNewKind] = useState(null);          // "Analytics" | "Match"
+  const [viewReport, setViewReport] = useState(null);    // report detail modal
+  const [teams, setTeams] = useState([]);
+  const [matches, setMatches] = useState([]);
+  const [toast, setToast] = useState(null);
   const { canEdit } = useRole();
+  const SPORT_TYPES = ["FOOTBALL", "BASKETBALL", "HANDBALL", "TENNIS", "VOLLEYBALL", "SWIMMING"];
+  const ADMIN_KC = "00000000-0000-0000-0000-000000000001";
+  const arr = (r) => (Array.isArray(r) ? r : (r?.content || r?.data || []));
+  useEffect(() => {
+    api.getTeams().then((r) => setTeams(arr(r))).catch(() => {});
+    api.getMatches().then((r) => setMatches(arr(r))).catch(() => {});
+  }, []);
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
   const fetchReports = useCallback(async () => {
@@ -248,6 +261,52 @@ export default function ReportsPage() {
     URL.revokeObjectURL(url);
   };
 
+  // ── Create non-scouting reports ──────────────────────────────────────────
+  const submitNewReport = async (form) => {
+    try {
+      if (newKind === "Analytics") {
+        await api.createTeamAnalytics({
+          teamId: Number(form.teamId), sportType: form.sportType,
+          periodStart: form.periodStart, periodEnd: form.periodEnd,
+          totalMatches: form.totalMatches ? Number(form.totalMatches) : null,
+          wins: form.wins ? Number(form.wins) : null, draws: form.draws ? Number(form.draws) : null, losses: form.losses ? Number(form.losses) : null,
+          calculatedAt: new Date().toISOString(), notes: form.notes || null,
+        });
+      } else if (newKind === "Match") {
+        await api.createMatchAnalysis({
+          matchId: Number(form.matchId), teamId: Number(form.teamId), sportType: form.sportType,
+          tacticalAnalysis: form.tacticalAnalysis || null, keyMoments: form.keyMoments || null,
+          analyzedByUserKeycloakId: ADMIN_KC, analyzedAt: new Date().toISOString(), notes: form.notes || null,
+        });
+      }
+      setToast({ msg: "Report created", type: "success" });
+      setNewKind(null);
+      fetchReports();
+    } catch (err) {
+      setToast({ msg: err?.message || "Failed to create report", type: "error" });
+    }
+  };
+
+  const analyticsFields = [
+    { key: "teamId", label: "Team", type: "select", options: teams.map((t) => ({ value: String(t.id), label: t.name })), required: true },
+    { key: "sportType", label: "Sport", type: "select", options: SPORT_TYPES, required: true },
+    { key: "periodStart", label: "Period Start", type: "date", required: true },
+    { key: "periodEnd", label: "Period End", type: "date", required: true },
+    { key: "totalMatches", label: "Total Matches", type: "number" },
+    { key: "wins", label: "Wins", type: "number" },
+    { key: "draws", label: "Draws", type: "number" },
+    { key: "losses", label: "Losses", type: "number" },
+    { key: "notes", label: "Notes", full: true },
+  ];
+  const matchFields = [
+    { key: "matchId", label: "Match", type: "select", options: matches.map((m) => ({ value: String(m.id), label: `#${m.id} ${displayTeamName(m.homeTeamId, "FCB")} vs ${m.opponentName || (m.outerTeamId != null ? displayTeamName(m.outerTeamId, "Opp") : "Opponent")}` })), required: true },
+    { key: "teamId", label: "Team", type: "select", options: teams.map((t) => ({ value: String(t.id), label: t.name })), required: true },
+    { key: "sportType", label: "Sport", type: "select", options: SPORT_TYPES, required: true },
+    { key: "tacticalAnalysis", label: "Tactical Analysis", full: true },
+    { key: "keyMoments", label: "Key Moments", full: true },
+    { key: "notes", label: "Notes", full: true },
+  ];
+
   // ── Filters ────────────────────────────────────────────────────────────────
   const filteredReports = reports.filter(r => {
     const matchesSearch = r.title?.toLowerCase().includes(search.toLowerCase());
@@ -269,9 +328,9 @@ export default function ReportsPage() {
           action={
             canEdit ? (
               <button
-                onClick={() => { setEditReport(null); setShowScoutModal(true); }}
+                onClick={() => setTypeMenu(true)}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold shadow-lg shadow-emerald-950 transition-all active:scale-95">
-                + New Scout Report
+                + New Report
               </button>
             ) : null
           }
@@ -342,6 +401,12 @@ export default function ReportsPage() {
                     </div>
 
                     <div className="flex items-center gap-2 z-10">
+                      <button
+                        onClick={() => setViewReport(report)}
+                        title="View Report"
+                        className="w-9 h-9 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center text-slate-500 hover:text-emerald-400 hover:border-emerald-500/40 transition-all">
+                        <Eye size={14} />
+                      </button>
                       {canEdit && isScout && (
                         <button
                           onClick={() => handleEdit(report)}
@@ -439,6 +504,67 @@ export default function ReportsPage() {
         )}
       </div>
 
+      {/* ── New report TYPE CHOOSER ───────────────────────────────────────── */}
+      {typeMenu && (
+        <div className="fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setTypeMenu(false)}>
+          <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl p-6">
+            <h3 className="font-black text-white text-lg mb-4">New Report</h3>
+            <div className="space-y-2.5">
+              {[
+                ["Scouting", "Player scouting evaluation", Eye, () => { setTypeMenu(false); setEditReport(null); setShowScoutModal(true); }],
+                ["Team Analytics", "Team performance over a period", TrendingUp, () => { setTypeMenu(false); setNewKind("Analytics"); }],
+                ["Match Analysis", "Post-match tactical analysis", Activity, () => { setTypeMenu(false); setNewKind("Match"); }],
+              ].map(([label, desc, Icon, onClick]) => (
+                <button key={label} onClick={onClick} className="w-full flex items-center gap-3 text-left rounded-xl border border-slate-800 bg-slate-900/40 px-4 py-3 hover:border-emerald-500/40 transition-all">
+                  <Icon size={18} className="text-emerald-400 shrink-0" />
+                  <div><p className="text-sm font-black text-slate-100">{label}</p><p className="text-[11px] text-slate-500">{desc}</p></div>
+                </button>
+              ))}
+            </div>
+            <button onClick={() => setTypeMenu(false)} className="mt-4 w-full py-2.5 rounded-xl border border-slate-800 text-slate-400 text-xs font-black uppercase tracking-widest hover:bg-slate-900">Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Team Analytics / Match Analysis create forms ──────────────────── */}
+      {newKind === "Analytics" && (
+        <FormModal title="New Team Analytics Report" fields={analyticsFields} initialData={{ sportType: "FOOTBALL" }}
+          onSubmit={submitNewReport} onClose={() => setNewKind(null)} />
+      )}
+      {newKind === "Match" && (
+        <FormModal title="New Match Analysis Report" fields={matchFields} initialData={{ sportType: "FOOTBALL" }}
+          onSubmit={submitNewReport} onClose={() => setNewKind(null)} />
+      )}
+
+      {/* ── View report modal (with download) ─────────────────────────────── */}
+      {viewReport && (
+        <div className="fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && setViewReport(null)}>
+          <div className="w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl">
+            <div className="sticky top-0 bg-slate-950/95 backdrop-blur px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">{viewReport.category}</span>
+                <h3 className="font-black text-white text-lg leading-tight">{viewReport.title}</h3>
+                <p className="text-[11px] text-slate-500">Generated {viewReport.date}</p>
+              </div>
+              <button onClick={() => setViewReport(null)} className="text-slate-500 hover:text-white p-1 text-lg">✕</button>
+            </div>
+            <div className="p-6 space-y-2">
+              <p className="text-sm text-slate-300 leading-relaxed mb-3">{viewReport.desc}</p>
+              {Object.entries(viewReport._raw || {}).filter(([k, v]) => v != null && v !== "" && !k.startsWith("_") && typeof v !== "object").map(([k, v]) => (
+                <div key={k} className="flex items-start justify-between gap-4 border-b border-slate-900 py-1.5">
+                  <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">{k}</span>
+                  <span className="text-[13px] text-slate-200 text-right break-all">{String(v)}</span>
+                </div>
+              ))}
+            </div>
+            <div className="px-6 py-4 border-t border-slate-800 flex justify-end gap-3">
+              <button onClick={() => setViewReport(null)} className="px-5 py-2.5 rounded-xl border border-slate-800 text-slate-400 text-xs font-black uppercase tracking-widest hover:bg-slate-900">Close</button>
+              <button onClick={() => handleDownload(viewReport)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-black uppercase tracking-widest hover:bg-emerald-500"><Download size={14} /> Download</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Scout Report Modal ────────────────────────────────────────────── */}
       <ScoutingModal
         open={showScoutModal}
@@ -446,6 +572,8 @@ export default function ReportsPage() {
         onSaved={() => { setShowScoutModal(false); setEditReport(null); fetchReports(); }}
         editData={editReport}
       />
+
+      {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 }

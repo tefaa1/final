@@ -2,8 +2,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { api } from "@/src/lib/api";
 import { lookupTeam } from "@/src/lib/teamDirectory";
+import { buildPlayerTeamMap } from "@/src/lib/clubTeams";
+import { restrictInjuredPlayer, clearInjuredPlayer, isFitnessPass } from "@/src/lib/injuryActions";
 import { FormModal, Toast } from "@/src/components/shared/SharedComponents";
 import MedicalCard from './MedicalCard';
+import MedicalProfiles from './MedicalProfiles';
 
 // ─── BACKEND ENUMS (verified against medical-fitness-service *.java) ──────────
 const INJURY_TYPES = ["MUSCLE_STRAIN", "LIGAMENT_SPRAIN", "FRACTURE", "CONTUSION", "TENDONITIS", "DISLOCATION", "CONCUSSION", "OTHER"];
@@ -20,6 +23,7 @@ const TEAM_IDS = [1, 2, 3, 4, 5];
 
 // Icons per tab
 const TAB_ICONS = {
+  Profiles: "contacts",
   Injuries: "local_hospital",
   Diagnoses: "description",
   Treatments: "medication",
@@ -28,6 +32,7 @@ const TAB_ICONS = {
   Fitness: "speed",
 };
 const TAB_LABELS = {
+  Profiles: "Player Profiles",
   Injuries: "Injuries",
   Diagnoses: "Diagnoses",
   Treatments: "Treatments",
@@ -35,28 +40,38 @@ const TAB_LABELS = {
   Recovery: "Recovery",
   Fitness: "Fitness Tests",
 };
-const TABS = ["Injuries", "Diagnoses", "Treatments", "Rehabilitation", "Recovery", "Fitness"];
+const TABS = ["Profiles", "Injuries", "Diagnoses", "Treatments", "Rehabilitation", "Recovery", "Fitness"];
 
 export default function Medical() {
-  const [activeTab, setActiveTab] = useState("Injuries");
+  const [activeTab, setActiveTab] = useState("Profiles");
   const [data, setData] = useState([]);
   const [players, setPlayers] = useState([]);
+  const [staff, setStaff] = useState([]);
+  const [rostersRaw, setRostersRaw] = useState([]);
+  const [allMedical, setAllMedical] = useState({ Injuries: [], Treatments: [], Rehabilitation: [], Recovery: [], Fitness: [], Diagnoses: [] });
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState({});
   const [toast, setToast] = useState(null);
 
-  // ── reference data: load all players once (across statuses) ────────────────
-  useEffect(() => {
+  const playerTeamMap = useMemo(() => buildPlayerTeamMap(rostersRaw), [rostersRaw]);
+
+  // ── reference data: players (all statuses) + staff + rosters ───────────────
+  const reloadPlayers = () => {
     const unwrap = (r) => r?.data || r?.content || (Array.isArray(r) ? r : []);
-    Promise.all(["AVAILABLE", "INJURED", "SUSPENDED", "ABSENT"].map(s => api.getPlayers(s).catch(() => [])))
+    return Promise.all(["AVAILABLE", "INJURED", "SUSPENDED", "ABSENT"].map(s => api.getPlayers(s).catch(() => [])))
       .then(lists => {
-        const merged = [];
-        const seen = new Set();
+        const merged = []; const seen = new Set();
         lists.flatMap(unwrap).forEach(p => { if (p && !seen.has(p.id)) { seen.add(p.id); merged.push(p); } });
         setPlayers(merged);
       })
       .catch(() => setPlayers([]));
+  };
+  useEffect(() => {
+    const unwrap = (r) => r?.data || r?.content || (Array.isArray(r) ? r : []);
+    reloadPlayers();
+    api.getStaff().then((r) => setStaff(unwrap(r))).catch(() => {});
+    api.getRosters().then((r) => setRostersRaw(unwrap(r))).catch(() => {});
   }, []);
 
   // Resolve a numeric playerId → "First Last"
@@ -89,10 +104,18 @@ export default function Medical() {
 
   const loadData = async () => {
     setLoading(true);
+    const unwrap = (r) => r?.content || r?.data || (Array.isArray(r) ? r : []);
     try {
-      const res = await api.medical[activeTab].get();
-      const fetchedData = res?.content || res?.data || (Array.isArray(res) ? res : []);
-      setData(fetchedData);
+      if (activeTab === "Profiles") {
+        const keys = ["Injuries", "Treatments", "Rehabilitation", "Recovery", "Fitness", "Diagnoses"];
+        const res = await Promise.all(keys.map((k) => api.medical[k].get().catch(() => [])));
+        const next = {}; keys.forEach((k, i) => { next[k] = unwrap(res[i]); });
+        setAllMedical(next);
+        await reloadPlayers();
+      } else {
+        const res = await api.medical[activeTab].get();
+        setData(unwrap(res));
+      }
     } catch (err) {
       console.error("Load Error:", err);
       setData([]);
@@ -170,7 +193,9 @@ export default function Medical() {
       { key: "testName", label: "Test Name", required: true },
       { key: "result", label: "Result Value", type: "number" },
       { key: "unit", label: "Unit (e.g. ml/kg/min)", required: true },
-      { key: "resultCategory", label: "Result Category", required: true },
+      // PASS/EXCELLENT/GOOD/AVERAGE clear an injured player back to AVAILABLE;
+      // FAIL/POOR keep them restricted (see injuryActions.isFitnessPass).
+      { key: "resultCategory", label: "Result (clears injury if passed)", type: "select", options: ["PASS", "EXCELLENT", "GOOD", "AVERAGE", "FAIL", "POOR"], required: true },
       { key: "testDate", label: "Test Date", type: "date", required: true },
     ],
   }), [playerOptsById, playerOptsByKeycloak, teamOpts]);
@@ -295,7 +320,31 @@ export default function Medical() {
         await api.medical[activeTab].post(payload);
         setToast({ msg: `${activeTab} saved successfully!`, type: "success" });
       }
+      // ── Injury lifecycle ──────────────────────────────────────────────
+      // Logging a NEW injury flags the player INJURED (Restricted): pulls them
+      // from lineups, training sessions & attendance, and emails the whole team.
+      // The player stays restricted (even through treatment/rehab/recovery)
+      // until a PASSING fitness test clears them — NOT when the injury is marked
+      // "RECOVERED". Editing an injury just keeps them restricted.
+      if (activeTab === "Injuries" && payload.playerId) {
+        const pl = players.find((p) => String(p.id) === String(payload.playerId)) || { id: Number(payload.playerId) };
+        if (!isEditing) {
+          const r = await restrictInjuredPlayer(pl, { players, staff, playerTeamMap, teamId: payload.teamId });
+          setToast({ msg: `Injury logged · player restricted · ${r.notified} team members emailed`, type: "success" });
+        } else {
+          try { await api.updatePlayerStatus(payload.playerId, "INJURED"); } catch (e) { console.error(e); }
+        }
+      }
+      // Passing a fitness test clears the player back to AVAILABLE.
+      if (activeTab === "Fitness" && payload.playerKeycloakId) {
+        const pl = players.find((p) => p.keycloakId === payload.playerKeycloakId);
+        if (pl && isFitnessPass(payload)) {
+          await clearInjuredPlayer(pl);
+          setToast({ msg: `Fitness test passed · ${pl.firstName} ${pl.lastName} cleared to return`, type: "success" });
+        }
+      }
       setShowModal(false);
+      reloadPlayers();
       loadData();
     } catch (err) {
       console.error("Backend Error:", err);
@@ -348,20 +397,33 @@ export default function Medical() {
 
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-white text-2xl font-black tracking-tighter uppercase">
-          {TAB_LABELS[activeTab]} <span className="text-teal-400">Log</span>
+          {TAB_LABELS[activeTab]} <span className="text-teal-400">{activeTab === "Profiles" ? "" : "Log"}</span>
         </h2>
-        <button
-          onClick={handleAddNew}
-          className="bg-teal-600 hover:bg-teal-400 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-teal-900/20 flex items-center gap-2"
-        >
-          <span className="material-icons">add</span> Add New Record
-        </button>
+        {activeTab !== "Profiles" && (
+          <button
+            onClick={handleAddNew}
+            className="bg-teal-600 hover:bg-teal-400 text-white px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl shadow-teal-900/20 flex items-center gap-2"
+          >
+            <span className="material-icons">add</span> Add New Record
+          </button>
+        )}
       </div>
 
       {loading ? (
         <div className="flex justify-center py-20 animate-pulse text-teal-400 font-mono tracking-widest">
           LOADING_SECURE_DATA...
         </div>
+      ) : activeTab === "Profiles" ? (
+        <MedicalProfiles
+          players={players}
+          injuries={allMedical.Injuries}
+          treatments={allMedical.Treatments}
+          rehabilitations={allMedical.Rehabilitation}
+          recoveries={allMedical.Recovery}
+          fitness={allMedical.Fitness}
+          diagnoses={allMedical.Diagnoses}
+          playerTeamMap={playerTeamMap}
+        />
       ) : data.length === 0 ? (
         <div className="text-center py-20 text-slate-500">
           <div className="text-6xl mb-6 opacity-20 grayscale">🗂️</div>

@@ -8,6 +8,7 @@ public record SponsorContractOfferResponse(
         Long teamId,
         Double offerAmount,
         Integer contractDurationMonths,
+        Double negotiatedAmount,
         String terms,
         String status,
         LocalDateTime offeredAt,

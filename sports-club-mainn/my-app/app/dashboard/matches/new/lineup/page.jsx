@@ -10,6 +10,7 @@ import { FORMATION_LAYOUTS, FORMATION_NAMES, SPORT_PLAYERS_ON_PITCH, genericLayo
 import { setPlayerDragImage } from "@/src/components/matches/dragGhost";
 import { formatKickoff } from "@/src/components/matches/liveClock";
 import { loadDraftMatch, clearDraftMatch } from "@/src/components/matches/draftMatch";
+import { isInjured } from "@/src/lib/playerStatus";
 import { FiArrowLeft, FiCheck, FiAlertTriangle, FiGrid, FiZap } from "react-icons/fi";
 
 const unwrapArr = (r) => r?.data || r?.content || (Array.isArray(r) ? r : []);
@@ -81,7 +82,12 @@ export default function DraftLineupBuilderPage() {
     return () => window.removeEventListener("beforeunload", handler);
   }, [draft]);
 
-  const squad = players.filter(p => resolveSportUpper(p.preferredPosition) === sportUpper);
+  // Injured players cannot be selected for a lineup. We keep the full sport squad
+  // for display of who's unavailable, but only `squad` (fit players) feeds the
+  // bench and the auto-fill.
+  const sportSquad = players.filter(p => resolveSportUpper(p.preferredPosition) === sportUpper);
+  const injuredSquad = sportSquad.filter(isInjured);
+  const squad = sportSquad.filter(p => !isInjured(p));
   const playerById = (pid) => players.find(p => p.id === pid);
   const assignedIds = Object.values(assignments);
   const bench = squad.filter(p => !assignedIds.includes(p.id));
@@ -353,6 +359,25 @@ export default function DraftLineupBuilderPage() {
                   </ul>
                 )}
                 <p className="mt-3 text-[10px] text-slate-600 leading-snug">Drag onto a slot, or tap to fill the next free position.</p>
+
+                {injuredSquad.length > 0 && (
+                  <div className="mt-4 pt-3 border-t border-slate-800">
+                    <h4 className="text-[10px] font-black text-rose-400 uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5">🩹 Injured · unavailable</h4>
+                    <ul className="space-y-1.5">
+                      {injuredSquad.map(p => (
+                        <li key={p.id} title="Injured — cannot be selected until recovered"
+                          className="w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-rose-500/[0.04] border border-rose-500/20 opacity-70 cursor-not-allowed">
+                          <PlayerFace photoUrl={p.photoUrl} name={`${p.firstName} ${p.lastName}`} sport={resolveSport(p.preferredPosition)} size={32} rounded="rounded-lg" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-slate-300 truncate">{p.firstName} {p.lastName}</p>
+                            <p className="text-[9px] font-black uppercase tracking-widest text-rose-400/80 truncate">Injured</p>
+                          </div>
+                          <span className="text-rose-400 text-sm">🩹</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </aside>
           </div>

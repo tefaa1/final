@@ -82,4 +82,38 @@ public final class SeedIds {
     public static final String PERFORMANCE_ANALYST = "00000000-0000-0000-0000-000000000051";
     public static final String SPECIFIC_COACH     = "00000000-0000-0000-0000-000000000052";
     public static final String ADMIN_2            = "00000000-0000-0000-0000-000000000002";
+
+    // ─── SECOND TEAMS (reserve squads) — data-only profiles, no logins ───────
+    // Appended AFTER the tennis squad → numeric ids 66..89 (see player-mgmt SeedIds).
+    // FC Barcelona Atlètic (football B, team 6)
+    public static final String FBB_KOCHEN = "00000000-0000-0000-0000-000000000301";
+    public static final String FBB_FORT   = "00000000-0000-0000-0000-000000000302";
+    public static final String FBB_CUENCA = "00000000-0000-0000-0000-000000000303";
+    public static final String FBB_FAYE   = "00000000-0000-0000-0000-000000000304";
+    public static final String FBB_MARTIN = "00000000-0000-0000-0000-000000000305";
+    public static final String FBB_BERNAL = "00000000-0000-0000-0000-000000000306";
+    public static final String FBB_PRIM   = "00000000-0000-0000-0000-000000000307";
+    public static final String FBB_UNAI   = "00000000-0000-0000-0000-000000000308";
+    public static final String FBB_TONI   = "00000000-0000-0000-0000-000000000309";
+    public static final String FBB_DANI   = "00000000-0000-0000-0000-000000000310";
+    public static final String FBB_VICTOR = "00000000-0000-0000-0000-000000000311";
+    // FC Barcelona Bàsquet B (basketball B, team 7)
+    public static final String BBB_MOLINS  = "00000000-0000-0000-0000-000000000321";
+    public static final String BBB_MARA    = "00000000-0000-0000-0000-000000000322";
+    public static final String BBB_CANO    = "00000000-0000-0000-0000-000000000323";
+    public static final String BBB_KEITA   = "00000000-0000-0000-0000-000000000324";
+    public static final String BBB_HALPIN  = "00000000-0000-0000-0000-000000000325";
+    public static final String BBB_ESPINET = "00000000-0000-0000-0000-000000000326";
+    // FC Barcelona Handbol B (handball B, team 8)
+    public static final String HBB_MESTRE   = "00000000-0000-0000-0000-000000000331";
+    public static final String HBB_VALERA   = "00000000-0000-0000-0000-000000000332";
+    public static final String HBB_GURRI    = "00000000-0000-0000-0000-000000000333";
+    public static final String HBB_REY      = "00000000-0000-0000-0000-000000000334";
+    public static final String HBB_BARRUFET = "00000000-0000-0000-0000-000000000335";
+    public static final String HBB_CANELLAS = "00000000-0000-0000-0000-000000000336";
+    public static final String HBB_RIBAS    = "00000000-0000-0000-0000-000000000337";
+    // Second-team head coaches (appended after the reserve players → ids 90..92)
+    public static final String HEAD_COACH_FBB = "00000000-0000-0000-0000-000000000350";
+    public static final String HEAD_COACH_BBB = "00000000-0000-0000-0000-000000000351";
+    public static final String HEAD_COACH_HBB = "00000000-0000-0000-0000-000000000352";
 }

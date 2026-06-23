@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
 public record ScoutReportRequest(
         @NotBlank(groups = Create.class) String scoutKeycloakId,
         Long outerPlayerId,
+        String playerCountry,
+        String playerPosition,
+        String playerClub,
+        String sportType,
         @Min(1) @Max(10) Integer technicalRating,
         @Min(1) @Max(10) Integer physicalRating,
         @Min(1) @Max(10) Integer tacticalRating,

@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline -B
 
 # Copy source code and build the application
 COPY src ./src
-RUN mvn clean package -DskipTests -B
+RUN mvn clean package -Dmaven.test.skip=true -B
 
 # Rename the fat jar to a known name
 RUN find target -maxdepth 1 -name '*.jar' -not -name '*original*' | head -1 | xargs -I{} cp {} target/app.jar

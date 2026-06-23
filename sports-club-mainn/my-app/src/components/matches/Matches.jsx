@@ -101,15 +101,16 @@ const Matches = () => {
         for (const m of candidates) {
             const hasEvents = eventsKnown ? (eventsByMatch.get(String(m.id)) || 0) > 0 : true;
             try {
-                if (!hasEvents && eventsKnown) {
-                    // Never managed → fake match → delete.
-                    await api.deleteMatch(m.id);
-                    changed = true;
-                } else if (hasEvents) {
-                    // Played but never ended → finalize to COMPLETED with current score.
-                    await api.updateMatch(m.id, { ...m, status: "COMPLETED" });
+                if (hasEvents) {
+                    // Played but never ended → finalize to FINISHED with current score.
+                    // ("FINISHED" is the only completed status the backend enum accepts;
+                    // "COMPLETED" is rejected with 400 and the match would stay LIVE forever.)
+                    await api.updateMatch(m.id, { ...m, status: "FINISHED" });
                     changed = true;
                 }
+                // NOTE: we intentionally DO NOT auto-delete event-less past matches
+                // anymore. A user can schedule a match and play it later; deleting it
+                // just because its kickoff has passed destroyed real, saved fixtures.
             } catch (e) {
                 console.error("Auto-clean failed for match", m.id, e);
             }

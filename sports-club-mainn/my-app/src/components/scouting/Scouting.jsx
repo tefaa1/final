@@ -55,6 +55,19 @@ export default function Scouting() {
     return reports;
   }, [reports, filter]);
 
+  // Group the visible reports by the scouted player's sport (Other last).
+  const SPORT_LABEL = { FOOTBALL: "⚽ Football", BASKETBALL: "🏀 Basketball", HANDBALL: "🤾 Handball", TENNIS: "🎾 Tennis", VOLLEYBALL: "🏐 Volleyball", SWIMMING: "🏊 Swimming", OTHER: "🗂️ Unspecified Sport" };
+  const SPORT_ORDER = ["FOOTBALL", "BASKETBALL", "HANDBALL", "TENNIS", "VOLLEYBALL", "SWIMMING", "OTHER"];
+  const grouped = useMemo(() => {
+    const g = {};
+    for (const r of visible) { const k = String(r.sportType || "OTHER").toUpperCase(); (g[k] ||= []).push(r); }
+    return g;
+  }, [visible]);
+  const groupKeys = useMemo(() => {
+    const rank = (k) => { const i = SPORT_ORDER.indexOf(k); return i === -1 ? SPORT_ORDER.length : i; };
+    return Object.keys(grouped).sort((a, b) => rank(a) - rank(b));
+  }, [grouped]);
+
   const stats = useMemo(() => {
     const total = reports.length;
     const recommended = reports.filter((r) => r.recommendSigning).length;
@@ -131,14 +144,25 @@ export default function Scouting() {
       ) : visible.length === 0 ? (
         <EmptyState icon="🔍" title="No scout reports yet" />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {visible.map((r) => (
-            <ScoutingCard
-              key={r.id}
-              report={r}
-              playerLabel={outerPlayerLabel(playerById.get(Number(r.outerPlayerId)))}
-              onEdit={openEdit}
-            />
+        <div className="space-y-10">
+          {groupKeys.map((sport) => (
+            <section key={sport}>
+              <h2 className="flex items-center gap-2.5 text-lg font-black uppercase tracking-tight text-white mb-4">
+                {SPORT_LABEL[sport] || sport}
+                <span className="text-[11px] font-black text-slate-500">{grouped[sport].length}</span>
+                <span className="h-px flex-1 bg-gradient-to-r from-slate-700 to-transparent ml-2" />
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                {grouped[sport].map((r) => (
+                  <ScoutingCard
+                    key={r.id}
+                    report={r}
+                    playerLabel={outerPlayerLabel(playerById.get(Number(r.outerPlayerId)))}
+                    onEdit={openEdit}
+                  />
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       )}

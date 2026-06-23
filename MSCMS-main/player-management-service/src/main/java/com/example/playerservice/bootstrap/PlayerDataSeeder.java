@@ -77,6 +77,11 @@ public class PlayerDataSeeder implements CommandLineRunner {
             Team teamVb = saveTeam("CV Barcelona",           "Spain", volleyball);
             teamHb = saveTeam("FC Barcelona Handbol",  "Spain", handball);
 
+            // ─── Second / reserve teams (ids 6,7,8 — no Tennis B) ───────────
+            Team teamFbB = saveTeam("FC Barcelona Atlètic",    "Spain", football);   // id 6
+            Team teamBbB = saveTeam("FC Barcelona Bàsquet B",  "Spain", basketball); // id 7
+            Team teamHbB = saveTeam("FC Barcelona Handbol B",  "Spain", handball);   // id 8
+
             String season = "2024/25";
             saveRoster(SeedIds.PLAYER_1_ID,  teamFb, season);
             saveRoster(SeedIds.PLAYER_2_ID,  teamFb, season);
@@ -189,6 +194,35 @@ public class PlayerDataSeeder implements CommandLineRunner {
             saveContract(SeedIds.TN_MUGURUZA, start, end, 2_500_000L,  4_000_000L);
             saveContract(SeedIds.TN_CARRENO,  start, end, 2_000_000L,  3_000_000L);
             saveContract(SeedIds.TN_BAUTISTA, start, end, 2_200_000L,  3_500_000L);
+
+            // ─── Second-team rosters (reserve squads → teams 6,7,8) ─────────
+            // FC Barcelona Atlètic (football B)
+            saveRoster(SeedIds.FBB_KOCHEN_ID, teamFbB, season);
+            saveRoster(SeedIds.FBB_FORT_ID,   teamFbB, season);
+            saveRoster(SeedIds.FBB_CUENCA_ID, teamFbB, season);
+            saveRoster(SeedIds.FBB_FAYE_ID,   teamFbB, season);
+            saveRoster(SeedIds.FBB_MARTIN_ID, teamFbB, season);
+            saveRoster(SeedIds.FBB_BERNAL_ID, teamFbB, season);
+            saveRoster(SeedIds.FBB_PRIM_ID,   teamFbB, season);
+            saveRoster(SeedIds.FBB_UNAI_ID,   teamFbB, season);
+            saveRoster(SeedIds.FBB_TONI_ID,   teamFbB, season);
+            saveRoster(SeedIds.FBB_DANI_ID,   teamFbB, season);
+            saveRoster(SeedIds.FBB_VICTOR_ID, teamFbB, season);
+            // FC Barcelona Bàsquet B
+            saveRoster(SeedIds.BBB_MOLINS_ID,  teamBbB, season);
+            saveRoster(SeedIds.BBB_MARA_ID,    teamBbB, season);
+            saveRoster(SeedIds.BBB_CANO_ID,    teamBbB, season);
+            saveRoster(SeedIds.BBB_KEITA_ID,   teamBbB, season);
+            saveRoster(SeedIds.BBB_HALPIN_ID,  teamBbB, season);
+            saveRoster(SeedIds.BBB_ESPINET_ID, teamBbB, season);
+            // FC Barcelona Handbol B
+            saveRoster(SeedIds.HBB_MESTRE_ID,   teamHbB, season);
+            saveRoster(SeedIds.HBB_VALERA_ID,   teamHbB, season);
+            saveRoster(SeedIds.HBB_GURRI_ID,    teamHbB, season);
+            saveRoster(SeedIds.HBB_REY_ID,      teamHbB, season);
+            saveRoster(SeedIds.HBB_BARRUFET_ID, teamHbB, season);
+            saveRoster(SeedIds.HBB_CANELLAS_ID, teamHbB, season);
+            saveRoster(SeedIds.HBB_RIBAS_ID,    teamHbB, season);
         } else {
             // Base section already seeded — fetch the team handles we'll need
             // for the later sections. Insert order is deterministic so the IDs

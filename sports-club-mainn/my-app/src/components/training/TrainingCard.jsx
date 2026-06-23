@@ -69,7 +69,7 @@ const useLiveStatus = (session) => {
   return { phase, countdown, remaining, elapsedPct };
 };
 
-const TrainingCard = ({ session }) => {
+const TrainingCard = ({ session, onView }) => {
   const [expanded, setExpanded] = useState(false);
   const team = lookupTeam(session?.teamId);
   const type = session?.trainingType || session?.type || "SESSION";
@@ -86,7 +86,7 @@ const TrainingCard = ({ session }) => {
       : `border-slate-800/70 border-l-slate-600 opacity-75 hover:opacity-100 ${expanded ? "ring-1 ring-slate-600/30" : ""}`;
 
   return (
-    <button onClick={() => setExpanded(v => !v)}
+    <button onClick={() => (onView ? onView(session) : setExpanded(v => !v))}
       className={`relative overflow-hidden text-left border-l-4 w-full rounded-2xl p-5 bg-slate-900/50 border shadow-sm hover:-translate-y-0.5 transition-all group ${accent}`}>
 
       {live && (
