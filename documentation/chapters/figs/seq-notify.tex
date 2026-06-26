@@ -1,0 +1,21 @@
+% auto-generated figure: seq-notify (source: fix)
+\begin{figure}[H]
+\centering
+{\footnotesize
+\begin{sequencediagram}
+  \newthread{ds}{:domain service}
+  \newinst[1]{kf}{:Kafka}
+  \newinst[1]{nm}{:notification-mail}
+  \newinst[1]{db}{:DB}
+  \newinst[1]{fe}{:Recipient}
+  \mess{ds}{publish event / outbox}{kf}
+  \mess{kf}{deliver async}{nm}
+  \begin{call}{nm}{persist notification}{db}{saved}
+  \end{call}
+  \mess{fe}{GET /notifications}{nm}
+  \mess{nm}{unread list + bell badge}{fe}
+\end{sequencediagram}
+}
+\caption{Sequence diagram of event-driven notification delivery: the training-match service publishes a domain event to Kafka and returns immediately, while the notification-mail service asynchronously consumes the event, persists a notification, and later surfaces it to the recipient's top-bar bell.}
+\label{fig-seq-notify}
+\end{figure}

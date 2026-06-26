@@ -16,6 +16,9 @@ import {
   Lock,
   Mail,
   Check,
+  Clock,
+  LogOut,
+  MoreVertical,
 } from "lucide-react";
 import { api } from "../../lib/api";
 import {
@@ -41,6 +44,8 @@ import {
   recentActiveSenders,
   distinctParticipants,
   canCreateGroups,
+  isFanRole,
+  excludeFanMembers,
   asArray,
   ACTIVE_WINDOW_MS,
 } from "./groupChat";
@@ -214,6 +219,9 @@ export default function Messages() {
   const [creating, setCreating] = useState(false);
   const [usersList, setUsersList] = useState([]);
   const [actingInvite, setActingInvite] = useState(null); // group id being accepted/declined
+  const [headerMenuOpen, setHeaderMenuOpen] = useState(false); // group header "…" menu
+  const [leaveConfirm, setLeaveConfirm] = useState(null); // group pending a "leave" confirm
+  const [leaving, setLeaving] = useState(false);
 
   const scrollRef = useRef(null);
   const composerRef = useRef(null);
@@ -242,7 +250,8 @@ export default function Messages() {
       .getUsers()
       .then((r) =>
         setUsersList(
-          asArray(r)
+          // Fans are spectator-only — never offer them as group members/invitees.
+          excludeFanMembers(asArray(r))
             .filter((u) => u && u.keycloakId)
             .map((u) => ({
               keycloakId: u.keycloakId,
@@ -291,17 +300,30 @@ export default function Messages() {
         if (general && !generalRosterLoadedRef.current) {
           generalRosterLoadedRef.current = true;
           try {
+            // Pull the full users list (carries each user's role) so we can keep
+            // fans OUT of the implicit General roster — fans are spectator-only
+            // and must never appear as members of the team chat.
+            const all = await api.getUsers().catch(() => []);
+            const nonFanUsers = excludeFanMembers(asArray(all));
+            const nonFanIds = new Set(
+              nonFanUsers.map((u) => u.keycloakId).filter(Boolean)
+            );
+            const fanIds = new Set(
+              asArray(all)
+                .filter((u) => u && isFanRole(u.role))
+                .map((u) => u.keycloakId)
+                .filter(Boolean)
+            );
             const memRaw = await api.chatGroups.members(general.id).catch(() => []);
             const mem = asArray(memRaw)
               .map((m) => (typeof m === "string" ? m : m.userKeycloakId))
-              .filter(Boolean);
+              .filter(Boolean)
+              // Drop any fan the backend included in the implicit membership.
+              .filter((id) => !fanIds.has(id));
             if (mem.length) {
               setGeneralMembers(mem);
             } else {
-              const all = await api.getUsers().catch(() => []);
-              setGeneralMembers(
-                asArray(all).map((u) => u.keycloakId).filter(Boolean)
-              );
+              setGeneralMembers([...nonFanIds]);
             }
           } catch {
             generalRosterLoadedRef.current = false; // allow a retry next poll
@@ -343,14 +365,16 @@ export default function Messages() {
         const all = await api.getMessagesByGroup(groupId).catch(() => api.getAllMessages());
         const { visible } = buildGroupThread(all, groupId, myId);
         setThread(visible);
-        // Drop optimistic sends now backed by a persisted copy (match by
-        // clientMsgId when present, else by sender+content+near-time).
+        // Retire optimistic sends for THIS group once their persisted copy has
+        // landed in the thread (match by clientMsgId when present, else by
+        // sender+content+near-time). After this the merge renders the persisted
+        // row directly — still a single "sent" (✓) bubble, never a duplicate.
+        // Pending sends for OTHER groups are left untouched.
         setPending((prev) =>
-          prev.filter(
-            (p) =>
-              sameGroupId(p.groupId, groupId) &&
-              !visible.some((v) => isSameMessage(v, p))
-          )
+          prev.filter((p) => {
+            if (!sameGroupId(p.groupId, groupId)) return true; // keep other groups
+            return !visible.some((v) => v.id != null && isSameMessage(v, p));
+          })
         );
         setError(null);
       } catch (err) {
@@ -416,13 +440,50 @@ export default function Messages() {
     onChat: handleWsChat,
   });
 
-  // ── Merge persisted thread + pending optimistic/live (dedup by identity) ──
+  // ── Merge persisted thread + pending optimistic/live ─────────────────────
+  // CRITICAL (WhatsApp single-bubble): a sent message must ALWAYS be exactly one
+  // bubble that goes clock -> check. We do this by REPLACING in place, never
+  // add-then-remove:
+  //   * For each persisted message that matches a pending optimistic one
+  //     (by clientMsgId, else sender+content+near-time), we MERGE the persisted
+  //     copy ONTO the pending record so it keeps the pending record's stable
+  //     React key (cmsg-<clientMsgId>) and shows status "sent" (✓).
+  //   * The persisted copy is then NOT rendered as its own row, so there is no
+  //     second bubble at any point.
+  //   * Pending sends with no persisted match yet stay as "sending" (clock).
   const mergedThread = useMemo(() => {
-    const extras = pending.filter(
-      (p) => sameGroupId(p.groupId, activeGroupId) && !thread.some((v) => isSameMessage(v, p))
-    );
-    if (extras.length === 0) return thread;
-    return [...thread, ...extras].sort(
+    const mine = pending.filter((p) => sameGroupId(p.groupId, activeGroupId));
+    if (mine.length === 0) return thread;
+
+    // Index persisted messages that have been claimed by a pending bubble.
+    const claimed = new Set(); // indices into `thread`
+    const rows = [];
+
+    for (const p of mine) {
+      const idx = thread.findIndex((v, i) => !claimed.has(i) && isSameMessage(v, p));
+      if (idx >= 0) {
+        claimed.add(idx);
+        const persisted = thread[idx];
+        // Merge persisted fields (real id, server reactions/reply) onto the
+        // optimistic record, but keep clientMsgId so the bubble's key is stable.
+        rows.push({
+          ...persisted,
+          clientMsgId: p.clientMsgId,
+          live: false,
+          status: "sent",
+        });
+      } else {
+        // Still in flight — keep showing the optimistic bubble (clock).
+        rows.push({ ...p, status: p.status || "sending" });
+      }
+    }
+
+    // Persisted messages NOT claimed by a pending bubble render normally.
+    for (let i = 0; i < thread.length; i++) {
+      if (!claimed.has(i)) rows.push(thread[i]);
+    }
+
+    return rows.sort(
       (a, b) => new Date(a.sentAt || 0).getTime() - new Date(b.sentAt || 0).getTime()
     );
   }, [thread, pending, activeGroupId]);
@@ -450,6 +511,7 @@ export default function Messages() {
     const onDocClick = (e) => {
       if (composerRef.current && !composerRef.current.contains(e.target)) setShowEmoji(false);
       if (!e.target.closest?.("[data-reaction-ui]")) setPickerForId(null);
+      if (!e.target.closest?.("[data-header-menu]")) setHeaderMenuOpen(false);
     };
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
@@ -511,6 +573,9 @@ export default function Messages() {
 
   // ── Send a message ───────────────────────────────────────────────────────
   const handleSend = async () => {
+    // Fans are spectator-only and cannot post in any chat (defense-in-depth;
+    // the route guard already keeps them off this page).
+    if (isFanRole(role)) return;
     const text = draft.trim();
     if (!text || sending) return;
     const myId = meId || getCurrentKeycloakId();
@@ -525,7 +590,10 @@ export default function Messages() {
     const sentAt = new Date().toISOString();
     const clientMsgId = `c-${myId}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
-    // Optimistic add — rendered immediately, deduped against the persisted copy.
+    // Optimistic add — ONE bubble rendered immediately with a "sending" (clock)
+    // status. The persisted copy is later MERGED into this same record by
+    // clientMsgId (see mergedThread), flipping the clock to a check — we never
+    // append a second bubble.
     const optimistic = {
       id: null,
       clientMsgId,
@@ -536,6 +604,7 @@ export default function Messages() {
       reactions: [],
       reply: replyTo ? { id: replyTo.id, sender: replyTo.sender, content: replyTo.content } : null,
       live: true,
+      status: "sending",
     };
     setPending((prev) => [...prev, optimistic]);
     setDraft("");
@@ -544,8 +613,10 @@ export default function Messages() {
     setShowEmoji(false);
 
     try {
-      // 1) Persist (durable) with the real groupId.
-      await api.createMessage({
+      // 1) Persist (durable) with the real groupId. The POST returns the created
+      //    row — flip THIS bubble to "sent" (✓) immediately with its real id, so
+      //    the check shows the instant the server confirms, before any refetch.
+      const saved = await api.createMessage({
         senderUserKeycloakId: myId,
         recipientUserKeycloakId: groupRecipient(gid),
         subject: GROUP_SUBJECT,
@@ -554,6 +625,13 @@ export default function Messages() {
         groupId: gid,
         parentMessageId: repliedTo ? repliedTo.id : null,
       });
+      setPending((prev) =>
+        prev.map((p) =>
+          p.clientMsgId === clientMsgId
+            ? { ...p, id: saved?.id ?? p.id, status: "sent", live: false }
+            : p
+        )
+      );
       // 2) Broadcast over WS so others get it instantly (no-op if WS is down).
       //    Include clientMsgId so our own echo is deduped, not double-rendered.
       sendChat({
@@ -674,6 +752,36 @@ export default function Messages() {
     }
   };
 
+  // ── Leave a group ─────────────────────────────────────────────────────────
+  // Reuse the decline endpoint (it removes the membership row) as "leave". After
+  // leaving we drop the group from the sidebar and fall back to General. The
+  // General group cannot be left.
+  const handleLeaveGroup = async (group) => {
+    const myId = meId || getCurrentKeycloakId();
+    if (!myId || !group || group.isGeneral) return;
+    const groupId = group.id;
+    setLeaving(true);
+    try {
+      await api.chatGroups.decline(groupId, myId);
+      // Remove from the sidebar immediately, then select General.
+      setGroups((prev) => {
+        const next = prev.filter((g) => !sameGroupId(g.id, groupId));
+        const general = next.find((g) => g.isGeneral) || next[0] || null;
+        setActiveGroupId(general ? general.id : null);
+        return next;
+      });
+      setLeaveConfirm(null);
+      setHeaderMenuOpen(false);
+      // Reconcile with the backend (silent so we don't flash a loader).
+      await loadGroups(myId, { silent: true });
+    } catch (err) {
+      console.error("Failed to leave group", err);
+      setError(err.message || "Couldn't leave the group.");
+    } finally {
+      setLeaving(false);
+    }
+  };
+
   // Day separators.
   const grouped = useMemo(() => {
     const out = [];
@@ -690,6 +798,28 @@ export default function Messages() {
   }, [mergedThread]);
 
   const mayCreate = canCreateGroups(role);
+  const isFan = isFanRole(role);
+
+  // Fans are spectator-only and are not part of any team chat. The route guard
+  // (permissions.js + middleware) keeps them off this page; this is the
+  // in-component fallback so a fan who somehow lands here sees a locked state
+  // instead of the General chat — and can never read or post.
+  if (isFan) {
+    return (
+      <div className="-m-8 h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-950 text-slate-100">
+        <div className="max-w-sm w-full mx-4 rounded-2xl border border-slate-800 bg-slate-900/60 p-8 text-center">
+          <div className="mx-auto mb-4 w-14 h-14 rounded-full bg-slate-800 grid place-items-center text-slate-400">
+            <Lock size={24} />
+          </div>
+          <h1 className="text-lg font-black text-slate-100 mb-1.5">Team chat is members-only</h1>
+          <p className="text-[13px] font-bold text-slate-400 leading-relaxed">
+            The General team chat is for club players and staff. As a fan you have
+            full spectator access to matches, competitions and club news.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="-m-8 h-[calc(100vh-4rem)] flex bg-slate-950 text-slate-100 overflow-hidden">
@@ -896,6 +1026,43 @@ export default function Messages() {
               </span>
             )}
           </div>
+
+          {/* Group header menu — only meaningful for non-General groups (Leave). */}
+          {activeGroup && !activeGroup.isGeneral && (
+            <div className="relative shrink-0" data-header-menu>
+              <button
+                onClick={() => setHeaderMenuOpen((v) => !v)}
+                aria-label="Group options"
+                aria-haspopup="menu"
+                aria-expanded={headerMenuOpen}
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+                  headerMenuOpen
+                    ? "bg-slate-800 text-white"
+                    : "text-slate-300 hover:text-white hover:bg-slate-800/70"
+                }`}
+              >
+                <MoreVertical size={18} />
+              </button>
+              {headerMenuOpen && (
+                <div
+                  role="menu"
+                  data-header-menu
+                  className="absolute right-0 top-full mt-2 w-44 rounded-xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/40 py-1 z-40"
+                >
+                  <button
+                    role="menuitem"
+                    onClick={() => {
+                      setHeaderMenuOpen(false);
+                      setLeaveConfirm(activeGroup);
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 text-left text-[13px] font-bold text-rose-300 hover:bg-rose-500/10 transition-colors"
+                  >
+                    <LogOut size={15} /> Leave group
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Messages */}
@@ -1032,6 +1199,50 @@ export default function Messages() {
         meId={meId}
         busy={creating}
       />
+
+      {/* Leave-group confirmation */}
+      {leaveConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={() => !leaving && setLeaveConfirm(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl shadow-black/50 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 px-5 pt-5">
+              <span className="w-10 h-10 rounded-full bg-rose-500/15 text-rose-300 grid place-items-center shrink-0">
+                <LogOut size={18} />
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-base font-black text-slate-100">Leave group?</h2>
+                <p className="text-[12px] font-bold text-slate-400 truncate">{leaveConfirm.name}</p>
+              </div>
+            </div>
+            <p className="px-5 py-4 text-[13px] text-slate-300 leading-relaxed">
+              You'll be removed from <span className="font-bold text-slate-100">{leaveConfirm.name}</span> and
+              it will disappear from your chats. You can rejoin only if you're invited again.
+            </p>
+            <div className="flex gap-2 px-5 pb-5">
+              <button
+                onClick={() => setLeaveConfirm(null)}
+                disabled={leaving}
+                className="flex-1 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-[13px] font-black disabled:opacity-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleLeaveGroup(leaveConfirm)}
+                disabled={leaving}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-[13px] font-black disabled:opacity-50 transition-colors"
+              >
+                {leaving ? <RefreshCw size={14} className="animate-spin" /> : <LogOut size={14} />}
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1080,6 +1291,16 @@ function ConnIndicator({ status }) {
   );
 }
 
+// ── Send-status tick (WhatsApp style) ───────────────────────────────────────
+// One bubble, one icon that flips clock -> check. "sending" shows a clock;
+// anything else (persisted/loaded messages) shows a single check.
+function StatusTick({ status }) {
+  if (status === "sending") {
+    return <Clock size={11} className="shrink-0 opacity-80" aria-label="Sending" />;
+  }
+  return <Check size={12} className="shrink-0 opacity-90" aria-label="Sent" />;
+}
+
 // ── A single chat bubble ────────────────────────────────────────────────────
 function Bubble({ msg, mine, onReply, onReact, pickerOpen, setPickerOpen }) {
   const name = senderName(msg.sender);
@@ -1124,9 +1345,9 @@ function Bubble({ msg, mine, onReply, onReact, pickerOpen, setPickerOpen }) {
 
           <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
 
-          <span className={`block text-right text-[9px] mt-0.5 ${mine ? "text-emerald-100/70" : "text-slate-500"}`}>
+          <span className={`flex items-center justify-end gap-1 text-[9px] mt-0.5 ${mine ? "text-emerald-100/70" : "text-slate-500"}`}>
             {formatTime(msg.sentAt)}
-            {msg.live && " · sending"}
+            {mine && <StatusTick status={msg.status} />}
           </span>
 
           {!msg.live && msg.id != null && (

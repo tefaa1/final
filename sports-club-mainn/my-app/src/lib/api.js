@@ -348,6 +348,11 @@ export const api = {
     createSponsorOffer: (data) => apiFetch(`${API_BASE}/sponsor-offers`, { method: 'POST', body: JSON.stringify(data) }),
     updateSponsorOffer: (id, data) => apiFetch(`${API_BASE}/sponsor-offers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     deleteSponsorOffer: (id) => apiFetch(`${API_BASE}/sponsor-offers/${id}`, { method: 'DELETE' }),
+    // Turn-based negotiation lifecycle. The backend enforces that the caller is
+    // the admin or the owning sponsor AND that it is their turn.
+    acceptSponsorOffer: (id) => apiFetch(`${API_BASE}/sponsor-offers/${id}/accept`, { method: 'POST' }),
+    rejectSponsorOffer: (id) => apiFetch(`${API_BASE}/sponsor-offers/${id}/reject`, { method: 'POST' }),
+    negotiateSponsorOffer: (id, data) => apiFetch(`${API_BASE}/sponsor-offers/${id}/negotiate`, { method: 'POST', body: JSON.stringify(data) }),
     getUsers: () => apiFetch(`${API_BASE}/users`),
     // Admin-only user creation. Backend exposes POST /auth/admin/create-user
     // (the bare POST /users returns 405). Schema is in the admin Swagger.

@@ -1,0 +1,57 @@
+% auto-generated figure: class-user (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=10mm]
+  % --- central identity class ---
+  \UmlClass{user}{User}{%
+    - keycloakId : String\\
+    - username : String\\
+    - email : String\\
+    - role : Role\\
+    - age : int\\
+    - gender : Gender\\
+    - phone : String}{%
+    + assignRole()\\
+    + profile()}
+
+  % --- role-extension classes (vertical extension, 1..1) ---
+  \UmlClass[above right=2mm and 30mm of user]{player}{PlayerProfile}{%
+    - dateOfBirth : Date\\
+    - nationality : String\\
+    - preferredPosition\\
+    - marketValue : Money\\
+    - kitNumber : int\\
+    - status : PlayerStatus\\
+    - rosterId : Long\\
+    - contractId : Long}{}
+
+  \UmlClass[right=30mm of user]{coach}{HeadCoachProfile}{%
+    - sport : Sport\\
+    - team : String\\
+    - staffRole : String\\
+    - experienceYears : int\\
+    - licenceLevel : String}{}
+
+  \UmlClass[below right=2mm and 30mm of user]{nteam}{NationalTeam}{%
+    - federationName : String\\
+    - country : String\\
+    - contact : String}{}
+
+  % --- note: further role extensions ---
+  \UmlClass[left=22mm of user]{others}{Other extensions}{%
+    Doctor, Physiotherapist,\\
+    FitnessCoach, TeamManager,\\
+    SportManager, Scout,\\
+    Sponsor, Fan\\
+    \emph{(same 1..1 pattern)}}{}
+
+  % --- composition links: User extends each profile 1..1 ---
+  \draw[flow] (user.east) -- node[lbl,pos=0.55]{\itshape extends 1..1} (player.west);
+  \draw[flow] (user.east) -- node[lbl,pos=0.55]{\itshape extends 1..1} (coach.west);
+  \draw[flow] (user.east) -- node[lbl,pos=0.55]{\itshape extends 1..1} (nteam.west);
+  \draw[flow] (user.west) -- node[lbl,pos=0.5]{\itshape extends 1..1} (others.east);
+\end{tikzpicture}}
+\caption{Class model of the user-management domain: the central \texttt{User} identity record and its one-to-one role-extension classes (\texttt{PlayerProfile}, \texttt{HeadCoachProfile}, \texttt{NationalTeam} and the remaining role extensions), realising the vertical-extension pattern of \texttt{mscms\_user}.}
+\label{fig-class-user}
+\end{figure}

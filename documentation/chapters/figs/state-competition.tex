@@ -1,0 +1,31 @@
+% auto-generated figure: state-competition (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=26mm, on grid,
+    every edge/.style={flow,draw}]
+  % --- main competition lifecycle ---
+  \node[st,initial,initial text=create] (draft) {Draft};
+  \node[st,right=34mm of draft]         (ongo)  {Ongoing\\(editable)};
+  \node[st,accepting,right=40mm of ongo](comp)  {Completed\\(read-only)};
+
+  \draw[flow] (draft) edge node[lbl,above]{publish} (ongo);
+  \draw[flow] (ongo)  edge node[lbl,above,align=center]{all fixtures\\played} (comp);
+  \draw[flow] (ongo)  edge[loop above] node[lbl]{record result} (ongo);
+
+  % --- Champions League sub-states (knockout gated by league phase) ---
+  \node[st,below=24mm of draft] (league) {League\\Phase};
+  \node[st,right=44mm of league] (knock) {Knockout\\(locked)};
+
+  \draw[flow] (league) edge node[lbl,above,align=center]{league phase complete\\$\rightarrow$ unlock knockout} (knock);
+  \draw[flow] (knock)  edge[bend left=12] node[lbl,below,align=center]{all ties played} (comp);
+
+  % link the CL specialisation to the generic Ongoing state
+  \draw[flowd] (ongo) edge[bend right=14] node[lbl,right,align=center]{Champions\\League} (league);
+
+  \node[font=\scriptsize\itshape,below=10mm of league,xshift=22mm,align=center]
+    {Champions League specialisation of \emph{Ongoing}:\\the knockout bracket is locked until the league phase is complete.};
+\end{tikzpicture}}
+\caption{State machine for the competition lifecycle: a competition moves from Draft through an editable Ongoing phase to a read-only Completed state once every fixture is played, with the Champions League specialisation in which the knockout bracket stays locked until the league phase is complete.}
+\label{fig-state-competition}
+\end{figure}

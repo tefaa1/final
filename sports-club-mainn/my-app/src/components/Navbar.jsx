@@ -9,6 +9,7 @@ import {
 import { MdOutlineSportsVolleyball, MdOutlineEmojiEvents, MdCompareArrows } from "react-icons/md";
 import { useRouter, usePathname } from "next/navigation";
 import Cookies from 'js-cookie';
+import NotificationBell from "./NotificationBell";
 
 // A segment is "raw" (an id we must never show) when it is purely numeric or
 // looks like a uuid / long hex / opaque token.
@@ -129,6 +130,9 @@ const Navbar = ({ isSidebarOpen, currentPage, user }) => {
 
         {/* Right */}
         <div className="flex items-center gap-3">
+
+          {/* Notification bell */}
+          <NotificationBell />
 
           {/* Logout button */}
           <button

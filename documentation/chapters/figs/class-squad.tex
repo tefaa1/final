@@ -1,0 +1,30 @@
+% auto-generated figure: class-squad (source: fix)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=10mm and 20mm]
+  % left composition chain
+  \UmlClass{sport}{Sport}{- id : Long\\ - name\\ - sportType}{}
+  \UmlClass[below=of sport]{team}{Team}{- id : Long\\ - name\\ - sportId : Long}{}
+  \UmlClass[below=of team]{roster}{Roster}{- teamId : Long\\ - playerKeycloakId\\ - season}{}
+  % contract to the right of team
+  \UmlClass[right=of team]{contract}{PlayerContract}{- playerKeycloakId\\ - start / endDate\\ - salary, releaseClause\\ - status}{}
+  % external column (far right)
+  \UmlClass[right=24mm of contract]{oteam}{OuterTeam}{- id : Long\\ - name, country}{}
+  \UmlClass[below=of oteam]{oplayer}{OuterPlayer}{- id : Long\\ - position\\ - outerTeamId : Long}{}
+  % transfer + call-up classes at the bottom
+  \UmlClass[below=of roster]{tin}{PlayerTransferIncoming}{- playerKeycloakId\\ - fromOuterTeam, toTeam\\ - status : RequestStatus}{}
+  \UmlClass[right=of tin]{tout}{PlayerTransferOutgoing}{- playerKeycloakId\\ - fromTeam, toOuterTeam\\ - status : RequestStatus}{}
+  \UmlClass[right=of tout]{callup}{PlayerCallUpRequest}{- playerKeycloakId\\ - nationalTeamId\\ - status}{}
+  % compositions (filled) and references (dashed)
+  \draw[flow] (sport) -- node[lbl,right]{1..*} (team);
+  \draw[flow] (team)  -- node[lbl,right]{1..*} (roster);
+  \draw[flow] (oteam) -- node[lbl,right]{1..*} (oplayer);
+  \draw[flow,dashed] (team)  -- node[lbl,above]{signs} (contract);
+  \draw[flow,dashed] (tin.north)  -- node[lbl,right]{to} (roster.south);
+  \draw[flow,dashed] (tout.north) to[out=90,in=-90] node[lbl,right]{from} (team.south east);
+\end{tikzpicture}%
+}
+\caption{Class model of the player-management domain: the Sport--Team--Roster composition chain, per-player PlayerContract, the external OuterTeam--OuterPlayer squad, and the directed, status-bearing transfer and national-team call-up associations.}
+\label{fig-class-squad}
+\end{figure}

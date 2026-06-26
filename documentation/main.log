@@ -1,0 +1,4076 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.24)  24 JUN 2026 11:40
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**./main.tex
+(main.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\report.cls
+Document Class: report 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@chapter=\count276
+\c@section=\count277
+\c@subsection=\count278
+\c@subsubsection=\count279
+\c@paragraph=\count280
+\c@subparagraph=\count281
+\c@figure=\count282
+\c@table=\count283
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+Package: inputenc 2024/02/08 v1.3d Input encoding file
+\inpenc@prehook=\toks17
+\inpenc@posthook=\toks18
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2025/07/09 v2.17z AMS math features
+\@mathmargin=\skip51
+
+For additional information on amsmath, use the `?' option.
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks19
+\ex@=\dimen149
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen150
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count284
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count285
+\leftroot@=\count286
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count287
+\DOTSCASE@=\count288
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box53
+\strutbox@=\box54
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen151
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count289
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count290
+\dotsspace@=\muskip17
+\c@parentequation=\count291
+\dspbrk@lvl=\count292
+\tag@help=\toks20
+\row@=\count293
+\column@=\count294
+\maxfields@=\count295
+\andhelp@=\toks21
+\eqnshift@=\dimen152
+\alignsep@=\dimen153
+\tagshift@=\dimen154
+\tagwidth@=\dimen155
+\totwidth@=\dimen156
+\lineht@=\dimen157
+\@envbody=\toks22
+\multlinegap=\skip52
+\multlinetaggap=\skip53
+\mathdisplay@stack=\toks23
+LaTeX Info: Redefining \[ on input line 2950.
+LaTeX Info: Redefining \] on input line 2951.
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\mathptmx.sty
+Package: mathptmx 2020/03/25 PSNFSS-v9.3 Times w/ Math, improved (SPQR, WaS) 
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 28.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> OT1/ztmcm/m/n on input line 28.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/ztmcm/m/n on input line 28.
+LaTeX Font Info:    Redeclaring symbol font `letters' on input line 29.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `normal'
+(Font)                  OML/cmm/m/it --> OML/ztmcm/m/it on input line 29.
+LaTeX Font Info:    Overwriting symbol font `letters' in version `bold'
+(Font)                  OML/cmm/b/it --> OML/ztmcm/m/it on input line 29.
+LaTeX Font Info:    Redeclaring symbol font `symbols' on input line 30.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
+(Font)                  OMS/cmsy/m/n --> OMS/ztmcm/m/n on input line 30.
+LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
+(Font)                  OMS/cmsy/b/n --> OMS/ztmcm/m/n on input line 30.
+LaTeX Font Info:    Redeclaring symbol font `largesymbols' on input line 31.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
+(Font)                  OMX/cmex/m/n --> OMX/ztmcm/m/n on input line 31.
+LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
+(Font)                  OMX/cmex/m/n --> OMX/ztmcm/m/n on input line 31.
+\symbold=\mathgroup4
+\symitalic=\mathgroup5
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 34.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
+(Font)                  OT1/cmr/bx/n --> OT1/ptm/bx/n on input line 34.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> OT1/ptm/m/it on input line 35.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> OT1/ptm/m/it on input line 35.
+LaTeX Info: Redefining \hbar on input line 50.
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+Package: geometry 2026/03/07 v6.0 Page Geometry
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks24
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+))
+\Gm@cnth=\count296
+\Gm@cntv=\count297
+\c@Gm@tempcnt=\count298
+\Gm@bindingoffset=\dimen158
+\Gm@wd@mp=\dimen159
+\Gm@odd@mp=\dimen160
+\Gm@even@mp=\dimen161
+\Gm@layoutwidth=\dimen162
+\Gm@layoutheight=\dimen163
+\Gm@layouthoffset=\dimen164
+\Gm@layoutvoffset=\dimen165
+\Gm@dimlist=\toks25
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/setspace\setspace.sty
+Package: setspace 2022/12/04 v6.7b set line spacing
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics
+.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.d
+ef
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen166
+\Gin@req@width=\dimen167
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen168
+\captionmargin=\dimen169
+\caption@leftmargin=\dimen170
+\caption@rightmargin=\dimen171
+\caption@width=\dimen172
+\caption@indent=\dimen173
+\caption@parindent=\dimen174
+\caption@hangindent=\dimen175
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count299
+\c@continuedfloat=\count300
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen176
+\lightrulewidth=\dimen177
+\cmidrulewidth=\dimen178
+\belowrulesep=\dimen179
+\belowbottomsep=\dimen180
+\aboverulesep=\dimen181
+\abovetopsep=\dimen182
+\cmidrulesep=\dimen183
+\cmidrulekern=\dimen184
+\defaultaddspace=\dimen185
+\@cmidla=\count301
+\@cmidlb=\count302
+\@aboverulesep=\dimen186
+\@belowrulesep=\dimen187
+\@thisruleclass=\count303
+\@lastruleclass=\count304
+\@thisrulewidth=\dimen188
+) (C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
+Package: longtable 2025-10-13 v4.24 Multi-page Table package (DPC)
+\LTleft=\skip54
+\LTright=\skip55
+\LTpre=\skip56
+\LTpost=\skip57
+\LTchunksize=\count305
+\LTcapwidth=\dimen189
+\LT@head=\box55
+\LT@firsthead=\box56
+\LT@foot=\box57
+\LT@lastfoot=\box58
+\LT@gbox=\box59
+\LT@cols=\count306
+\LT@rows=\count307
+\c@LT@tables=\count308
+\c@LT@chunks=\count309
+\LT@p@ftn=\toks26
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count310
+) (C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+Package: array 2025/09/25 v2.6n Tabular extension package (FMi)
+\col@sep=\dimen190
+\ar@mcellbox=\box60
+\extrarowheight=\dimen191
+\NC@list=\toks27
+\extratabsurround=\skip58
+\backup@length=\skip59
+\ar@cellbox=\box61
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
+Package: tabularx 2023/12/11 v2.12a `tabularx' package (DPC)
+\TX@col@width=\dimen192
+\TX@old@table=\dimen193
+\TX@old@col=\dimen194
+\TX@target=\dimen195
+\TX@delta=\dimen196
+\TX@cols=\count311
+\TX@ftn=\toks28
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
+Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
+\multirow@colwidth=\skip60
+\multirow@cntb=\count312
+\multirow@dima=\skip61
+\bigstrutjot=\dimen197
+) (C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count313
+\float@exts=\toks29
+\float@box=\box62
+\@float@everytoks=\toks30
+\@floatcapt=\box63
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cf
+g
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 274.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.lt
+x)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+Package: enumitem 2025/02/06 v3.11 Customized lists
+\labelindent=\skip62
+\enit@outerparindent=\dimen198
+\enit@toks=\toks31
+\enit@inbox=\box64
+\enit@count@id=\count314
+\enitdp@description=\count315
+) (preamble-diagrams.tex
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/frontendlayer\tik
+z.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgf.st
+y
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfrcs.
+sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfut
+il-common.tex
+\pgfutil@everybye=\toks32
+\pgfutil@tempdima=\dimen199
+\pgfutil@tempdimb=\dimen256
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfut
+il-latex.def
+\pgfutil@abb=\box65
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrc
+s.code.tex
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf\pgf.revision.te
+x)
+Package: pgfrcs 2025-08-29 v3.1.11a (3.1.11a)
+))
+Package: pgf 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/basiclayer\pgfcor
+e.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/systemlayer\pgfsy
+s.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf
+sys.code.tex
+Package: pgfsys 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfke
+ys.code.tex
+\pgfkeys@pathtoks=\toks33
+\pgfkeys@temptoks=\toks34
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfke
+yslibraryfiltered.code.tex
+\pgfkeys@tmptoks=\toks35
+))
+\pgf@x=\dimen257
+\pgf@y=\dimen258
+\pgf@xa=\dimen259
+\pgf@ya=\dimen260
+\pgf@xb=\dimen261
+\pgf@yb=\dimen262
+\pgf@xc=\dimen263
+\pgf@yc=\dimen264
+\pgf@xd=\dimen265
+\pgf@yd=\dimen266
+\w@pgf@writea=\write3
+\r@pgf@reada=\read2
+\c@pgf@counta=\count316
+\c@pgf@countb=\count317
+\c@pgf@countc=\count318
+\c@pgf@countd=\count319
+\t@pgf@toka=\toks36
+\t@pgf@tokb=\toks37
+\t@pgf@tokc=\toks38
+\pgf@sys@id@count=\count320
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf
+.cfg
+File: pgf.cfg 2025-08-29 v3.1.11a (3.1.11a)
+)
+Driver file for pgf: pgfsys-pdftex.def
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf
+sys-pdftex.def
+File: pgfsys-pdftex.def 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf
+sys-common-pdf.def
+File: pgfsys-common-pdf.def 2025-08-29 v3.1.11a (3.1.11a)
+)))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf
+syssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfsyssoftpath@smallbuffer@items=\count321
+\pgfsyssoftpath@bigbuffer@items=\count322
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf
+sysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+ore.code.tex
+Package: pgfcore 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.co
+de.tex
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathuti
+l.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathpar
+ser.code.tex
+\pgfmath@dimen=\dimen267
+\pgfmath@count=\count323
+\pgfmath@box=\box66
+\pgfmath@toks=\toks39
+\pgfmath@stack@operand=\toks40
+\pgfmath@stack@operation=\toks41
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.basic.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.trigonometric.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.random.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.comparison.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.base.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.round.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.misc.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfun
+ctions.integerarithmetics.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathcal
+c.code.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathflo
+at.code.tex
+\c@pgfmathroundto@lastzeros=\count324
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.cod
+e.tex)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orepoints.code.tex
+File: pgfcorepoints.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@picminx=\dimen268
+\pgf@picmaxx=\dimen269
+\pgf@picminy=\dimen270
+\pgf@picmaxy=\dimen271
+\pgf@pathminx=\dimen272
+\pgf@pathmaxx=\dimen273
+\pgf@pathminy=\dimen274
+\pgf@pathmaxy=\dimen275
+\pgf@xx=\dimen276
+\pgf@xy=\dimen277
+\pgf@yx=\dimen278
+\pgf@yy=\dimen279
+\pgf@zx=\dimen280
+\pgf@zy=\dimen281
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orepathconstruct.code.tex
+File: pgfcorepathconstruct.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@path@lastx=\dimen282
+\pgf@path@lasty=\dimen283
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orepathusage.code.tex
+File: pgfcorepathusage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@shorten@end@additional=\dimen284
+\pgf@shorten@start@additional=\dimen285
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orescopes.code.tex
+File: pgfcorescopes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfpic=\box67
+\pgf@hbox=\box68
+\pgf@layerbox@main=\box69
+\pgf@picture@serial@count=\count325
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+oregraphicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgflinewidth=\dimen286
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+oretransformations.code.tex
+File: pgfcoretransformations.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@pt@x=\dimen287
+\pgf@pt@y=\dimen288
+\pgf@pt@temp=\dimen289
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orequick.code.tex
+File: pgfcorequick.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+oreobjects.code.tex
+File: pgfcoreobjects.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orepathprocessing.code.tex
+File: pgfcorepathprocessing.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orearrows.code.tex
+File: pgfcorearrows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfarrowsep=\dimen290
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+oreshade.code.tex
+File: pgfcoreshade.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@max=\dimen291
+\pgf@sys@shading@range@num=\count326
+\pgf@shadingcount=\count327
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+oreimage.code.tex
+File: pgfcoreimage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+oreexternal.code.tex
+File: pgfcoreexternal.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfexternal@startupbox=\box70
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orelayers.code.tex
+File: pgfcorelayers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+oretransparency.code.tex
+File: pgfcoretransparency.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orepatterns.code.tex
+File: pgfcorepatterns.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfc
+orerdf.code.tex
+File: pgfcorerdf.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodu
+leshapes.code.tex
+File: pgfmoduleshapes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfnodeparttextbox=\box71
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodu
+leplot.code.tex
+File: pgfmoduleplot.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgf
+comp-version-0-65.sty
+Package: pgfcomp-version-0-65 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@nodesepstart=\dimen292
+\pgf@nodesepend=\dimen293
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgf
+comp-version-1-18.sty
+Package: pgfcomp-version-1-18 2025-08-29 v3.1.11a (3.1.11a)
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgffor.
+sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/utilities\pgfkeys
+.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfke
+ys.code.tex))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf/math\pgfmath.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmath.co
+de.tex))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffo
+r.code.tex
+Package: pgffor 2025-08-29 v3.1.11a (3.1.11a)
+\pgffor@iter=\dimen294
+\pgffor@skip=\dimen295
+\pgffor@stack=\toks42
+\pgffor@toks=\toks43
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz\tikz.code.tex
+Package: tikz 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgfli
+braryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@plot@mark@count=\count328
+\pgfplotmarksize=\dimen296
+)
+\tikz@lastx=\dimen297
+\tikz@lasty=\dimen298
+\tikz@lastxsaved=\dimen299
+\tikz@lastysaved=\dimen300
+\tikz@lastmovetox=\dimen301
+\tikz@lastmovetoy=\dimen302
+\tikzleveldistance=\dimen303
+\tikzsiblingdistance=\dimen304
+\tikz@figbox=\box72
+\tikz@figbox@bg=\box73
+\tikz@tempbox=\box74
+\tikz@tempbox@bg=\box75
+\tikztreelevel=\count329
+\tikznumberofchildren=\count330
+\tikznumberofcurrentchild=\count331
+\tikz@fig@count=\count332
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodu
+lematrix.code.tex
+File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfmatrixcurrentrow=\count333
+\pgfmatrixcurrentcolumn=\count334
+\pgf@matrix@numberofcolumns=\count335
+)
+\tikz@expandcount=\count336
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf-umlsd\pgf-umlsd.s
+ty
+Package: pgf-umlsd 2011/07/27 v0.6 Some LaTeX macros for UML Sequence Diagrams.
+
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibraryarrows.code.tex
+File: tikzlibraryarrows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgfli
+braryarrows.code.tex
+File: pgflibraryarrows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\arrowsize=\dimen305
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibraryshadows.code.tex
+File: tikzlibraryshadows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibraryfadings.code.tex
+File: tikzlibraryfadings.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgfli
+braryfadings.code.tex
+File: pgflibraryfadings.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+)
+\c@preinst=\count337
+\c@instnum=\count338
+\c@threadnum=\count339
+\c@seqlevel=\count340
+\c@callevel=\count341
+\c@callselflevel=\count342
+\c@blocklevel=\count343
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/colortbl\colortbl.sty
+Package: colortbl 2026/05/01 v1.0l Color table columns (DPC)
+\everycr=\toks44
+\minrowclearance=\skip63
+\rownum=\count344
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgfli
+braryarrows.meta.code.tex
+File: pgflibraryarrows.meta.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfarrowinset=\dimen306
+\pgfarrowlength=\dimen307
+\pgfarrowwidth=\dimen308
+\pgfarrowlinewidth=\dimen309
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibrarycalc.code.tex
+File: tikzlibrarycalc.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibraryfit.code.tex
+File: tikzlibraryfit.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibraryshapes.geometric.code.tex
+File: tikzlibraryshapes.geometric.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/shape
+s\pgflibraryshapes.geometric.code.tex
+File: pgflibraryshapes.geometric.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibraryshapes.multipart.code.tex
+File: tikzlibraryshapes.multipart.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/shape
+s\pgflibraryshapes.multipart.code.tex
+File: pgflibraryshapes.multipart.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgfnodepartlowerbox=\box76
+\pgfnodeparttwobox=\box77
+\pgfnodepartthreebox=\box78
+\pgfnodepartfourbox=\box79
+\pgfnodeparttwentybox=\box80
+\pgfnodepartnineteenbox=\box81
+\pgfnodeparteighteenbox=\box82
+\pgfnodepartseventeenbox=\box83
+\pgfnodepartsixteenbox=\box84
+\pgfnodepartfifteenbox=\box85
+\pgfnodepartfourteenbox=\box86
+\pgfnodepartthirteenbox=\box87
+\pgfnodeparttwelvebox=\box88
+\pgfnodepartelevenbox=\box89
+\pgfnodeparttenbox=\box90
+\pgfnodepartninebox=\box91
+\pgfnodeparteightbox=\box92
+\pgfnodepartsevenbox=\box93
+\pgfnodepartsixbox=\box94
+\pgfnodepartfivebox=\box95
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibrarybackgrounds.code.tex
+File: tikzlibrarybackgrounds.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+\pgf@layerbox@background=\box96
+\pgf@layerboxsaved@background=\box97
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibraryautomata.code.tex
+File: tikzlibraryautomata.code.tex 2025-08-29 v3.1.11a (3.1.11a)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pgf-blur\tikzlibrarys
+hadows.blur.code.tex  v1.02, 2012/12/09
+\pgfbs@fading@count=\count345
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibrarydecorations.pathreplacing.code.tex
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/t
+ikz/libraries\tikzlibrarydecorations.code.tex
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodu
+ledecorations.code.tex
+\pgfdecoratedcompleteddistance=\dimen310
+\pgfdecoratedremainingdistance=\dimen311
+\pgfdecoratedinputsegmentcompleteddistance=\dimen312
+\pgfdecoratedinputsegmentremainingdistance=\dimen313
+\pgf@decorate@distancetomove=\dimen314
+\pgf@decorate@repeatstate=\count346
+\pgfdecorationsegmentamplitude=\dimen315
+\pgfdecorationsegmentlength=\dimen316
+)
+\tikz@lib@dec@box=\box98
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries/decor
+ations\pgflibrarydecorations.pathreplacing.code.tex)))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
+\lst@mode=\count347
+\lst@gtempboxa=\box99
+\lst@token=\toks45
+\lst@length=\count348
+\lst@currlwidth=\dimen317
+\lst@column=\count349
+\lst@pos=\count350
+\lst@lostspace=\dimen318
+\lst@width=\dimen319
+\lst@newlines=\count351
+\lst@lineno=\count352
+\lst@maxwidth=\dimen320
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstpatch.sty
+File: lstpatch.sty 2025/11/14 1.11b (Carsten Heinz)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+File: lstmisc.sty 2025/11/14 1.11b (Carsten Heinz)
+\c@lstnumber=\count353
+\lst@skipnumbers=\count354
+\lst@framebox=\box100
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
+File: listings.cfg 2025/11/14 1.11b listings configuration
+))
+Package: listings 2025/11/14 1.11b (Carsten Heinz)
+
+==> First Aid for listings.sty no longer applied!
+    Expected:
+        2024/09/23 1.10c (Carsten Heinz)
+    but found:
+        2025/11/14 1.11b (Carsten Heinz)
+    so I'm assuming it got fixed.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2025-07-12 v7.01o Hypertext links for LaTeX
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.s
+ty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefi
+nekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape
+.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcm
+ds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr
+.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+Package: nameref 2025-06-21 v2.57 Cross-referencing by name of section
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gett
+itlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.s
+ty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+))
+\c@section@level=\count355
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\stringenc
+.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\@linkdim=\dimen321
+\Hy@linkcounter=\count356
+\Hy@pagecounter=\count357
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
+File: pd1enc.def 2025-07-12 v7.01o Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count358
+ (C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
+File: puenc.def 2025-07-12 v7.01o Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Option `breaklinks' set `true' on input line 4066.
+Package hyperref Info: Hyper figures OFF on input line 4195.
+Package hyperref Info: Link nesting OFF on input line 4200.
+Package hyperref Info: Hyper index ON on input line 4203.
+Package hyperref Info: Plain pages OFF on input line 4210.
+Package hyperref Info: Backreferencing OFF on input line 4215.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4462.
+\c@Hy@tempcnt=\count359
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4801.
+\XeTeXLinkMargin=\dimen322
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintca
+lc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count360
+\Field@Width=\dimen323
+\Fld@charsize=\dimen324
+Package hyperref Info: Hyper figures OFF on input line 6078.
+Package hyperref Info: Link nesting OFF on input line 6083.
+Package hyperref Info: Hyper index ON on input line 6086.
+Package hyperref Info: backreferencing OFF on input line 6093.
+Package hyperref Info: Link coloring OFF on input line 6098.
+Package hyperref Info: Link coloring with OCG OFF on input line 6103.
+Package hyperref Info: PDF/A mode OFF on input line 6108.
+\Hy@abspage=\count361
+\c@Item=\count362
+\c@Hfootnote=\count363
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+File: hpdftex.def 2025-07-12 v7.01o Hyperref driver for pdfTeX
+\Fld@listcount=\count364
+\c@bookmark@seq@number=\count365
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunf
+ilecheck.sty
+Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniqu
+ecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+84.
+)
+\Hy@SectionHShift=\skip64
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage.sty
+Package: lastpage 2025/08/14 v2.1h lastpage: 2.09 or 2e? (HMM)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpage2e.s
+ty
+Package: lastpage2e 2025/08/14 v2.1h Decide which 2e lastpage version to use (H
+MM)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/lastpage\lastpagemode
+rn.sty
+Package: lastpagemodern 2025-08-14 v2.1h Refers to last page's name (HMM; JPG)
+\c@lastpagecount=\count366
+) 
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
+Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+
+\f@nch@headwidth=\skip65
+\f@nch@offset@elh=\skip66
+\f@nch@offset@erh=\skip67
+\f@nch@offset@olh=\skip68
+\f@nch@offset@orh=\skip69
+\f@nch@offset@elf=\skip70
+\f@nch@offset@erf=\skip71
+\f@nch@offset@olf=\skip72
+\f@nch@offset@orf=\skip73
+\f@nch@height=\skip74
+\f@nch@footalignment=\skip75
+\f@nch@widthL=\skip76
+\f@nch@widthC=\skip77
+\f@nch@widthR=\skip78
+\@temptokenb=\toks46
+) (C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/eso-pic\eso-pic.sty
+Package: eso-pic 2026/05/31 v3.0e eso-pic (RN)
+\ESO@tempdima=\dimen325
+\ESO@tempdimb=\dimen326
+)
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 19
+9.
+ (C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-p
+dftex.def
+File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count367
+) (main.aux)
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 199.
+LaTeX Font Info:    ... okay on input line 199.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(90.3375pt, 416.83289pt, 90.3375pt)
+* v-part:(T,H,B)=(72.26999pt, 700.50687pt, 72.26999pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=416.83289pt
+* \textheight=700.50687pt
+* \oddsidemargin=18.0675pt
+* \evensidemargin=18.0675pt
+* \topmargin=-37.0pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=35.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.
+mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count368
+\scratchdimen=\dimen327
+\scratchbox=\box101
+\nofMPsegments=\count369
+\nofMParguments=\count370
+\everyMPshowfont=\toks47
+\MPscratchCnt=\count371
+\MPscratchDim=\dimen328
+\MPnumerator=\count372
+\makeMPintoPDFobject=\count373
+\everyMPtoPDFconversion=\toks48
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf
+-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys
+.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: longtable package is loaded.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty
+Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
+)
+Package caption Info: End \AtBeginDocument code.
+\c@lstlisting=\count374
+Package hyperref Info: Link coloring OFF on input line 199.
+ (main.out) (main.out)
+\@outlinefile=\write4
+\openout4 = `main.out'.
+
+<screenshots/fci-logo.png, id=565, 139.52126pt x 110.4125pt>
+File: screenshots/fci-logo.png Graphic file (type png)
+<use screenshots/fci-logo.png>
+Package pdftex.def Info: screenshots/fci-logo.png  used on input line 212.
+(pdftex.def)             Requested size: 79.09789pt x 62.59596pt.
+LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line
+ 213.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ztmcm.fd
+File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
+)
+LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line
+ 213.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omlztmcm.fd
+File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
+)
+LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line
+ 213.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omsztmcm.fd
+File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
+)
+LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line
+ 213.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omxztmcm.fd
+File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
+)
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 2
+13.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 213.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 213.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 213.
+<screenshots/menoufia-logo.png, id=566, 117.43875pt x 125.46875pt>
+File: screenshots/menoufia-logo.png Graphic file (type png)
+<use screenshots/menoufia-logo.png>
+Package pdftex.def Info: screenshots/menoufia-logo.png  used on input line 219.
+
+(pdftex.def)             Requested size: 58.5902pt x 62.59596pt.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 246.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10.95> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 246.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 246.
+
+[1
+
+{C:/Users/Best By/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Be
+st By/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./screenshots
+/fci-logo.png (PNG copy)> <./screenshots/menoufia-logo.png (PNG copy)>]
+Overfull \hbox (3.52248pt too wide) in paragraph at lines 282--288
+\T1/ptm/m/n/12 First and fore-most, the team ex-presses its sin-cere grat-i-tud
+e to its su-per-vi-sor, \T1/ptm/b/n/12 Dr. Shaimaa
+ []
+
+[2
+
+
+]
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 3
+36.
+ (C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)
+Overfull \hbox (5.93504pt too wide) in paragraph at lines 339--342
+[]\T1/ptm/b/n/12 Centralised iden-tity and ex-pert RBAC \T1/ptm/m/n/12 -- Keycl
+oak-issued JWTs and a fine-grained,
+ []
+
+
+Overfull \hbox (12.82327pt too wide) in paragraph at lines 352--356
+[]\T1/ptm/b/n/12 Medical injury-management work-flow \T1/ptm/m/n/12 -- a Treat-
+ment Room that sep-a-rates currently-
+ []
+
+[3
+
+] [4] (main.toc [5
+
+
+]
+Overfull \hbox (0.99254pt too wide) in paragraph at lines 65--65
+ [][] [][]\T1/ptm/m/n/12 Real-Time Group Mes-sag-ing over Web-Socket with Polli
+ng Fall- 
+ []
+
+[6] [7] [8])
+\tf@toc=\write5
+\openout5 = `main.toc'.
+
+ [9] (main.lof
+Overfull \hbox (5.58656pt too wide) in paragraph at lines 5--5
+ \T1/ptm/m/n/12 truc-ture, a Python/FastAPI ML ser-vice, and the ex-ter-nal foo
+tball-data.org 
+ []
+
+
+Overfull \hbox (4.59213pt too wide) in paragraph at lines 8--8
+ \T1/ptm/m/n/12 drives train-ing plan-ning and the line-up-mandatory match and 
+live-match 
+ []
+
+
+Overfull \hbox (5.99606pt too wide) in paragraph at lines 10--10
+ \T1/ptm/m/n/12 side the read-only player and fan sur-faces, where scouts brows
+e prospects 
+ []
+
+
+Overfull \hbox (5.83951pt too wide) in paragraph at lines 11--11
+ \T1/cmtt/m/n/12 HeadCoachProfile\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 NationalTeam 
+\T1/ptm/m/n/12 and the re-main-ing role ex-ten-sions), 
+ []
+
+
+Overfull \hbox (1.9517pt too wide) in paragraph at lines 12--12
+ [][] [][]\T1/ptm/m/n/12 Class model of the player-management do-main: the Spor
+t--Team--Roster 
+ []
+
+
+Overfull \hbox (4.47168pt too wide) in paragraph at lines 12--12
+ \T1/ptm/m/n/12 OuterPlayer squad, and the di-rected, status-bearing trans-fer 
+and national- 
+ []
+
+[10
+
+
+]
+Overfull \hbox (9.83633pt too wide) in paragraph at lines 15--15
+ \T1/ptm/m/n/12 whose \T1/cmtt/m/n/12 status \T1/ptm/m/n/12 drives the whole re
+-cov-ery jour-ney, com-pos-ing \T1/cmtt/m/n/12 Diagnosis\T1/ptm/m/n/12 , 
+ []
+
+
+Overfull \hbox (43.5629pt too wide) in paragraph at lines 15--15
+ \T1/cmtt/m/n/12 Treatment \T1/ptm/m/n/12 and \T1/cmtt/m/n/12 Rehabilitation \T
+1/ptm/m/n/12 (which in turn com-poses \T1/cmtt/m/n/12 RecoveryProgram\T1/ptm/m/
+n/12 ), 
+ []
+
+
+Overfull \hbox (0.49152pt too wide) in paragraph at lines 16--16
+ [][] [][]\T1/ptm/m/n/12 Class model of the com-mu-ni-ca-tion sub-sys-tem (\T1/
+cmtt/m/n/12 mscms_notification\T1/ptm/m/n/12 ), 
+ []
+
+
+Overfull \hbox (18.48705pt too wide) in paragraph at lines 19--19
+ \T1/ptm/m/n/12 the club hi-er-ar-chy (sports, teams, ros-ters), player con-tra
+cts and transfer/call- 
+ []
+
+[11]
+Overfull \hbox (11.63956pt too wide) in paragraph at lines 22--22
+ [][] [][]\T1/ptm/m/n/12 Entity-relationship di-a-gram of the \T1/cmtt/m/n/12 m
+scms_notification \T1/ptm/m/n/12 database, show- 
+ []
+
+
+Overfull \hbox (7.73575pt too wide) in paragraph at lines 22--22
+ \T1/ptm/m/n/12 ing no-ti-fi-ca-tions, alerts, and the team-chat groups, mem-be
+rs, and threaded 
+ []
+
+
+Overfull \hbox (5.29964pt too wide) in paragraph at lines 23--23
+ \T1/ptm/m/n/12 an-a-lyt-i-cal en-ti-ties ag-gre-gate op-er-a-tional data from 
+other do-mains through 
+ []
+
+
+Overfull \hbox (7.46097pt too wide) in paragraph at lines 28--28
+ [][] [][]\T1/ptm/m/n/12 Sequence di-a-gram of the injury-to-recovery work-flow
+, ad-vanc-ing a player 
+ []
+
+
+Overfull \hbox (7.53142pt too wide) in paragraph at lines 30--30
+ \T1/ptm/m/n/12 football-data.org, fil-ters and de-duplicates fix-tures be-fore
+ per-sist-ing them, 
+ []
+
+[12] [13] [14]
+Overfull \hbox (1.59177pt too wide) in paragraph at lines 54--54
+ [][] [][]\T1/ptm/m/n/12 The Med-i-cal Treat-ment Room, sep-a-rat-ing cur-rentl
+y in-jured play-ers from 
+ []
+
+
+Overfull \hbox (23.30003pt too wide) in paragraph at lines 57--57
+ \T1/ptm/m/n/12 and emoji re-ac-tions are de-liv-ered over a na-tive Web-Socket
+ to the notification- 
+ []
+
+)
+\tf@lof=\write6
+\openout6 = `main.lof'.
+
+ [15] [16] (main.lot [17
+
+
+]
+Overfull \hbox (32.99988pt too wide) in paragraph at lines 32--32
+ [][] [][]\T1/ptm/m/n/12 Principal ta-bles and key columns in \T1/cmtt/m/n/12 m
+scms_reports \T1/ptm/m/n/12 and \T1/cmtt/m/n/12 mscms_notification\T1/ptm/m/n/1
+2 .[] [][]  
+ []
+
+)
+\tf@lot=\write7
+\openout7 = `main.lot'.
+
+ [18]
+main.tex:440: ignored error: Infinite glue shrinkage found in box being split
+[19
+
+
+] (chapters/01-introduction.tex [20]
+Chapter 1.
+[21
+
+] [22
+
+] [23] [24] [25]
+Overfull \hbox (18.10222pt too wide) in paragraph at lines 176--182
+[]\T1/ptm/b/n/12 Competitions \T1/ptm/m/n/12 --- database-backed com-pe-ti-tion
+s cov-er-ing a do-mes-tic league (La Liga,
+ []
+
+[26] [27]
+Overfull \hbox (2.76598pt too wide) in paragraph at lines 251--256
+[]\T1/ptm/b/n/12 Limited an-a-lyt-i-cal in-sight. \T1/ptm/m/n/12 With-out a uni
+-fied data layer, com-put-ing cross-domain
+ []
+
+
+Overfull \hbox (4.51933pt too wide) in paragraph at lines 267--276
+\T1/ptm/m/n/12 mod-els the gen-uine com-plex-ity of a multi-sport club while re
+-main-ing trust-wor-thy enough
+ []
+
+[28] [29] [30]
+Overfull \hbox (0.36658pt too wide) in paragraph at lines 362--379
+\T1/ptm/m/n/12 multi-sport club-management plat-form built on a mod-ern mi-cros
+er-vices ar-chi-tec-ture [[]].
+ []
+
+) (chapters/02-literature-review.tex [31] [32]
+Chapter 2.
+[33
+
+] [34
+
+] [35] [36] [37]
+Overfull \hbox (5.8505pt too wide) in paragraph at lines 197--213
+\T1/ptm/m/n/12 premises data res-i-dency, which mat-ters acutely for sen-si-tiv
+e med-i-cal and fi-nan-cial records
+ []
+
+[38]
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 239.
+
+Overfull \hbox (2.30095pt too wide) in paragraph at lines 239--269
+ [][] 
+ []
+
+[39] [40]) (chapters/03-methodology.tex [41]
+Chapter 3.
+[42
+
+]
+Overfull \hbox (6.59448pt too wide) in paragraph at lines 36--44
+\T1/ptm/m/n/12 MSCMS was de-vel-oped fol-low-ing an \T1/ptm/m/it/12 ag-ile, it-
+er-a-tive and in-cre-men-tal \T1/ptm/m/n/12 pro-cess model [[]].
+ []
+
+[43
+
+]
+Underfull \hbox (badness 2495) in paragraph at lines 67--68
+[]|\T1/ptm/m/n/12 Keycloak realm, JWT lo-gin, API Gate-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 69--70
+\T1/ptm/m/n/12 ros-ters, con-tracts, trans-fers, scout-ing
+ []
+
+
+Underfull \hbox (badness 3407) in paragraph at lines 71--72
+[]|\T1/ptm/m/n/12 Training-match ser-vice: ses-sions, plans,
+ []
+
+
+Underfull \hbox (badness 5607) in paragraph at lines 81--82
+[]|\T1/ptm/m/n/12 Per-role RBAC, per-sis-tent set-tings with
+ []
+
+[44] [45]
+Overfull \hbox (1.12788pt too wide) in paragraph at lines 154--160
+[]\T1/ptm/m/n/12 Table []3.2[] lists the foun-da-tional re-quire-ments cov-er-i
+ng iden-tity, ad-min-is-tra-tion, squad
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 174--174
+[]|\T1/ptm/m/n/12 User man-age-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 176--176
+[]|\T1/ptm/m/n/12 User man-age-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 188--188
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 2165) in paragraph at lines 188--188
+[]|\T1/ptm/m/n/12 Reports & an-a-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 202--202
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 204--204
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 206--206
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 208--208
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 210--210
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 1137) in paragraph at lines 210--211
+[]|\T1/ptm/m/n/12 The sys-tem shall drive a live match through a
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 212--212
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 214--214
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 216--216
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 1019) in paragraph at lines 216--217
+\T1/ptm/m/n/12 logues (di-ag-noses, treat-ments and re-cov-ery pro-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 218--218
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 2384) in paragraph at lines 218--219
+\T1/ptm/m/n/12 groups with in-vi-ta-tions (in-vited/member states),
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 220--220
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 222--222
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--224
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--226
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+LaTeX Warning: Float too large for page by 103.94261pt on input line 229.
+
+[46] [47] [48]
+Underfull \hbox (badness 10000) in paragraph at lines 295--295
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 297--297
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 1092) in paragraph at lines 297--298
+[]|\T1/ptm/m/n/12 Role-based ac-cess con-trol shall be en-forced in
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 299--299
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 301--301
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 303--303
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 305--305
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 307--307
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 309--309
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 311--311
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 313--313
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+[49] [50]
+Overfull \hbox (8.4534pt too wide) in paragraph at lines 337--343
+\T1/ptm/m/n/12 MSCMS adopts a \T1/ptm/m/it/12 cloud-native mi-croser-vices \T1/
+ptm/m/n/12 ar-chi-tec-ture [[]] built on the well-established
+ []
+
+[51]
+Overfull \hbox (1.79443pt too wide) in paragraph at lines 387--393
+\T1/ptm/m/n/12 de-cou-pled Python/FastAPI machine-learning ser-vices are reache
+d through a same-origin
+ []
+
+[52]
+Overfull \hbox (7.54462pt too wide) in paragraph at lines 440--440
+[]|\T1/cmtt/m/n/12 mscms_user| 
+ []
+
+
+Underfull \hbox (badness 6641) in paragraph at lines 440--441
+\T1/ptm/m/n/12 cloak Admin-API pro-vi-sion-ing,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 440--441
+\T1/ptm/m/n/12 au-then-ti-ca-tion end-points, and
+ []
+
+
+Overfull \hbox (19.8916pt too wide) in paragraph at lines 442--442
+[]|\T1/cmtt/m/n/12 mscms_player| 
+ []
+
+
+Underfull \hbox (badness 1033) in paragraph at lines 442--443
+\T1/ptm/m/n/12 trans-fers and national-team call-
+ []
+
+
+Overfull \hbox (32.23859pt too wide) in paragraph at lines 444--444
+[]|\T1/cmtt/m/n/12 mscms_training| 
+ []
+
+
+Underfull \hbox (badness 1231) in paragraph at lines 444--445
+\T1/ptm/m/n/12 game events, re-views, statis-tics,
+ []
+
+
+Overfull \hbox (26.0651pt too wide) in paragraph at lines 446--446
+[]|\T1/cmtt/m/n/12 mscms_medical| 
+ []
+
+
+Underfull \hbox (badness 6125) in paragraph at lines 446--447
+[]|\T1/ptm/m/n/12 Injuries, di-ag-noses, treat-ments,
+ []
+
+
+Underfull \hbox (badness 2050) in paragraph at lines 446--447
+\T1/ptm/m/n/12 re-ha-bil-i-ta-tion and re-cov-ery pro-
+ []
+
+
+Overfull \hbox (26.0651pt too wide) in paragraph at lines 448--448
+[]|\T1/cmtt/m/n/12 mscms_reports| 
+ []
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 448--449
+[]|\T1/ptm/m/n/12 Cross-domain an-a-lyt-ics: match,
+ []
+
+
+Overfull \hbox (56.93256pt too wide) in paragraph at lines 450--450
+[]|\T1/cmtt/m/n/12 mscms_notification| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 450--451
+[]|\T1/ptm/m/n/12 In-app no-ti-fi-ca-tions and role-
+ []
+
+
+Underfull \hbox (badness 2035) in paragraph at lines 450--451
+\T1/ptm/m/n/12 the team group-chat sub-sys-tem,
+ []
+
+
+Overfull \hbox (2.68147pt too wide) in paragraph at lines 455--465
+\T1/ptm/m/n/12 events---\T1/cmtt/m/n/12 MatchScheduled\T1/ptm/m/n/12 , \T1/cmtt
+/m/n/12 MatchResult-Available\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 GoalScored\T1/ptm
+/m/n/12 , \T1/cmtt/m/n/12 InjuryReported\T1/ptm/m/n/12 ,
+ []
+
+[53] [54] [55]
+Overfull \hbox (0.24644pt too wide) in paragraph at lines 526--529
+\T1/ptm/m/n/12 Authorisation is en-forced through role-based ac-cess con-trol (
+RBAC) at three lay-ers [[]],
+ []
+
+
+Overfull \hbox (23.76013pt too wide) in paragraph at lines 562--570
+\T1/ptm/m/n/12 Web-Socket end-point ex-posed di-rectly by the no-ti-fi-ca-tion 
+ser-vice at \T1/cmtt/m/n/12 ws://.../ws/chat \T1/ptm/m/n/12 [[]].
+ []
+
+[56] [57]
+Underfull \hbox (badness 4582) in paragraph at lines 638--639
+\T1/ptm/m/n/12 doc-tor, phys-io-ther-a-pist, fit-ness_coach, team_manager,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 640--641
+[]|\T1/cmtt/m/n/12 sports\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 teams\T1/ptm/m/n/12 ,
+ \T1/cmtt/m/n/12 rosters\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 player_contracts\T1/pt
+m/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 640--641
+\T1/cmtt/m/n/12 outer_teams\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 outer_players\T1/pt
+m/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 640--641
+\T1/cmtt/m/n/12 player_transfer_incoming\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 640--641
+\T1/cmtt/m/n/12 player_transfer_outgoing\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--643
+[]|\T1/cmtt/m/n/12 training_sessions\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 training_p
+lans\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--643
+\T1/cmtt/m/n/12 training_drills\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 training_attend
+ance\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--643
+\T1/cmtt/m/n/12 player_training_assessments\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 mat
+ches\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 3942) in paragraph at lines 642--643
+\T1/cmtt/m/n/12 match_formations\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 match_lineups\
+T1/ptm/m/n/12 , \T1/cmtt/m/n/12 match_events\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--643
+\T1/cmtt/m/n/12 player_match_statistics\T1/ptm/m/n/12 , and the com-pe-ti-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--643
+\T1/ptm/m/n/12 tion ta-bles (\T1/cmtt/m/n/12 competition\T1/ptm/m/n/12 , \T1/cm
+tt/m/n/12 competition_team\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 644--645
+\T1/cmtt/m/n/12 recovery_programs\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 fitness_tests
+\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (11.08069pt too wide) in paragraph at lines 646--646
+[]|\T1/cmtt/m/n/12 mscms_notification| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 648--649
+[]|\T1/cmtt/m/n/12 match_analysis\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 player_analyt
+ics\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 648--649
+\T1/cmtt/m/n/12 team_analytics\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 training_analyti
+cs\T1/ptm/m/n/12 ,
+ []
+
+[58] [59]
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 670.
+
+Overfull \hbox (6.7805pt too wide) in paragraph at lines 681--691
+ []\T1/ptm/b/n/12 Squad (\T1/cmtt/m/n/12 mscms_player\T1/ptm/b/n/12 ).[] \T1/pt
+m/m/n/12 A \T1/cmtt/m/n/12 sport \T1/ptm/m/n/12 owns many \T1/cmtt/m/n/12 teams
+\T1/ptm/m/n/12 , and a team owns many \T1/cmtt/m/n/12 rosters\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (51.78699pt too wide) in paragraph at lines 681--691
+\T1/ptm/m/n/12 clause. The trans-fer mar-ket is mod-elled with two sym-met-ric 
+ta-bles: \T1/cmtt/m/n/12 player_transfer_incoming
+ []
+
+
+Overfull \hbox (53.75192pt too wide) in paragraph at lines 692--707
+ []\T1/ptm/b/n/12 Training and matches (\T1/cmtt/m/n/12 mscms_training\T1/ptm/b
+/n/12 ).[] \T1/ptm/m/n/12 A \T1/cmtt/m/n/12 training_session \T1/ptm/m/n/12 own
+s its \T1/cmtt/m/n/12 training_drills\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (17.488pt too wide) in paragraph at lines 692--707
+\T1/ptm/m/n/12 its \T1/cmtt/m/n/12 training_attendance \T1/ptm/m/n/12 rows (one
+ per player, with a present/absent/late/excused/injured
+ []
+
+[60]
+Overfull \hbox (0.66664pt too wide) in paragraph at lines 708--716
+ []\T1/ptm/b/n/12 Medical (\T1/cmtt/m/n/12 mscms_medical\T1/ptm/b/n/12 ).[] \T1
+/ptm/m/n/12 The \T1/cmtt/m/n/12 injury \T1/ptm/m/n/12 is the ag-gre-gate root: 
+it owns its \T1/cmtt/m/n/12 diagnoses\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (40.41603pt too wide) in paragraph at lines 708--716
+\T1/cmtt/m/n/12 treatments \T1/ptm/m/n/12 and \T1/cmtt/m/n/12 rehabilitations\T
+1/ptm/m/n/12 , and a re-ha-bil-i-ta-tion in turn owns its \T1/cmtt/m/n/12 recov
+ery_programs\T1/ptm/m/n/12 .
+ []
+
+
+Overfull \hbox (8.63542pt too wide) in paragraph at lines 717--725
+ []\T1/ptm/b/n/12 Reporting (\T1/cmtt/m/n/12 mscms_reports\T1/ptm/b/n/12 ).[] \
+T1/ptm/m/n/12 This database holds de-rived and au-thored arte-facts rather
+ []
+
+[61]
+Overfull \hbox (6.3115pt too wide) in paragraph at lines 751--759
+[]\T1/ptm/m/n/12 In the \T1/ptm/b/n/12 match and train-ing \T1/ptm/m/n/12 model
+, \T1/cmtt/m/n/12 TrainingSession \T1/ptm/m/n/12 com-poses its \T1/cmtt/m/n/12 
+TrainingDrill\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (3.58588pt too wide) in paragraph at lines 751--759
+\T1/cmtt/m/n/12 TrainingAttendance \T1/ptm/m/n/12 and as-sess-ment chil-dren, w
+hile \T1/cmtt/m/n/12 Match \T1/ptm/m/n/12 com-poses its \T1/cmtt/m/n/12 MatchEv
+ent
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 795--795
+\T1/cmtt/m/n/12 /auth\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /users\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 796--797
+[]|\T1/cmtt/m/n/12 POST /auth/login\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 POST /auth/
+refresh\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 796--797
+\T1/cmtt/m/n/12 POST /auth/admin/create-user\T1/ptm/m/n/12 ; \T1/cmtt/m/n/12 GE
+T/POST
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 796--797
+\T1/cmtt/m/n/12 /users\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 GET/PUT/DELETE /users/{i
+d}\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 PUT
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 796--797
+\T1/cmtt/m/n/12 /users/{id}/password \T1/ptm/m/n/12 (current-password ver-i-
+ []
+
+
+Underfull \hbox (badness 2753) in paragraph at lines 796--797
+\T1/ptm/m/n/12 fied); role col-lec-tions such as \T1/cmtt/m/n/12 /players\T1/pt
+m/m/n/12 , \T1/cmtt/m/n/12 /staff\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 799--800
+[]|\T1/cmtt/m/n/12 GET/POST /sports\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /teams\T1/p
+tm/m/n/12 , \T1/cmtt/m/n/12 /rosters\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 799--800
+\T1/cmtt/m/n/12 /player-contracts\T1/ptm/m/n/12 ; \T1/cmtt/m/n/12 /outer-teams\
+T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 799--800
+\T1/cmtt/m/n/12 /outer-players\T1/ptm/m/n/12 ; trans-fer flows
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 799--800
+\T1/cmtt/m/n/12 /transfers/incoming\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /transfers/
+outgoing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 801--801
+\T1/cmtt/m/n/12 /training...\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 2903) in paragraph at lines 802--803
+[]|\T1/ptm/m/n/12 training: \T1/cmtt/m/n/12 /training-sessions\T1/ptm/m/n/12 , 
+\T1/cmtt/m/n/12 /training-plans\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 802--803
+\T1/cmtt/m/n/12 /training-drills\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /training-atte
+ndance\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 802--803
+\T1/cmtt/m/n/12 /player-training-assessments\T1/ptm/m/n/12 ; matches:
+ []
+
+
+Underfull \hbox (badness 7925) in paragraph at lines 802--803
+\T1/cmtt/m/n/12 /matches\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /match-formations\T1/p
+tm/m/n/12 , \T1/cmtt/m/n/12 /match-lineups\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 5832) in paragraph at lines 802--803
+\T1/cmtt/m/n/12 /match-events\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /player-match-sta
+tistics\T1/ptm/m/n/12 ; ex-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 802--803
+\T1/ptm/m/n/12 ter-nal sync \T1/cmtt/m/n/12 POST /matches/sync-external \T1/ptm
+/m/n/12 and
+ []
+
+
+Underfull \hbox (badness 5147) in paragraph at lines 802--803
+\T1/ptm/m/n/12 stand-ings \T1/cmtt/m/n/12 GET /matches/standings/{code}\T1/ptm/
+m/n/12 ; com-
+ []
+
+
+Underfull \hbox (badness 2393) in paragraph at lines 802--803
+\T1/ptm/m/n/12 pe-ti-tions un-der \T1/cmtt/m/n/12 /matches/leagues \T1/ptm/m/n/
+12 (\T1/cmtt/m/n/12 GET/POST\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 GET
+ []
+
+
+Underfull \hbox (badness 3460) in paragraph at lines 802--803
+\T1/cmtt/m/n/12 /{id}\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 POST /import\T1/ptm/m/n/1
+2 , \T1/cmtt/m/n/12 POST /{id}/fixtures \T1/ptm/m/n/12 and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 805--806
+[]|\T1/cmtt/m/n/12 GET/POST /injuries\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 GET/PUT/D
+ELETE
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 805--806
+\T1/cmtt/m/n/12 /injuries/{id}\T1/ptm/m/n/12 ; the staged chil-dren
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 805--806
+\T1/cmtt/m/n/12 /diagnoses\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /treatments\T1/ptm/m
+/n/12 , \T1/cmtt/m/n/12 /rehabilitations\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 805--806
+\T1/cmtt/m/n/12 /recovery-programs\T1/ptm/m/n/12 ; plus \T1/cmtt/m/n/12 /fitnes
+s-tests \T1/ptm/m/n/12 and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 808--809
+[]|\T1/cmtt/m/n/12 /match-analysis\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /player-anal
+ytics\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 808--809
+\T1/cmtt/m/n/12 /team-analytics\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /training-analy
+tics\T1/ptm/m/n/12 ;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 808--809
+\T1/cmtt/m/n/12 /scout-reports\T1/ptm/m/n/12 ; \T1/cmtt/m/n/12 /sponsor-contrac
+t-offers
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 810--810
+\T1/cmtt/m/n/12 /notifications\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 811--812
+[]|\T1/cmtt/m/n/12 /notifications \T1/ptm/m/n/12 and \T1/cmtt/m/n/12 /alerts \T
+1/ptm/m/n/12 (with \T1/cmtt/m/n/12 GET
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 811--812
+\T1/cmtt/m/n/12 /alerts/target/{keycloakId} \T1/ptm/m/n/12 and \T1/cmtt/m/n/12 
+GET
+ []
+
+
+Underfull \hbox (badness 4832) in paragraph at lines 811--812
+\T1/cmtt/m/n/12 /alerts/unacknowledged\T1/ptm/m/n/12 ); mes-sag-ing \T1/cmtt/m/
+n/12 /messages\T1/ptm/m/n/12 ;
+ []
+
+
+Underfull \hbox (badness 1019) in paragraph at lines 811--812
+\T1/ptm/m/n/12 chat groups un-der \T1/cmtt/m/n/12 /messages/groups \T1/ptm/m/n/
+12 (\T1/cmtt/m/n/12 GET ?user=\T1/ptm/m/n/12 ,
+ []
+
+[62] [63]
+Underfull \hbox (badness 1540) in paragraph at lines 847--847
+[]|\T1/ptm/m/n/12 Spring Boot 3.5.6 / Java
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 849--849
+[]|\T1/ptm/m/n/12 Spring Cloud (Gate-way,
+ []
+
+
+Underfull \hbox (badness 3128) in paragraph at lines 849--850
+[]|\T1/ptm/m/n/12 Routing, ser-vice dis-cov-ery and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 851--852
+[]|\T1/ptm/m/n/12 Object-relational map-ping over
+ []
+
+
+Underfull \hbox (badness 1354) in paragraph at lines 855--856
+[]|\T1/ptm/m/n/12 Server- and client-rendered user
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 859--860
+[]|\T1/ptm/m/n/12 Utility-first styling and the
+ []
+
+
+Underfull \hbox (badness 1655) in paragraph at lines 863--864
+[]|\T1/ptm/m/n/12 One iso-lated re-la-tional database
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 869--869
+[]|\T1/ptm/m/n/12 football-data.org REST
+ []
+
+
+Underfull \hbox (badness 1960) in paragraph at lines 869--870
+[]|\T1/ptm/m/n/12 Source of real com-pe-ti-tion fix-
+ []
+
+
+Underfull \hbox (badness 1107) in paragraph at lines 869--870
+\T1/ptm/m/n/12 tures, re-sults and stand-ings, in-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 871--872
+[]|\T1/ptm/m/n/12 Decoupled match-outcome and
+ []
+
+
+Underfull \hbox (badness 3291) in paragraph at lines 873--873
+[]|\T1/ptm/m/n/12 Docker & Docker Com-
+ []
+
+[64] [65]
+Overfull \hbox (24.83301pt too wide) in paragraph at lines 913--916
+\T1/ptm/m/n/12 at Key-cloak's to-ken end-point (\T1/cmtt/m/n/12 /realms/mscms/p
+rotocol/openid-connect/token\T1/ptm/m/n/12 ,
+ []
+
+[66] [67] [68]
+Overfull \hbox (9.89952pt too wide) in paragraph at lines 1035--1039
+[]\T1/ptm/m/n/12 The work-flow demon-strates the plat-form's defin-ing char-ac-
+ter-is-tics to-gether: a domain-
+ []
+
+
+Overfull \hbox (9.31114pt too wide) in paragraph at lines 1054--1057
+[]\T1/ptm/m/n/12 The front-end opens a Web-Socket to the no-ti-fi-ca-tion ser-v
+ice at \T1/cmtt/m/n/12 ws://.../ws/chat\T1/ptm/m/n/12 .
+ []
+
+[69]
+Overfull \hbox (27.11868pt too wide) in paragraph at lines 1080--1084
+\T1/ptm/m/n/12 do-main event (for ex-am-ple \T1/cmtt/m/n/12 MatchScheduled\T1/p
+tm/m/n/12 , \T1/cmtt/m/n/12 GoalScored\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 MatchRes
+ultAvailable\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (3.77132pt too wide) in paragraph at lines 1080--1084
+\T1/cmtt/m/n/12 InjuryReported\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 TransferApproved
+ \T1/ptm/m/n/12 or \T1/cmtt/m/n/12 TrainingCancelled\T1/ptm/m/n/12 ) to a Kafka
+ topic
+ []
+
+) (chapters/03b-system-design.tex [70] [71]
+Chapter 4.
+[72
+
+] (chapters/figs/arch-overview.tex) [73
+
+] (chapters/figs/arch-deploy.tex
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <8> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 76.
+)
+[74] (chapters/figs/uc-admin.tex) (chapters/figs/uc-match.tex [75])
+(chapters/figs/uc-medical.tex [76]) (chapters/figs/uc-business.tex [77])
+[78] (chapters/figs/class-user.tex) (chapters/figs/class-squad.tex [79])
+(chapters/figs/class-match.tex) (chapters/figs/class-competition.tex [80])
+(chapters/figs/class-medical.tex
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 43.
+ [81]) (chapters/figs/class-comm.tex [82])
+(chapters/figs/class-reports.tex [83]) [84] (chapters/figs/er-user.tex
+Underfull \hbox (badness 2103) in paragraph at lines 23--23
+[]\T1/ptm/b/n/10.95 Figure 4.14. |\T1/ptm/m/n/10.95 Entity-relationship di-a-gr
+am of the \T1/cmtt/m/n/10.95 mscms_user \T1/ptm/m/n/10.95 database, show-ing th
+e
+ []
+
+) (chapters/figs/er-player.tex
+Overfull \hbox (32.85693pt too wide) in paragraph at lines 38--38
+[][]\T1/ptm/b/n/8 PLAYER_TRANSFER_INCOMING  
+ []
+
+
+Overfull \hbox (34.20087pt too wide) in paragraph at lines 38--38
+[][]\T1/ptm/b/n/8 PLAYER_TRANSFER_OUTGOING  
+ []
+
+
+Overfull \hbox (25.68105pt too wide) in paragraph at lines 38--38
+[][]\T1/ptm/b/n/8 PLAYER_CALL_UP_REQUESTS  
+ []
+
+) (chapters/figs/er-training.tex
+Overfull \hbox (4.777pt too wide) in paragraph at lines 109--109
+[][]\T1/ptm/b/n/8 COMPETITION_FIXTURE  
+ []
+
+
+Overfull \hbox (5.95313pt too wide) in paragraph at lines 109--109
+[][]\T1/ptm/b/n/8 TRAINING_ATTENDANCE  
+ []
+
+[85]) (chapters/figs/er-medical.tex
+Overfull \hbox (1.62527pt too wide) in paragraph at lines 63--63
+[][]\T1/ptm/b/n/8 RECOVERY_PROGRAMS  
+ []
+
+[86]) (chapters/figs/er-notification.tex
+Overfull \hbox (1.99327pt too wide) in paragraph at lines 21--21
+[][]\T1/ptm/b/n/8 CHAT_GROUP_MEMBER  
+ []
+
+[87]) (chapters/figs/er-reports.tex
+Overfull \hbox (28.78505pt too wide) in paragraph at lines 44--44
+[][]\T1/ptm/b/n/8 SPONSOR_CONTRACT_OFFERS  
+ []
+
+[88]) [89] (chapters/figs/seq-login.tex
+\pgf@layerbox@umlsd@background=\box102
+\pgf@layerboxsaved@umlsd@background=\box103
+\pgf@layerbox@umlsd@threadlayer=\box104
+\pgf@layerboxsaved@umlsd@threadlayer=\box105
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 6.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 6.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``mess to''? on input li
+ne 20.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``mess from''? on input 
+line 20.
+
+) (chapters/figs/seq-schedule.tex
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``ct4''? on input line 1
+6.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``cf4''? on input line 1
+6.
+
+
+Overfull \hbox (22.21915pt too wide) in paragraph at lines 24--26
+ [][] 
+ []
+
+[90]) (chapters/figs/seq-live.tex) (chapters/figs/seq-injury-sub.tex
+Overfull \hbox (50.37984pt too wide) in paragraph at lines 32--34
+ [][] 
+ []
+
+[91]) (chapters/figs/seq-medical.tex
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``mess to''? on input li
+ne 41.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``mess from''? on input 
+line 41.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``mess to''? on input li
+ne 43.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``mess from''? on input 
+line 43.
+
+[92]) (chapters/figs/seq-messaging.tex
+Overfull \hbox (15.11661pt too wide) in paragraph at lines 41--43
+ [][] 
+ []
+
+[93]) (chapters/figs/seq-ingest.tex
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``mess to''? on input li
+ne 18.
+
+
+Package pgf Warning: Returning node center instead of a point on node border. D
+id you specify a point identical to the center of node ``mess from''? on input 
+line 18.
+
+[94]) (chapters/figs/seq-notify.tex [95]) (chapters/figs/seq-password.tex)
+[96] (chapters/figs/state-match.tex) (chapters/figs/state-injury.tex [97])
+(chapters/figs/state-competition.tex)) (chapters/04-results.tex [98]
+Chapter 5.
+[99
+
+] [100
+
+]
+<screenshots/fig-login.png, id=1802, 1156.32pt x 551.05875pt>
+File: screenshots/fig-login.png Graphic file (type png)
+<use screenshots/fig-login.png>
+Package pdftex.def Info: screenshots/fig-login.png  used on input line 91.
+(pdftex.def)             Requested size: 354.31049pt x 168.85045pt.
+ [101] [102 <./screenshots/fig-login.png>]
+<screenshots/fig-dashboard.png, id=1823, 1156.32pt x 548.64975pt>
+File: screenshots/fig-dashboard.png Graphic file (type png)
+<use screenshots/fig-dashboard.png>
+Package pdftex.def Info: screenshots/fig-dashboard.png  used on input line 136.
+
+(pdftex.def)             Requested size: 395.98996pt x 187.88629pt.
+
+Overfull \hbox (4.38757pt too wide) in paragraph at lines 152--160
+ []\T1/ptm/b/n/12 User ex-pe-ri-ence.[] \T1/ptm/m/n/12 Tak-ing FC Barcelona as 
+the work-ing ex-am-ple, the Club Hub presents
+ []
+
+[103 <./screenshots/fig-dashboard.png>]
+<screenshots/fig-club-hub.png, id=1835, 1156.32pt x 548.64975pt>
+File: screenshots/fig-club-hub.png Graphic file (type png)
+<use screenshots/fig-club-hub.png>
+Package pdftex.def Info: screenshots/fig-club-hub.png  used on input line 181.
+(pdftex.def)             Requested size: 395.98996pt x 187.88629pt.
+
+Overfull \hbox (8.32271pt too wide) in paragraph at lines 192--195
+\T1/ptm/m/n/12 The Play-ers mod-ule man-ages the multi-sport ros-ter main-taine
+d by the player-management
+ []
+
+[104 <./screenshots/fig-club-hub.png>]
+<screenshots/fig-players.png, id=1848, 1156.32pt x 549.85425pt>
+File: screenshots/fig-players.png Graphic file (type png)
+<use screenshots/fig-players.png>
+Package pdftex.def Info: screenshots/fig-players.png  used on input line 228.
+(pdftex.def)             Requested size: 395.98996pt x 188.29877pt.
+<screenshots/fig-player-detail.png, id=1849, 1156.32pt x 543.83176pt>
+File: screenshots/fig-player-detail.png Graphic file (type png)
+<use screenshots/fig-player-detail.png>
+Package pdftex.def Info: screenshots/fig-player-detail.png  used on input line 
+236.
+(pdftex.def)             Requested size: 333.46758pt x 156.82756pt.
+
+Overfull \hbox (2.62227pt too wide) in paragraph at lines 246--251
+\T1/ptm/m/n/12 Competitions are mod-elled as first-class, database-backed en-ti
+-ties owned by the training-
+ []
+
+[105] [106 <./screenshots/fig-players.png> <./screenshots/fig-player-detail.png
+>]
+Overfull \hbox (8.86649pt too wide) in paragraph at lines 252--264
+\T1/ptm/m/n/12 name, short name, crest URL and sport---scoped to a com-pe-ti-ti
+on. \T1/cmtt/m/n/12 CompetitionFixture
+ []
+
+<screenshots/fig-competitions.png, id=1866, 1156.32pt x 549.252pt>
+File: screenshots/fig-competitions.png Graphic file (type png)
+<use screenshots/fig-competitions.png>
+Package pdftex.def Info: screenshots/fig-competitions.png  used on input line 2
+87.
+(pdftex.def)             Requested size: 395.98996pt x 188.09253pt.
+[107] [108 <./screenshots/fig-competitions.png>]
+<screenshots/fig-laliga.png, id=1886, 1156.32pt x 548.64975pt>
+File: screenshots/fig-laliga.png Graphic file (type png)
+<use screenshots/fig-laliga.png>
+Package pdftex.def Info: screenshots/fig-laliga.png  used on input line 335.
+(pdftex.def)             Requested size: 395.98996pt x 187.88629pt.
+ [109 <./screenshots/fig-laliga.png>]
+<screenshots/fig-cl-bracket.png, id=1897, 1156.32pt x 548.64975pt>
+File: screenshots/fig-cl-bracket.png Graphic file (type png)
+<use screenshots/fig-cl-bracket.png>
+Package pdftex.def Info: screenshots/fig-cl-bracket.png  used on input line 365
+.
+(pdftex.def)             Requested size: 395.98996pt x 187.88629pt.
+ [110 <./screenshots/fig-cl-bracket.png>]
+Overfull \hbox (54.75316pt too wide) in paragraph at lines 409--416
+\T1/ptm/m/n/12 league-phase fix-tures for the Cham-pi-ons League via a \T1/cmtt
+/m/n/12 /matches/leagues/{id}/fixtures/bulk
+ []
+
+<screenshots/fig-create-competition.png, id=1908, 1156.32pt x 552.26324pt>
+File: screenshots/fig-create-competition.png Graphic file (type png)
+<use screenshots/fig-create-competition.png>
+Package pdftex.def Info: screenshots/fig-create-competition.png  used on input 
+line 419.
+(pdftex.def)             Requested size: 375.14705pt x 179.17163pt.
+[111 <./screenshots/fig-create-competition.png>]
+<screenshots/fig-head-to-head.png, id=1917, 1156.32pt x 549.252pt>
+File: screenshots/fig-head-to-head.png Graphic file (type png)
+<use screenshots/fig-head-to-head.png>
+Package pdftex.def Info: screenshots/fig-head-to-head.png  used on input line 4
+50.
+(pdftex.def)             Requested size: 395.98996pt x 188.09253pt.
+ [112 <./screenshots/fig-head-to-head.png>]
+<screenshots/fig-world-cup.png, id=1927, 1156.32pt x 543.2295pt>
+File: screenshots/fig-world-cup.png Graphic file (type png)
+<use screenshots/fig-world-cup.png>
+Package pdftex.def Info: screenshots/fig-world-cup.png  used on input line 486.
+
+(pdftex.def)             Requested size: 395.98996pt x 186.0301pt.
+ [113]
+<screenshots/fig-trophy-room.png, id=1938, 1156.32pt x 546.843pt>
+File: screenshots/fig-trophy-room.png Graphic file (type png)
+<use screenshots/fig-trophy-room.png>
+Package pdftex.def Info: screenshots/fig-trophy-room.png  used on input line 51
+6.
+(pdftex.def)             Requested size: 375.14705pt x 177.41313pt.
+ [114 <./screenshots/fig-world-cup.png> <./screenshots/fig-trophy-room.png>]
+<screenshots/fig-matches.png, id=1948, 1156.32pt x 552.8655pt>
+File: screenshots/fig-matches.png Graphic file (type png)
+<use screenshots/fig-matches.png>
+Package pdftex.def Info: screenshots/fig-matches.png  used on input line 549.
+(pdftex.def)             Requested size: 395.98996pt x 189.32997pt.
+ [115 <./screenshots/fig-matches.png>]
+<screenshots/fig-match-schedule.png, id=1959, 1156.32pt x 552.26324pt>
+File: screenshots/fig-match-schedule.png Graphic file (type png)
+<use screenshots/fig-match-schedule.png>
+Package pdftex.def Info: screenshots/fig-match-schedule.png  used on input line
+ 587.
+(pdftex.def)             Requested size: 375.14705pt x 179.17163pt.
+ [116]
+<screenshots/fig-lineup.png, id=1969, 1156.32pt x 551.05875pt>
+File: screenshots/fig-lineup.png Graphic file (type png)
+<use screenshots/fig-lineup.png>
+Package pdftex.def Info: screenshots/fig-lineup.png  used on input line 624.
+(pdftex.def)             Requested size: 395.98996pt x 188.71124pt.
+ [117 <./screenshots/fig-match-schedule.png>] [118 <./screenshots/fig-lineup.pn
+g>] [119] [120]
+<screenshots/fig-live-match.png, id=1999, 1156.32pt x 551.05875pt>
+File: screenshots/fig-live-match.png Graphic file (type png)
+<use screenshots/fig-live-match.png>
+Package pdftex.def Info: screenshots/fig-live-match.png  used on input line 729
+.
+(pdftex.def)             Requested size: 395.98996pt x 188.71124pt.
+<screenshots/fig-match-details.png, id=2001, 1156.32pt x 545.6385pt>
+File: screenshots/fig-match-details.png Graphic file (type png)
+<use screenshots/fig-match-details.png>
+Package pdftex.def Info: screenshots/fig-match-details.png  used on input line 
+751.
+(pdftex.def)             Requested size: 395.98996pt x 186.85507pt.
+
+[121 <./screenshots/fig-live-match.png>]
+Overfull \hbox (2.6476pt too wide) in paragraph at lines 773--780
+\T1/ptm/m/n/12 the body part, the in-jury type and sever-ity, the re-port meta-
+data, and---most importantly---
+ []
+
+
+Overfull \hbox (25.27882pt too wide) in paragraph at lines 773--780
+\T1/ptm/m/n/12 a \T1/cmtt/m/n/12 status \T1/ptm/m/n/12 drawn from a small enu-m
+er-a-tion: \T1/cmtt/m/n/12 REPORTED\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 DIAGNOSED\T
+1/ptm/m/n/12 , \T1/cmtt/m/n/12 TREATING\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 RECOVER
+ING\T1/ptm/m/n/12 ,
+ []
+
+<screenshots/fig-medical-room.png, id=2010, 1156.32pt x 549.252pt>
+File: screenshots/fig-medical-room.png Graphic file (type png)
+<use screenshots/fig-medical-room.png>
+Package pdftex.def Info: screenshots/fig-medical-room.png  used on input line 7
+83.
+(pdftex.def)             Requested size: 395.98996pt x 188.09253pt.
+[122 <./screenshots/fig-match-details.png>]
+<screenshots/fig-medical-journey.png, id=2020, 1156.32pt x 547.44525pt>
+File: screenshots/fig-medical-journey.png Graphic file (type png)
+<use screenshots/fig-medical-journey.png>
+Package pdftex.def Info: screenshots/fig-medical-journey.png  used on input lin
+e 817.
+(pdftex.def)             Requested size: 395.98996pt x 187.4738pt.
+ [123 <./screenshots/fig-medical-room.png>]
+<screenshots/fig-medical-catalog.png, id=2030, 1156.32pt x 546.24075pt>
+File: screenshots/fig-medical-catalog.png Graphic file (type png)
+<use screenshots/fig-medical-catalog.png>
+Package pdftex.def Info: screenshots/fig-medical-catalog.png  used on input lin
+e 840.
+(pdftex.def)             Requested size: 395.98996pt x 187.06133pt.
+
+Overfull \hbox (22.97484pt too wide) in paragraph at lines 851--854
+\T1/ptm/m/n/12 The Mes-sages mod-ule de-liv-ers a real-time, group-based team c
+hat backed by the notification-
+ []
+
+
+Overfull \hbox (53.0364pt too wide) in paragraph at lines 855--865
+ []\T1/ptm/b/n/12 Group and in-vi-ta-tion model.[] \T1/ptm/m/n/12 The data mode
+l com-prises a \T1/cmtt/m/n/12 ChatGroup \T1/ptm/m/n/12 and a \T1/cmtt/m/n/12 C
+hatGroupMember\T1/ptm/m/n/12 ,
+ []
+
+[124 <./screenshots/fig-medical-journey.png>]
+Overfull \hbox (9.48659pt too wide) in paragraph at lines 872--882
+ []\T1/ptm/b/n/12 Real-time de-liv-ery over Web-Socket.[] \T1/ptm/m/n/12 De-liv
+-ery is gen-uinely real-time. A na-tive browser
+ []
+
+
+Overfull \hbox (47.5684pt too wide) in paragraph at lines 872--882
+\T1/ptm/m/n/12 Web-Socket con-nects di-rectly to the no-ti-fi-ca-tion ser-vice 
+at \T1/cmtt/m/n/12 ws://localhost:8085/ws/chat \T1/ptm/m/n/12 [[]].
+ []
+
+[125 <./screenshots/fig-medical-catalog.png>]
+<screenshots/fig-messages.png, id=2049, 1156.32pt x 547.44525pt>
+File: screenshots/fig-messages.png Graphic file (type png)
+<use screenshots/fig-messages.png>
+Package pdftex.def Info: screenshots/fig-messages.png  used on input line 885.
+(pdftex.def)             Requested size: 395.98996pt x 187.4738pt.
+
+Overfull \hbox (21.46281pt too wide) in paragraph at lines 899--909
+ []\T1/ptm/b/n/12 The event pipeline.[] \T1/ptm/m/n/12 The notification-mail se
+r-vice con-sumes do-main events from Kafka [[]]
+ []
+
+[126 <./screenshots/fig-messages.png>]
+Overfull \hbox (0.29454pt too wide) in paragraph at lines 910--916
+ []\T1/ptm/b/n/12 The no-ti-fi-ca-tion cen-tre.[] \T1/ptm/m/n/12 The bell opens
+ a no-ti-fi-ca-tion cen-tre that presents alerts across
+ []
+
+<screenshots/fig-notifications.png, id=2059, 310.761pt x 413.1435pt>
+File: screenshots/fig-notifications.png Graphic file (type png)
+<use screenshots/fig-notifications.png>
+Package pdftex.def Info: screenshots/fig-notifications.png  used on input line 
+924.
+(pdftex.def)             Requested size: 375.14705pt x 498.75781pt.
+[127] [128 <./screenshots/fig-notifications.png>]
+<screenshots/fig-training.png, id=2077, 1156.32pt x 549.85425pt>
+File: screenshots/fig-training.png Graphic file (type png)
+<use screenshots/fig-training.png>
+Package pdftex.def Info: screenshots/fig-training.png  used on input line 953.
+(pdftex.def)             Requested size: 395.98996pt x 188.29877pt.
+<screenshots/fig-scouting.png, id=2079, 1156.32pt x 549.85425pt>
+File: screenshots/fig-scouting.png Graphic file (type png)
+<use screenshots/fig-scouting.png>
+Package pdftex.def Info: screenshots/fig-scouting.png  used on input line 976.
+(pdftex.def)             Requested size: 395.98996pt x 188.29877pt.
+ [129 <./screenshots/fig-training.png>]
+<screenshots/fig-sponsors.png, id=2088, 1156.32pt x 547.44525pt>
+File: screenshots/fig-sponsors.png Graphic file (type png)
+<use screenshots/fig-sponsors.png>
+Package pdftex.def Info: screenshots/fig-sponsors.png  used on input line 998.
+(pdftex.def)             Requested size: 395.98996pt x 187.4738pt.
+ [130 <./screenshots/fig-scouting.png> <./screenshots/fig-sponsors.png>]
+<screenshots/fig-reports.png, id=2098, 1156.32pt x 548.64975pt>
+File: screenshots/fig-reports.png Graphic file (type png)
+<use screenshots/fig-reports.png>
+Package pdftex.def Info: screenshots/fig-reports.png  used on input line 1021.
+(pdftex.def)             Requested size: 395.98996pt x 187.88629pt.
+ [131 <./screenshots/fig-reports.png>]
+<screenshots/fig-settings.png, id=2108, 1156.32pt x 549.85425pt>
+File: screenshots/fig-settings.png Graphic file (type png)
+<use screenshots/fig-settings.png>
+Package pdftex.def Info: screenshots/fig-settings.png  used on input line 1052.
+
+(pdftex.def)             Requested size: 395.98996pt x 188.29877pt.
+ [132 <./screenshots/fig-settings.png>] [133] [134]) (chapters/05-conclusion.te
+x [135] [136]
+Chapter 6.
+[137
+
+]
+Overfull \hbox (11.7663pt too wide) in paragraph at lines 17--30
+\T1/ptm/m/n/12 management---data frag-men-ta-tion, multi-discipline com-plex-it
+y and an-a-lyt-i-cal blindness---
+ []
+
+[138
+
+]
+Overfull \hbox (3.88304pt too wide) in paragraph at lines 81--86
+\T1/ptm/m/n/12 The project de-liv-ered a com-plete, runnable multi-sport club m
+an-age-ment plat-form whose
+ []
+
+
+Overfull \hbox (21.94116pt too wide) in paragraph at lines 88--96
+\T1/ptm/m/n/12 vices user-management, player-management, training-match, medica
+l-fitness, reports-
+ []
+
+[139]
+Overfull \hbox (5.58482pt too wide) in paragraph at lines 116--125
+[]\T1/ptm/b/n/12 A live-match en-gine. \T1/ptm/m/n/12 A broadcast-style phase m
+a-chine ad-vanc-ing a match through
+ []
+
+[140] [141] [142]
+Overfull \hbox (12.31787pt too wide) in paragraph at lines 252--259
+[]\T1/ptm/b/n/12 Single-region, single-host de-ploy-ment. \T1/ptm/m/n/12 The pl
+at-form runs as a sin-gle Docker Com-
+ []
+
+[143] [144]
+Overfull \hbox (0.54619pt too wide) in paragraph at lines 302--307
+[]\T1/ptm/b/n/12 Decoupled, snap-shot ma-chine learn-ing. \T1/ptm/m/n/12 The ma
+tch-prediction and player-rating
+ []
+
+[145]
+Overfull \hbox (3.29332pt too wide) in paragraph at lines 356--359
+[]\T1/ptm/b/n/12 Cross-platform search. \T1/ptm/m/n/12 A uni-fied search sur-fa
+ce span-ning play-ers, staff, matches,
+ []
+
+
+Overfull \hbox (16.28932pt too wide) in paragraph at lines 364--372
+\T1/ptm/m/n/12 models---injury-risk es-ti-ma-tion from train-ing load, or oppon
+ent-style classification---
+ []
+
+
+Overfull \hbox (3.90573pt too wide) in paragraph at lines 373--380
+[]\T1/ptm/b/n/12 Horizontal scal-ing and high avail-abil-ity. \T1/ptm/m/n/12 Mi
+-grat-ing the single-host Docker Com-
+ []
+
+[146]) [147] (chapters/06-appendices.tex
+Appendix A.
+[148
+
+
+]
+Underfull \hbox (badness 1005) in paragraph at lines 47--47
+[]|\T1/ptm/m/n/12 User man-age-
+ []
+
+
+Underfull \hbox (badness 1005) in paragraph at lines 48--48
+[]|\T1/ptm/m/n/12 User man-age-
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 49--50
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 50--50
+[]|\T1/ptm/m/n/12 Players &
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 51--52
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 53--54
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 54--54
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 54--55
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 55--55
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 6188) in paragraph at lines 55--55
+[]|\T1/ptm/m/n/12 Maintain database-backed competitions---
+ []
+
+
+Underfull \hbox (badness 1117) in paragraph at lines 55--55
+\T1/ptm/m/n/12 pi-ons League---each with its par-tic-i-pat-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--56
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 1237) in paragraph at lines 56--56
+\T1/ptm/m/n/12 with the knock-out stage locked un-til the
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 57--57
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 57--58
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 58--58
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 59--59
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 60--60
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--61
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 61--62
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
+[]|\T1/ptm/m/n/12 Provide a Treat-ment Room sep-a-rat-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
+\T1/ptm/m/n/12 ing currently-injured from re-cov-ered
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
+\T1/ptm/m/n/12 play-ers and ad-vanc-ing each in-jured
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 62--62
+\T1/ptm/m/n/12 player through the staged jour-ney
+ []
+
+
+Overfull \hbox (98.85391pt too wide) in paragraph at lines 62--62
+\T1/ptm/m/n/12 injury$\OMS/ztmcm/m/n/12 !$\T1/ptm/m/n/12 diagnosis$\OMS/ztmcm/m
+/n/12 !$\T1/ptm/m/n/12 treatment$\OMS/ztmcm/m/n/12 !$\T1/ptm/m/n/12 rehabilitat
+ion$\OMS/ztmcm/m/n/12 !$\T1/ptm/m/n/12 recovery$\OMS/ztmcm/m/n/12 !$\T1/ptm/m/n
+/12 fitness
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 63--63
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--64
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 2181) in paragraph at lines 64--64
+[]|\T1/ptm/m/n/12 Maintain gen-eral med-i-cal cat-a-logues (in-
+ []
+
+
+Underfull \hbox (badness 1248) in paragraph at lines 64--64
+\T1/ptm/m/n/12 re-cov-ery pro-grammes, fit-ness tests) ref-er-
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 64--65
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--65
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 3209) in paragraph at lines 65--65
+[]|\T1/ptm/m/n/12 Provide real-time team group chat with
+ []
+
+
+Underfull \hbox (badness 6658) in paragraph at lines 65--65
+\T1/ptm/m/n/12 a seeded gen-eral group for all users,
+ []
+
+
+Underfull \hbox (badness 4096) in paragraph at lines 65--65
+\T1/ptm/m/n/12 user-created groups with in-vi-ta-tions (in-
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 65--66
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--66
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 66--67
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--67
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 68--68
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 69--69
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 69--70
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 70--70
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 71--71
+[]|\T1/ptm/m/n/12 FR-
+ []
+
+
+Underfull \hbox (badness 1163) in paragraph at lines 71--71
+[]|\T1/ptm/m/n/12 Ingest real fix-tures, re-sults and stand-ings
+ []
+
+
+Underfull \hbox (badness 1024) in paragraph at lines 71--71
+\T1/ptm/m/n/12 de-mand, with the back-end as the sin-gle
+ []
+
+
+Overfull \hbox (3.15413pt too wide) in paragraph at lines 71--72
+[]|\T1/ptm/m/n/12 Medium| 
+ []
+
+chapters/06-appendices.tex:72: ignored error: Infinite glue shrinkage found in 
+box being split [149
+
+]
+chapters/06-appendices.tex:72: ignored error: Infinite glue shrinkage found in 
+box being split [150]
+Underfull \hbox (badness 10000) in paragraph at lines 97--97
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--98
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 2261) in paragraph at lines 98--98
+[]|\T1/ptm/m/n/12 Role-based ac-cess con-trol shall be en-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 99--99
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 1769) in paragraph at lines 99--99
+[]|\T1/ptm/m/n/12 Each do-main ser-vice shall be in-de-pen-
+ []
+
+
+Underfull \hbox (badness 1874) in paragraph at lines 99--99
+\T1/ptm/m/n/12 er-able through Eu-reka, with no shared
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 100--100
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 1052) in paragraph at lines 100--100
+\T1/ptm/m/n/12 (no-ti-fi-ca-tions, alerts) shall be de-cou-pled
+ []
+
+
+Underfull \hbox (badness 2653) in paragraph at lines 100--100
+\T1/ptm/m/n/12 through asyn-chronous Kafka mes-sag-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 101--101
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 102--102
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 103--103
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 1117) in paragraph at lines 103--103
+[]|\T1/ptm/m/n/12 Each mi-croser-vice shall be an in-de-pen-
+ []
+
+
+Underfull \hbox (badness 2368) in paragraph at lines 103--103
+\T1/ptm/m/n/12 dently build-able and re-leasable mod-ule
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 104--104
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 105--105
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 3078) in paragraph at lines 105--105
+\T1/ptm/m/n/12 technical no-ti-fi-ca-tions with-out ex-pos-ing
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 106--106
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 107--107
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 108--108
+[]|\T1/ptm/m/n/12 NFR-
+ []
+
+[151]
+chapters/06-appendices.tex:109: ignored error: Infinite glue shrinkage found in
+ box being split [152] [153]
+Appendix B.
+[154
+
+]
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 133--133
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 129--135
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 137--137
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 135--139
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 139--141
+ [] [] [] 
+ []
+
+
+Underfull \hbox (badness 1571) in paragraph at lines 142--143
+\T1/ptm/m/n/12 and a re-fresh to-ken as an HTTP-only
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 141--147
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 156--156
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 152--158
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 160--160
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 158--162
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 162--164
+ [] [] [] 
+ []
+
+
+Underfull \hbox (badness 1264) in paragraph at lines 166--167
+[]|\T1/ptm/m/n/12 Create a user ac-count pro-vi-sioned
+ []
+
+
+Overfull \hbox (6.12718pt too wide) in paragraph at lines 169--169
+[]|\T1/cmtt/m/n/12 /users/keycloak/{keycloakId}| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 171--171
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 172--172
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 173--173
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 174--174
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 175--175
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 176--176
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 177--177
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 178--178
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 164--179
+ [] [] [] 
+ []
+
+chapters/06-appendices.tex:179: ignored error: Infinite glue shrinkage found in
+ box being split [155
+
+]
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 188--188
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 184--190
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 192--192
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 190--194
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 194--196
+ [] [] [] 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 197--197
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 198--198
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 198--199
+[]|\T1/ptm/m/n/12 List or cre-ate sports; \T1/cmtt/m/n/12 GET
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 199--199
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 200--200
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 201--201
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 202--202
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 203--203
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 204--204
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 205--205
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 1776) in paragraph at lines 205--206
+[]|\T1/ptm/m/n/12 List or cre-ate ex-ter-nal (op-po-nent)
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 196--206
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 215--215
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 211--217
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 219--219
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 217--221
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 221--223
+ [] [] [] 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 224--224
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 224--225
+[]|\T1/ptm/m/n/12 List or sched-ule matches; \T1/cmtt/m/n/12 GET
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 227--227
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 2818) in paragraph at lines 229--230
+[]|\T1/ptm/m/n/12 Import a real com-pe-ti-tion sea-son
+ []
+
+
+Overfull \hbox (49.34163pt too wide) in paragraph at lines 230--230
+[]|\T1/cmtt/m/n/12 /matches/leagues/{id}/fixtures/bulk| 
+ []
+
+
+Overfull \hbox (55.51512pt too wide) in paragraph at lines 231--231
+[]|\T1/cmtt/m/n/12 /matches/leagues/{id}/fixtures/{fid}| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 232--232
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 2970) in paragraph at lines 232--233
+[]|\T1/ptm/m/n/12 List or record live match events
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 233--233
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 234--234
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 235--235
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 236--236
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 237--237
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 238--238
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 239--239
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 240--240
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 241--241
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (6.12718pt too wide) in paragraph at lines 241--241
+[]|\T1/cmtt/m/n/12 /player-training-assessments| 
+ []
+
+
+Underfull \hbox (badness 1540) in paragraph at lines 241--242
+[]|\T1/ptm/m/n/12 List or cre-ate post-session as-sess-
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 223--242
+ [] [] [] 
+ []
+
+chapters/06-appendices.tex:242: ignored error: Infinite glue shrinkage found in
+ box being split [156]
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 251--251
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 247--253
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 255--255
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 253--257
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 257--259
+ [] [] [] 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 260--260
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 261--261
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 262--262
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 263--263
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 4660) in paragraph at lines 263--264
+[]|\T1/ptm/m/n/12 List or cre-ate re-ha-bil-i-ta-tion pro-
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 264--264
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 265--265
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 3078) in paragraph at lines 265--266
+[]|\T1/ptm/m/n/12 List or record fit-ness tests; \T1/cmtt/m/n/12 GET
+ []
+
+
+Underfull \hbox (badness 5652) in paragraph at lines 265--266
+\T1/cmtt/m/n/12 /fitness-tests/by-sport \T1/ptm/m/n/12 fil-ters
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 266--266
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 259--267
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 276--276
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 272--278
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 280--280
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 278--282
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 282--284
+ [] [] [] 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 285--285
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 285--286
+[]|\T1/ptm/m/n/12 List or cre-ate match anal-y-ses;
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 286--286
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 286--287
+[]|\T1/ptm/m/n/12 List or cre-ate player an-a-lyt-ics;
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 287--287
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
+[]|\T1/ptm/m/n/12 List or cre-ate team an-a-lyt-ics;
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 288--288
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 289--289
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 290--290
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 284--291
+ [] [] [] 
+ []
+
+[157]
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 300--300
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 296--302
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.48222pt too wide) in paragraph at lines 304--304
+[]|\T1/ptm/b/n/12 Method| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 302--306
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 306--308
+ [] [] [] 
+ []
+
+
+Overfull \hbox (61.68861pt too wide) in paragraph at lines 309--309
+[]|\T1/cmtt/m/n/12 /notifications/recipient/{keycloakId}| 
+ []
+
+
+Overfull \hbox (104.90306pt too wide) in paragraph at lines 310--310
+[]|\T1/cmtt/m/n/12 /notifications/recipient/{keycloakId}/unread| 
+ []
+
+
+Overfull \hbox (22.49101pt too wide) in paragraph at lines 315--315
+[]|\T1/ptm/m/n/12 GET/POST| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 315--316
+[]|\T1/ptm/m/n/12 List or send mes-sages;
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 315--316
+\T1/cmtt/m/n/12 /messages/recipient/{id}
+ []
+
+
+Overfull \hbox (67.8621pt too wide) in paragraph at lines 318--318
+[]|\T1/cmtt/m/n/12 /messages/groups/invitations?user={id}| 
+ []
+
+
+Overfull \hbox (6.12718pt too wide) in paragraph at lines 319--319
+[]|\T1/cmtt/m/n/12 /messages/groups/{id}/accept| 
+ []
+
+
+Overfull \hbox (6.12718pt too wide) in paragraph at lines 320--320
+[]|\T1/cmtt/m/n/12 /messages/groups/{id}/invite| 
+ []
+
+
+Overfull \hbox (2.64622pt too wide) in alignment at lines 308--322
+ [] [] [] 
+ []
+
+[158]
+Appendix C.
+[159
+
+]
+Overfull \hbox (3.09087pt too wide) in paragraph at lines 328--335
+\T1/ptm/m/n/12 crosses a database bound-ary. Cross-service re-la-tion-ships are
+ ex-pressed in-stead as opaque
+ []
+
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <17.28> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 336.
+
+Underfull \hbox (badness 1043) in paragraph at lines 353--354
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 keycloak_id\T1/ptm/m/n/12
+ , \T1/cmtt/m/n/12 first_name\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 last_name\T1/ptm/
+m/n/12 , \T1/cmtt/m/n/12 email\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 354--355
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 user_keycloak_id\T1/ptm/m
+/n/12 , \T1/cmtt/m/n/12 nationality\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 2503) in paragraph at lines 354--355
+\T1/cmtt/m/n/12 preferred_position\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 market_value
+\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 kit_number\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 355--356
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 user_keycloak_id\T1/ptm/m
+/n/12 , \T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 staff_role\T1/p
+tm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 356--356
+[]|\T1/cmtt/m/n/12 sport_managers \T1/ptm/m/n/12 /
+ []
+
+
+Underfull \hbox (badness 5504) in paragraph at lines 381--382
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 player_keycloak_id\T1/ptm
+/m/n/12 , \T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 start_date\T1
+/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 381--382
+\T1/cmtt/m/n/12 end_date\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 salary\T1/ptm/m/n/12 ,
+ \T1/cmtt/m/n/12 release_clause\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (45.96306pt too wide) in paragraph at lines 382--382
+[]|\T1/cmtt/m/n/12 player_transfers_incoming| 
+ []
+
+
+Overfull \hbox (45.96306pt too wide) in paragraph at lines 383--383
+[]|\T1/cmtt/m/n/12 player_transfers_outgoing| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--385
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 player_keycloak_id\T1/ptm
+/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 384--385
+\T1/cmtt/m/n/12 national_team_keycloak_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 call_
+up_date\T1/ptm/m/n/12 ,
+ []
+
+chapters/06-appendices.tex:387: ignored error: Infinite glue shrinkage found in
+ box being split [160
+
+]
+Underfull \hbox (badness 5504) in paragraph at lines 405--406
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 home_team_id\T1/ptm/m/n/1
+2 , \T1/cmtt/m/n/12 outer_team_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 match_type\T1
+/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 405--406
+\T1/cmtt/m/n/12 status\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 sport_type\T1/ptm/m/n/12
+ , \T1/cmtt/m/n/12 kickoff_time\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 405--406
+\T1/cmtt/m/n/12 home_team_score\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 away_team_score
+\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 405--406
+\T1/cmtt/m/n/12 external_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 opponent_name\T1/pt
+m/m/n/12 , \T1/cmtt/m/n/12 opponent_crest\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 406--407
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 , \
+T1/cmtt/m/n/12 set_by_coach_keycloak_id\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 406--407
+\T1/cmtt/m/n/12 formation\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 tactical_approach\T1/
+ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 407--408
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 match_id\T1/ptm/m/n/12 , 
+\T1/cmtt/m/n/12 player_keycloak_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 position\T1/
+ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 408--409
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 match_id\T1/ptm/m/n/12 , 
+\T1/cmtt/m/n/12 player_keycloak_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 team_id\T1/p
+tm/m/n/12 ,
+ []
+
+
+Overfull \hbox (33.61607pt too wide) in paragraph at lines 409--409
+[]|\T1/cmtt/m/n/12 player_match_statistics| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 410--411
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 , \
+T1/cmtt/m/n/12 head_coach_keycloak_id\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 410--411
+\T1/cmtt/m/n/12 session_type\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 status\T1/ptm/m/n/
+12 , \T1/cmtt/m/n/12 scheduled_date\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 411--411
+[]|\T1/cmtt/m/n/12 training_plans \T1/ptm/m/n/12 /
+ []
+
+
+Overfull \hbox (8.9221pt too wide) in paragraph at lines 412--412
+[]|\T1/cmtt/m/n/12 training_attendance| 
+ []
+
+
+Underfull \hbox (badness 7925) in paragraph at lines 412--413
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 training_session_id\T1/pt
+m/m/n/12 , \T1/cmtt/m/n/12 player_keycloak_id\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (8.9221pt too wide) in paragraph at lines 415--415
+[]|\T1/cmtt/m/n/12 competition_fixture| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 415--416
+\T1/cmtt/m/n/12 home_score\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 away_score\T1/ptm/m/
+n/12 , \T1/cmtt/m/n/12 played\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 round\T1/ptm/m/n/
+12 ,
+ []
+
+chapters/06-appendices.tex:416: ignored error: Infinite glue shrinkage found in
+ box being split [161]
+Underfull \hbox (badness 10000) in paragraph at lines 434--435
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 player_keycloak_id\T1/ptm
+/m/n/12 , \T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 434--435
+\T1/cmtt/m/n/12 reported_by_doctor_keycloak_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 
+injury_type\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 434--435
+\T1/cmtt/m/n/12 severity\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 injured_body_part\T1/p
+tm/m/n/12 , \T1/cmtt/m/n/12 injury_date\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 435--436
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 injury_id\T1/ptm/m/n/12 ,
+ \T1/cmtt/m/n/12 player_keycloak_id\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 7925) in paragraph at lines 435--436
+\T1/cmtt/m/n/12 doctor_keycloak_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 diagnosis\T1
+/ptm/m/n/12 , \T1/cmtt/m/n/12 test_results\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 436--437
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 injury_id\T1/ptm/m/n/12 ,
+ \T1/cmtt/m/n/12 player_keycloak_id\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 439--440
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 player_keycloak_id\T1/ptm
+/m/n/12 , \T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 test_type\T1/
+ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 439--440
+\T1/cmtt/m/n/12 sport_type\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 test_date\T1/ptm/m/n
+/12 , \T1/cmtt/m/n/12 result\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 unit\T1/ptm/m/n/12
+ ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--461
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 match_id\T1/ptm/m/n/12 , 
+\T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 sport_type\T1/ptm/m/n/1
+2 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 460--461
+\T1/cmtt/m/n/12 sport_specific_stats\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 tactical_a
+nalysis\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 5504) in paragraph at lines 461--462
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 player_keycloak_id\T1/ptm
+/m/n/12 , \T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 sport_type\T1
+/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 2343) in paragraph at lines 462--463
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 team_id\T1/ptm/m/n/12 , \
+T1/cmtt/m/n/12 sport_type\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 wins\T1/ptm/m/n/12 , 
+\T1/cmtt/m/n/12 draws\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 losses\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (2.74861pt too wide) in paragraph at lines 463--463
+[]|\T1/cmtt/m/n/12 training_analytics| 
+ []
+
+
+Overfull \hbox (33.61607pt too wide) in paragraph at lines 465--465
+[]|\T1/cmtt/m/n/12 sponsor_contract_offers| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 465--466
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 sponsor_keycloak_id\T1/pt
+m/m/n/12 , \T1/cmtt/m/n/12 offer_title\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 468--469
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 recipient_user_keycloak_i
+d\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 category\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 469--470
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 alert_type\T1/ptm/m/n/12 
+, \T1/cmtt/m/n/12 priority\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 469--470
+\T1/cmtt/m/n/12 target_user_keycloak_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 target_
+role\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 470--471
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 sender_user_keycloak_id\T
+1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 2368) in paragraph at lines 471--472
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 name\T1/ptm/m/n/12 , \T1/
+cmtt/m/n/12 description\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 photo_url\T1/ptm/m/n/12
+ , \T1/cmtt/m/n/12 is_general\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 7397) in paragraph at lines 472--473
+[]|\T1/cmtt/m/n/12 id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 group_id\T1/ptm/m/n/12 , 
+\T1/cmtt/m/n/12 user_keycloak_id\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 status \T1/ptm
+/m/n/12 (IN-
+ []
+
+chapters/06-appendices.tex:473: ignored error: Infinite glue shrinkage found in
+ box being split [162] [163]
+Appendix D.
+[164
+
+]
+Overfull \hbox (2.65259pt too wide) in alignment at lines 487--493
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 493--497
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 497--499
+ [] [] [] 
+ []
+
+
+Underfull \hbox (badness 1147) in paragraph at lines 503--504
+[]|\T1/ptm/m/n/12 Object-relational map-ping over
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 504--504
+[]|\T1/ptm/m/n/12 Spring Se-cu-rity (re-source
+ []
+
+
+Underfull \hbox (badness 2600) in paragraph at lines 504--505
+[]|\T1/ptm/m/n/12 JWT ver-i-fi-ca-tion at the gate-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 505--506
+[]|\T1/ptm/m/n/12 OIDC/OAuth 2.0 iden-tity
+ []
+
+
+Underfull \hbox (badness 1062) in paragraph at lines 506--507
+[]|\T1/ptm/m/n/12 Server- and client-rendered UI
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 508--509
+[]|\T1/ptm/m/n/12 Utility-first styling and the
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 509--509
+[]|\T1/ptm/m/n/12 Native Web-Socket (RFC
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 511--511
+[]|\T1/ptm/m/n/12 Apache Kafka (cp-kafka
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 511--512
+[]|\T1/ptm/m/n/12 Asynchronous domain-event
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 514--514
+[]|\T1/ptm/m/n/12 Machine learn-
+ []
+
+
+Underfull \hbox (badness 1281) in paragraph at lines 514--515
+[]|\T1/ptm/m/n/12 Decoupled match-outcome and
+ []
+
+
+Underfull \hbox (badness 1005) in paragraph at lines 515--516
+[]|\T1/ptm/m/n/12 Reproducible con-tainer or-ches-
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 499--517
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 520--526
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 526--530
+ [] [] [] 
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 530--532
+ [] [] [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 537--538
+[]|\T1/cmtt/m/n/12 /users\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /staff\T1/ptm/m/n/12 
+, \T1/cmtt/m/n/12 /players\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 537--538
+\T1/cmtt/m/n/12 /team-managers\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 537--538
+\T1/cmtt/m/n/12 /sport-managers\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /scouts\T1/ptm/
+m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 537--538
+\T1/cmtt/m/n/12 /sponsors\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /fans\T1/ptm/m/n/12 ,
+
+ []
+
+
+Underfull \hbox (badness 2846) in paragraph at lines 538--539
+[]|\T1/cmtt/m/n/12 /teams\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /sports\T1/ptm/m/n/12
+ , \T1/cmtt/m/n/12 /rosters\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 538--539
+\T1/cmtt/m/n/12 /player-contracts\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 538--539
+\T1/cmtt/m/n/12 /player-transfers-*\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 538--539
+\T1/cmtt/m/n/12 /player-callups\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 538--539
+\T1/cmtt/m/n/12 /outer-players\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 539--540
+[]|\T1/cmtt/m/n/12 /matches\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /match-events\T1/pt
+m/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 539--540
+\T1/cmtt/m/n/12 /match-formations\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 539--540
+\T1/cmtt/m/n/12 /match-lineups\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (5.11227pt too wide) in paragraph at lines 539--540
+\T1/cmtt/m/n/12 /match-performance-reviews\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 539--540
+\T1/cmtt/m/n/12 /player-match-statistics\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 540--541
+[]|\T1/cmtt/m/n/12 /injuries\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /diagnoses\T1/ptm/
+m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 540--541
+\T1/cmtt/m/n/12 /treatments\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 540--541
+\T1/cmtt/m/n/12 /rehabilitations\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 540--541
+\T1/cmtt/m/n/12 /recovery-programs\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 540--541
+\T1/cmtt/m/n/12 /fitness-tests\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 541--542
+[]|\T1/cmtt/m/n/12 /match-analyses\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 541--542
+\T1/cmtt/m/n/12 /player-analytics\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 541--542
+\T1/cmtt/m/n/12 /team-analytics\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 541--542
+\T1/cmtt/m/n/12 /training-analytics\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 541--542
+\T1/cmtt/m/n/12 /scout-reports\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 542--543
+[]|\T1/cmtt/m/n/12 /notifications\T1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 542--543
+\T1/cmtt/m/n/12 /alerts\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 /messages \T1/ptm/m/n/1
+2 (and
+ []
+
+
+Overfull \hbox (2.65259pt too wide) in alignment at lines 532--545
+ [] [] [] 
+ []
+
+[165
+
+] [166]
+Appendix E.
+[167
+
+]
+Overfull \hbox (100.45271pt too wide) in paragraph at lines 564--566
+[]\T1/ptm/m/n/12 Optional: a free football-data.org API key, placed in \T1/cmtt
+/m/n/12 MSCMS-main/.env \T1/ptm/m/n/12 as \T1/cmtt/m/n/12 FOOTBALL_DATA_API_KEY
+\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (19.6833pt too wide) in paragraph at lines 571--577
+\T1/ptm/m/n/12 run-ning Maven in-side the con-tainer. The fol-low-ing com-mands
+ are run from the \T1/cmtt/m/n/12 MSCMS-main
+ []
+
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
+nput line 578.
+LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 580.
+[168
+
+]) [169]
+Underfull \hbox (badness 1603) in paragraph at lines 472--475
+\T1/ptm/m/n/12 line]. Avail-able: []$\T1/cmtt/m/n/12 https : / / docs . spring 
+. io / spring-[]boot / docs / current /
+ []
+
+
+Underfull \hbox (badness 1565) in paragraph at lines 499--502
+\T1/ptm/m/n/12 2024. [On-line]. Avail-able: []$\T1/cmtt/m/n/12 https : / / kafk
+a . apache . org / documentation/$[]\T1/ptm/m/n/12 .
+ []
+
+
+Underfull \hbox (badness 1132) in paragraph at lines 509--513
+\T1/ptm/m/n/12 tural term,'' Mar-t-in-Fowler.com, Mar. 2014. [On-line]. Avail-a
+ble: []$\T1/cmtt/m/n/12 https : / /
+ []
+
+[170
+
+
+] [171] 
+enddocument/afterlastpage (AED): lastpage setting LastPage.
+(main.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+ ***********
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 684AADEA5CD127E1435017D787D25E0B;24957.
+ ) 
+Here is how much of TeX's memory you used:
+ 32059 strings out of 467870
+ 625995 string characters out of 5417351
+ 1179737 words of memory out of 5000000
+ 59733 multiletter control sequences out of 15000+600000
+ 726684 words of font info for 174 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 89i,12n,97p,712b,1291s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\Best By\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ec
+tt1000.pk> <C:\Users\Best By\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/d
+pi600\ecit1000.pk> <C:\Users\Best By\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
+pen/ec/dpi600\ecit1200.pk> <C:\Users\Best By\AppData\Local\MiKTeX\fonts/pk/ljfo
+ur/jknappen/ec/dpi600\ectt1728.pk> <C:\Users\Best By\AppData\Local\MiKTeX\fonts
+/pk/ljfour/jknappen/ec/dpi600\ectt0800.pk> <C:\Users\Best By\AppData\Local\MiKT
+eX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1095.pk> <C:\Users\Best By\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1200.pk><C:/Users/Best By/App
+Data/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/B
+est By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+<C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pf
+b><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a
+.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr
+8a.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/ut
+mri8a.pfb>
+Output written on main.pdf (171 pages, 7401551 bytes).
+PDF statistics:
+ 2811 PDF objects out of 2984 (max. 8388607)
+ 552 named destinations out of 1000 (max. 500000)
+ 1326 words of extra memory for PDF output out of 10000 (max. 10000000)
+

@@ -28,14 +28,22 @@ public class SponsorContractOffer {
     @Column(columnDefinition = "TEXT")
     private String terms;
 
-    private String status; // e.g., PENDING, NEGOTIATING, ACCEPTED, REJECTED, EXPIRED
+    private String status; // PENDING, NEGOTIATING, ACCEPTED, REJECTED (ENDED is derived from endDate)
 
-    // Counter-offer salary proposed by the club during negotiation (null = none).
+    // Whose turn it is to act in the negotiation: ADMIN or SPONSOR.
+    // null once the offer reaches a terminal state (ACCEPTED / REJECTED).
+    private String currentTurn;
+
+    // Counter-offer salary proposed by the other party during negotiation (null = none).
     private Double negotiatedAmount;
 
     private LocalDateTime offeredAt;
 
     private LocalDateTime respondedAt;
+
+    // Set when the offer is ACCEPTED (respondedAt + contractDurationMonths).
+    // Once this date passes the offer is treated as ENDED/EXPIRED for display.
+    private LocalDateTime endDate;
 
     @Column(columnDefinition = "TEXT")
     private String notes;

@@ -18,7 +18,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem("token", data.accessToken);
+        localStorage.setItem("token", data.access_token);
         localStorage.setItem("loggedIn", "true");
 
         console.log("Login success");

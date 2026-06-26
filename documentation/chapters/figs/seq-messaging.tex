@@ -1,0 +1,45 @@
+% auto-generated figure: seq-messaging (source: wf)
+\begin{figure}[H]
+\centering
+{\footnotesize
+\begin{sequencediagram}
+  \newthread{u}{:User}
+  \newinst[1]{fe}{:Frontend}
+  \newinst[1.6]{ws}{:WSHandler /ws/chat}
+  \newinst[1.4]{db}{:DB}
+  \newinst[1.2]{mb}{:Members}
+
+  \begin{call}{u}{open chat}{fe}{groups + history}
+    \begin{call}{fe}{GET /messages/groups?user=}{ws}{groups}
+    \end{call}
+  \end{call}
+
+  \mess{fe}{connect ws://.../ws/chat}{ws}
+  \postlevel
+
+  \begin{sdblock}{alt}{[\,WebSocket available\,]}
+    \mess{u}{send content + groupId}{fe}
+    \mess{fe}{message frame}{ws}
+    \postlevel
+    \begin{call}{ws}{persist Message(group\_id)}{db}{saved id}
+    \end{call}
+    \mess{ws}{broadcast to group}{mb}
+    \postlevel
+  \end{sdblock}
+
+  \begin{sdblock}[dFill]{alt}{[\,socket unavailable\,]}
+    \mess{u}{send content + groupId}{fe}
+    \begin{call}{fe}{POST /messages \{group\_id\}}{ws}{saved}
+      \begin{call}{ws}{persist Message}{db}{row}
+      \end{call}
+    \end{call}
+    \begin{call}{fe}{poll GET /messages?group=}{ws}{messages}
+    \end{call}
+    \mess{fe}{render de-duplicated}{mb}
+    \postlevel
+  \end{sdblock}
+\end{sequencediagram}
+}
+\caption{Sequence diagram for group messaging: the front-end opens a WebSocket to \texttt{/ws/chat} on the notification-mail service (outside the gateway) and, when the socket is available, sends a message that the handler persists as a \texttt{Message} keyed by \texttt{group\_id} and broadcasts to connected group members in real time; if the socket is unavailable the client falls back to authenticated HTTP polling of the group's messages.}
+\label{fig-seq-messaging}
+\end{figure}

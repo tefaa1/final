@@ -1,0 +1,372 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.24)  24 JUN 2026 11:13
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**./rev4.tex
+(rev4.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo
+File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@section=\count276
+\c@subsection=\count277
+\c@subsubsection=\count278
+\c@paragraph=\count279
+\c@subparagraph=\count280
+\c@figure=\count281
+\c@table=\count282
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdfpages\pdfpages.sty
+Package: pdfpages 2026/03/30 v0.6h Insert pages of external PDF documents (AM)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty
+Package: calc 2025/03/01 v4.3b Infix arithmetic (KKT,FJ)
+\calc@Acount=\count283
+\calc@Bcount=\count284
+\calc@Adimen=\dimen149
+\calc@Bdimen=\dimen150
+\calc@Askip=\skip51
+\calc@Bskip=\skip52
+LaTeX Info: Redefining \setlength on input line 86.
+LaTeX Info: Redefining \addtolength on input line 87.
+\calc@Ccount=\count285
+\calc@Cskip=\skip53
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdfpages\pppdftex.def
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-p
+dftex.def)
+No file rev4.aux.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.
+mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf
+-base.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys
+.cfg))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape.s
+ty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape-n
+ometadata.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\lscape.sty))
+)
+
+! Package pdfpages Error: Cannot find file `fix_seq-notify.pdf'.
+
+See the pdfpages package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+
+! Package pdfpages Error: Cannot find file `1'.
+
+See the pdfpages package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+! Undefined control sequence.
+\AM@checkpagenumber #1->\ifnum #1>\AM@pagecount 
+                                                \relax \ifthenelse {\boolean...
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+! Missing number, treated as zero.
+<to be read again> 
+                   \relax 
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+
+! Package pdfpages Error: Page 1 of `\AM@currentdocname ' does not exist.
+
+See the pdfpages package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+[1{C:/Users/Best By/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] [2 <./fi
+x_seq-ingest.pdf>] [3 <./fix_state-injury.pdf>] [4 <./fix_state-match.pdf>]
+[5 <./fix_class-squad.pdf>] (rev4.aux) )
+(see the transcript file for additional information)<C:/Users/Best By/AppData/L
+ocal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Users/Best By
+/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Use
+rs/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.p
+fb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/
+cm/cmr8.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/
+amsfonts/cm/cmsy6.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/public/amsfonts/cm/cmsy8.pfb>
+Output written on rev4.pdf (5 pages, 106671 bytes).
+Transcript written on rev4.log.
+pdflatex: major issue: So far, you have not checked for MiKTeX updates.
+ng defaults for OT1/cmr/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.
+mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count291
+\scratchdimen=\dimen158
+\scratchbox=\box55
+\nofMPsegments=\count292
+\nofMParguments=\count293
+\everyMPshowfont=\toks21
+\MPscratchCnt=\count294
+\MPscratchDim=\dimen159
+\MPnumerator=\count295
+\makeMPintoPDFobject=\count296
+\everyMPtoPDFconversion=\toks22
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf
+-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys
+.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape.s
+ty
+Package: pdflscape 2022-10-27 v0.13 Display of landscape pages in PDF
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape-n
+ometadata.sty
+Package: pdflscape-nometadata 2022-10-28 v0.13 Display of landscape pages in PD
+F (HO)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+))
+
+! Package pdfpages Error: Cannot find file `fix_seq-notify.pdf'.
+
+See the pdfpages package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+This error message was generated by an \errmessage
+command, so I can't give any explicit help.
+Pretend that you're Hercule Poirot: Examine all clues,
+and deduce the truth by order and method.
+
+
+! Package pdfpages Error: Cannot find file `1'.
+
+See the pdfpages package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+(That was another \errmessage.)
+
+! Undefined control sequence.
+\AM@checkpagenumber #1->\ifnum #1>\AM@pagecount 
+                                                \relax \ifthenelse {\boolean...
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing number, treated as zero.
+<to be read again> 
+                   \relax 
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+
+! Package pdfpages Error: Page 1 of `\AM@currentdocname ' does not exist.
+
+See the pdfpages package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2 \includepdf[pages=1]{fix_seq-notify.pdf}
+                                            
+You have set a wrong page number in the `pages' option. Document 
+`\AM@currentdocname ' does not have 1 pages.
+
+<fix_seq-ingest.pdf, id=1, 597.50829pt x 845.0471pt>
+File: fix_seq-ingest.pdf Graphic file (type pdf)
+<use fix_seq-ingest.pdf>
+Package pdftex.def Info: fix_seq-ingest.pdf  used on input line 3.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<fix_seq-ingest.pdf, id=3, page=1, 597.50829pt x 845.0471pt>
+File: fix_seq-ingest.pdf Graphic file (type pdf)
+<use fix_seq-ingest.pdf, page 1>
+Package pdftex.def Info: fix_seq-ingest.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: fix_seq-ingest.pdf Graphic file (type pdf)
+<use fix_seq-ingest.pdf, page 1>
+Package pdftex.def Info: fix_seq-ingest.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+[1
+
+{C:/Users/Best By/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+File: fix_seq-ingest.pdf Graphic file (type pdf)
+<use fix_seq-ingest.pdf, page 1>
+Package pdftex.def Info: fix_seq-ingest.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_seq-ingest.pdf Graphic file (type pdf)
+<use fix_seq-ingest.pdf, page 1>
+Package pdftex.def Info: fix_seq-ingest.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_seq-ingest.pdf Graphic file (type pdf)
+<use fix_seq-ingest.pdf, page 1>
+Package pdftex.def Info: fix_seq-ingest.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [2
+
+ <./fix_seq-ingest.pdf>]
+<fix_state-injury.pdf, id=25, 597.50829pt x 845.0471pt>
+File: fix_state-injury.pdf Graphic file (type pdf)
+<use fix_state-injury.pdf>
+Package pdftex.def Info: fix_state-injury.pdf  used on input line 4.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<fix_state-injury.pdf, id=27, page=1, 597.50829pt x 845.0471pt>
+File: fix_state-injury.pdf Graphic file (type pdf)
+<use fix_state-injury.pdf, page 1>
+Package pdftex.def Info: fix_state-injury.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: fix_state-injury.pdf Graphic file (type pdf)
+<use fix_state-injury.pdf, page 1>
+Package pdftex.def Info: fix_state-injury.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_state-injury.pdf Graphic file (type pdf)
+<use fix_state-injury.pdf, page 1>
+Package pdftex.def Info: fix_state-injury.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_state-injury.pdf Graphic file (type pdf)
+<use fix_state-injury.pdf, page 1>
+Package pdftex.def Info: fix_state-injury.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_state-injury.pdf Graphic file (type pdf)
+<use fix_state-injury.pdf, page 1>
+Package pdftex.def Info: fix_state-injury.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [3
+
+ <./fix_state-injury.pdf>]
+<fix_state-match.pdf, id=48, 597.50829pt x 845.0471pt>
+File: fix_state-match.pdf Graphic file (type pdf)
+<use fix_state-match.pdf>
+Package pdftex.def Info: fix_state-match.pdf  used on input line 5.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<fix_state-match.pdf, id=50, page=1, 597.50829pt x 845.0471pt>
+File: fix_state-match.pdf Graphic file (type pdf)
+<use fix_state-match.pdf, page 1>
+Package pdftex.def Info: fix_state-match.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: fix_state-match.pdf Graphic file (type pdf)
+<use fix_state-match.pdf, page 1>
+Package pdftex.def Info: fix_state-match.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_state-match.pdf Graphic file (type pdf)
+<use fix_state-match.pdf, page 1>
+Package pdftex.def Info: fix_state-match.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_state-match.pdf Graphic file (type pdf)
+<use fix_state-match.pdf, page 1>
+Package pdftex.def Info: fix_state-match.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_state-match.pdf Graphic file (type pdf)
+<use fix_state-match.pdf, page 1>
+Package pdftex.def Info: fix_state-match.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [4
+
+ <./fix_state-match.pdf>]
+<fix_class-squad.pdf, id=69, 597.50829pt x 845.0471pt>
+File: fix_class-squad.pdf Graphic file (type pdf)
+<use fix_class-squad.pdf>
+Package pdftex.def Info: fix_class-squad.pdf  used on input line 6.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<fix_class-squad.pdf, id=71, page=1, 597.50829pt x 845.0471pt>
+File: fix_class-squad.pdf Graphic file (type pdf)
+<use fix_class-squad.pdf, page 1>
+Package pdftex.def Info: fix_class-squad.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: fix_class-squad.pdf Graphic file (type pdf)
+<use fix_class-squad.pdf, page 1>
+Package pdftex.def Info: fix_class-squad.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_class-squad.pdf Graphic file (type pdf)
+<use fix_class-squad.pdf, page 1>
+Package pdftex.def Info: fix_class-squad.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_class-squad.pdf Graphic file (type pdf)
+<use fix_class-squad.pdf, page 1>
+Package pdftex.def Info: fix_class-squad.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: fix_class-squad.pdf Graphic file (type pdf)
+<use fix_class-squad.pdf, page 1>
+Package pdftex.def Info: fix_class-squad.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+
+[5
+
+ <./fix_class-squad.pdf>] (rev4.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+ ***********
+ ) 
+Here is how much of TeX's memory you used:
+ 3129 strings out of 467870
+ 50863 string characters out of 5417351
+ 460530 words of memory out of 5000000
+ 32013 multiletter control sequences out of 15000+600000
+ 627721 words of font info for 40 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 72i,17n,90p,283b,445s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
+m/cmbx8.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/
+amsfonts/cm/cmr10.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/typ
+e1/public/amsfonts/cm/cmr12.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Best By/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/Users/Best By/AppData/Lo
+cal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on rev4.pdf (5 pages, 106671 bytes).
+PDF statistics:
+ 99 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 61 words of extra memory for PDF output out of 10000 (max. 10000000)
+

@@ -1,0 +1,95 @@
+\documentclass[border=10pt]{standalone}
+\input{../preamble-diagrams.tex}
+\begin{document}
+\begin{tikzpicture}[node distance=6mm and 7mm,
+    every node/.style={transform shape}]
+
+  % ---- frontend (browser) ----
+  \node[comp, minimum width=50mm] (fe) {Next.js / React Front-end (browser)};
+
+  % ---- API gateway ----
+  \node[svc, below=12mm of fe, minimum width=64mm] (gw)
+        {Spring Cloud API Gateway\\(:8080 -- JWT verify + routing)};
+
+  % ---- identity provider (left of gateway) ----
+  \node[comp, left=18mm of gw, minimum width=28mm] (kc)
+        {Keycloak\\realm \texttt{mscms}};
+
+  % ---- control plane (right of gateway) ----
+  \node[comp, right=18mm of gw, minimum width=28mm] (eu) {Eureka\\discovery (:8761)};
+  \node[comp, below=6mm of eu, minimum width=28mm] (cfg) {Config\\Server (:8082)};
+
+  % ---- six domain services in a row ----
+  \node[svc, below=30mm of gw, xshift=-72mm, minimum width=24mm] (um)
+        {user-\\management\\:8081};
+  \node[svc, right=of um, minimum width=24mm] (pm) {player-\\management\\:8084};
+  \node[svc, right=of pm, minimum width=24mm] (tm) {training-\\match\\:8087};
+  \node[svc, right=of tm, minimum width=24mm] (mf) {medical-\\fitness\\:8086};
+  \node[svc, right=of mf, minimum width=24mm] (ra) {reports-\\analytics\\:8083};
+  \node[svc, right=of ra, minimum width=24mm] (nm) {notification-\\mail\\:8085};
+
+  % ---- per-service databases ----
+  \node[store, below=9mm of um] (dbu) {mscms\\\_user};
+  \node[store, below=9mm of pm] (dbp) {mscms\\\_player};
+  \node[store, below=9mm of tm] (dbt) {mscms\\\_training};
+  \node[store, below=9mm of mf] (dbm) {mscms\\\_medical};
+  \node[store, below=9mm of ra] (dbr) {mscms\\\_reports};
+  \node[store, below=9mm of nm] (dbn) {mscms\\\_notif.};
+
+  % ---- external football API (far top-left corner) ----
+  \node[ext, left=14mm of fe, yshift=-2mm, minimum width=32mm] (fd)
+        {football-data.org\\REST API (external)};
+
+  % ---- async / infra row (bottom) ----
+  \node[comp, below=12mm of dbt, minimum width=32mm] (kafka)
+        {Apache Kafka\\(async event backbone)};
+  \node[comp, left=10mm of kafka, minimum width=18mm] (redis) {Redis\\(cache)};
+  \node[comp, below=12mm of dbn, minimum width=20mm] (rmq) {RabbitMQ};
+  \node[comp, below=12mm of dbr, minimum width=28mm] (ml)
+        {Python / FastAPI\\ML service};
+
+  % ===== synchronous edges =====
+  \draw[flow] (fe) -- node[lbl,pos=0.5]{HTTPS + JWT} (gw);
+  \draw[flow] (gw.south) -- (um.north);
+  \draw[flow] (gw.south) -- (pm.north);
+  \draw[flow] (gw.south) -- (tm.north);
+  \draw[flow] (gw.south) -- (mf.north);
+  \draw[flow] (gw.south) -- (ra.north);
+  \draw[flow] (gw.south) -- (nm.north);
+
+  % service -> own db
+  \draw[flow] (um) -- (dbu);
+  \draw[flow] (pm) -- (dbp);
+  \draw[flow] (tm) -- (dbt);
+  \draw[flow] (mf) -- (dbm);
+  \draw[flow] (ra) -- (dbr);
+  \draw[flow] (nm) -- (dbn);
+
+  % keycloak JWT to gateway + Admin API to user-management
+  \draw[biflow] (kc) -- node[lbl,pos=0.5]{JWKS} (gw);
+  \draw[flow] (kc.south) -- node[lbl,pos=0.5]{Admin API} (um.north -| kc.south) -- (um.north);
+
+  % training-match <- external API (scheduled ingestion)
+  \draw[flow] (fd.south) to[out=-90,in=150]
+        node[lbl,pos=0.7]{scheduled ingest} (tm.north west);
+
+  % reports -> ML
+  \draw[flow] (ra) -- (ml);
+
+  % notification raw websocket to frontend (outside gateway)
+  \draw[flow] (nm.east) to[out=0,in=0,looseness=1.3]
+        node[lbl,pos=0.5]{\texttt{/ws/chat} (raw WebSocket, outside gateway)} (fe.east);
+
+  % ===== control-plane (dashed: register / pull config) =====
+  \draw[flowd] (gw.east) -- node[lbl,pos=0.5]{register} (eu.west);
+  \draw[flowd] (cfg.west) to[out=180,in=-45] node[lbl,pos=0.7]{config} (gw.south east);
+  \foreach \s in {pm,tm,mf,ra,nm}{ \draw[flowd] (\s.north) to[out=70,in=-130] (eu.south west); }
+
+  % ===== async Kafka backbone =====
+  \draw[flowd] (tm.south) to[out=-90,in=90] (kafka.north);
+  \draw[flowd] (mf.south) to[out=-90,in=60] (kafka.north east);
+  \draw[flowd] (pm.south) to[out=-90,in=150] (kafka.north west);
+  \draw[flowd] (kafka.east) to[out=0,in=-135] node[lbl,pos=0.6]{consume} (nm.south);
+
+\end{tikzpicture}
+\end{document}

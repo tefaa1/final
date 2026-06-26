@@ -1,0 +1,25 @@
+% auto-generated figure: er-user (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=14mm]
+  \Entity{usr}{USER}{%
+    \underline{PK} id\\ keycloakId\\ username\\ email\\ role : Role\\ age\\ gender\\ phone}
+  \Entity[right=34mm of usr]{ply}{PLAYER}{%
+    \underline{PK} id\\ \underline{FK} userId\\ dateOfBirth\\ nationality\\ position\\ marketValue\\ kitNumber\\ status}
+  \Entity[below left=10mm and 6mm of usr]{coa}{HEAD\_COACH}{%
+    \underline{PK} id\\ \underline{FK} userId\\ sport\\ team\\ staffRole\\ licenceLevel}
+  \Entity[below right=10mm and 6mm of usr]{nat}{NATIONAL\_TEAM}{%
+    \underline{PK} id\\ federationName\\ country\\ contact}
+  \Rel{usr}{ply}{1}{1}{extends}
+  \Rel{usr}{coa}{1}{1}{extends}
+  \Rel{usr}{nat}{1}{1}{extends}
+  \node[font=\scriptsize\itshape, text width=46mm, align=left,
+        below=22mm of usr] (note)
+    {Further 1..1 role extensions follow the same pattern: doctor, physiotherapist,
+     fitness\_coach, team\_manager, sport\_manager, scout, sponsor and fan.};
+\end{tikzpicture}%
+}
+\caption{Entity-relationship diagram of the \texttt{mscms\_user} database, showing the common USER identity record and its one-to-one per-role profile extensions (PLAYER, HEAD\_COACH, NATIONAL\_TEAM, and the remaining role tables).}
+\label{fig-er-user}
+\end{figure}

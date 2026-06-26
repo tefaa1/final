@@ -1,0 +1,55 @@
+% auto-generated figure: class-reports (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=10mm]
+  \UmlClass{ma}{MatchAnalysis}{%
+    - matchId : Long\\
+    - teamId : Long\\
+    - sportType : SportType\\
+    - sportSpecificStats : json\\
+    - tacticalAnalysis : json\\
+    - playerRatings : json}{}
+  \UmlClass[right=12mm of ma]{pa}{PlayerAnalytics}{%
+    - playerKeycloakId\\
+    - teamId : Long\\
+    - sportType : SportType\\
+    - primaryScore : double\\
+    - secondaryScore : double\\
+    - averageRating : double}{}
+  \UmlClass[right=12mm of pa]{ta}{TeamAnalytics}{%
+    - teamId : Long\\
+    - sportType : SportType\\
+    - wins / draws / losses\\
+    - pointsFor : int\\
+    - pointsAgainst : int}{}
+  \UmlClass[below=14mm of ma]{tr}{TrainingAnalytics}{%
+    - teamId : Long\\
+    - period : DateRange\\
+    - attendanceRate\\
+    - completionRate\\
+    - trendData : json}{}
+  \UmlClass[below=14mm of pa]{sr}{ScoutReport}{%
+    - scoutKeycloakId\\
+    - outerPlayerId\\
+    - ratings : json\\
+    - recommendation : bool\\
+    - notes : text}{}
+  \UmlClass[below=14mm of ta]{so}{SponsorContractOffer}{%
+    - sponsorKeycloakId\\
+    - teamId : Long\\
+    - contractValue\\
+    - durationMonths : int\\
+    - terms : text\\
+    - status : OfferStatus}{}
+
+  % relationship notes: opaque-id references, no object links
+  \draw[flowd] (ma) -- node[lbl,pos=0.5]{\itshape matchId} (tr);
+  \draw[flowd] (pa) -- node[lbl,pos=0.5]{\itshape playerKeycloakId} (sr);
+  \node[lbl,below=8mm of sr,text width=70mm,align=center]
+        {\itshape all classes reference operational entities
+         (matches, players, teams, sponsors) by opaque id --- no object links};
+\end{tikzpicture}}
+\caption{Class model of the reports-and-analytics domain (\texttt{mscms\_reports}): six authored or derived classes that aggregate operational data over a period and reference matches, players, teams and sponsors only by opaque identifier rather than by object links.}
+\label{fig-class-reports}
+\end{figure}

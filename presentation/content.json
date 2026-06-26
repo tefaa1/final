@@ -1,0 +1,154 @@
+{
+  "features": {
+    "heading": "Key Features",
+    "subtitle": "Ten capabilities that run the whole club, end to end",
+    "emoji": "⭐",
+    "items": [
+      { "emoji": "🛡️", "title": "Role-Aware Dashboards", "desc": "Tailors every menu and screen to 14 roles, enforced by a shared permissions map across the sidebar and server-side route guard." },
+      { "emoji": "🏟️", "title": "Multi-Sport & Multi-Team", "desc": "Manages first and reserve squads across football, basketball, handball and more, with sport-specific rules wired throughout." },
+      { "emoji": "🏆", "title": "Real Competitions", "desc": "Builds league tables and knockout brackets and pulls live standings and fixtures from real leagues via football-data.org." },
+      { "emoji": "⚽", "title": "Live-Match Engine", "desc": "Runs a live clock with goals, cards, substitutions and a full event timeline, scoring penalties and shoot-outs per sport." },
+      { "emoji": "🩹", "title": "Injury Lifecycle", "desc": "Tracks each player from diagnosis through treatment, rehab and recovery to a fitness test, flipping availability automatically." },
+      { "emoji": "📋", "title": "Plan-Driven Training", "desc": "Schedules drill-based sessions and tracks per-player attendance, drill ratings and session completion against the calendar." },
+      { "emoji": "🔍", "title": "Scouting & Sponsorship", "desc": "Files sign-or-pass scout reports on prospects and negotiates sponsor offers with pending, stale and accepted states." },
+      { "emoji": "💬", "title": "Real-Time Messaging", "desc": "Delivers club-wide group chat over a live socket with reactions, replies and read receipts, falling back to polling." },
+      { "emoji": "🤖", "title": "Analytics & ML Predictions", "desc": "Aggregates team, player and training KPIs and serves ML-powered match-outcome predictions and 0-100 player ratings." },
+      { "emoji": "🔔", "title": "Live Notifications", "desc": "Surfaces injuries, goals, transfers, contract expiries and report-ready events in a top-bar bell and full alerts center." }
+    ]
+  },
+  "problems": {
+    "heading": "Problem Definition",
+    "subtitle": "Why a multi-sport club drowns without a unified platform",
+    "emoji": "🧩",
+    "items": [
+      { "emoji": "🗂️", "title": "Scattered Tooling", "desc": "Splinters club operations across spreadsheets, WhatsApp threads and paper forms, with no shared system." },
+      { "emoji": "✍️", "title": "Manual Match Ops", "desc": "Forces staff to log line-ups, events and scores by hand, inviting delays and human error." },
+      { "emoji": "🩹", "title": "Blind Injury Tracking", "desc": "Records injuries in isolation, with no link to player availability or selection decisions." },
+      { "emoji": "📊", "title": "No Single Truth", "desc": "Leaves standings, squads and fixtures duplicated and contradictory across teams and sports." },
+      { "emoji": "🔓", "title": "Role-Blind Access", "desc": "Exposes sensitive data through shared logins, with no per-role permissions or audit trail." },
+      { "emoji": "🔮", "title": "Zero Analytics", "desc": "Offers no performance insights or match-outcome predictions to guide tactical choices." },
+      { "emoji": "🏋️", "title": "Unplanned Training", "desc": "Schedules sessions ad hoc, with no attendance, drill rating or training-load tracking." },
+      { "emoji": "🐌", "title": "Slow Deal Flow", "desc": "Drags scouting reports and sponsor negotiations through disconnected emails and back-and-forth." }
+    ]
+  },
+  "goals": {
+    "heading": "Project Goals",
+    "subtitle": "What Sportify set out to achieve",
+    "emoji": "🎯",
+    "items": [
+      { "emoji": "🧩", "title": "Unify Club Operations", "desc": "Consolidates matches, medical, training, scouting, messaging and finance into one role-aware platform." },
+      { "emoji": "⚽", "title": "Run Matches Live", "desc": "Streams each fixture in real time with an accurate, minute-by-minute event timeline and live clock." },
+      { "emoji": "🏥", "title": "Drive Injury Recovery", "desc": "Guides every injury from diagnosis through rehab to a final passing fitness test before return-to-play." },
+      { "emoji": "🗄️", "title": "Anchor a Single Source of Truth", "desc": "Makes the Spring Boot back-end the authoritative store for real fixtures, results and league standings." },
+      { "emoji": "🔐", "title": "Enforce Secure Access", "desc": "Applies Keycloak-backed role-based access control across every service, route and action." },
+      { "emoji": "📊", "title": "Surface Predictive Insights", "desc": "Delivers performance analytics and ML-driven predictions to inform line-up, scouting and tactics." }
+    ]
+  },
+  "solutions": {
+    "heading": "Solutions: Traditional vs. Technological",
+    "subtitle": "How Sportify replaces the old club playbook with a cloud-native one",
+    "emoji": "⚙️",
+    "items": [
+      { "emoji": "☁️", "title": "Spreadsheets → Cloud Platform", "desc": "Replaces scattered, siloed spreadsheets with one unified cloud-native platform that centralizes every workflow." },
+      { "emoji": "🩺", "title": "Paper Files → Digital Journey", "desc": "Turns loose paper medical records into a staged digital injury lifecycle tied to each player's profile." },
+      { "emoji": "📺", "title": "No Live Ops → Match Engine", "desc": "Upgrades silent match days into a broadcast-style live engine streaming events, line-ups and a running clock." },
+      { "emoji": "📊", "title": "Manual Standings → Real Data", "desc": "Swaps hand-typed tables for live standings and fixtures ingested automatically from the football-data.org API." },
+      { "emoji": "🔐", "title": "Open Access → RBAC", "desc": "Ends 'everyone sees everything' by enforcing Keycloak role-based access across players, staff and managers." },
+      { "emoji": "🤖", "title": "Gut Feel → Analytics & ML", "desc": "Replaces instinct with data dashboards and a Python ML service that predicts outcomes and player insights." }
+    ]
+  },
+  "roles": {
+    "emoji": "🔐",
+    "heading": "Roles & Access",
+    "subtitle": "Role-based access control across every dashboard route",
+    "items": [
+      { "emoji": "👑", "title": "Administrator", "desc": "Key Access: every dashboard route, including admin-only User Management.  •  Primary Functions: manages all accounts and roles and oversees the platform with unrestricted access." },
+      { "emoji": "🏢", "title": "Sport Manager", "desc": "Key Access: Club Hub, Teams, Staff, Players, Matches, Scouting, Contracts and Sponsors.  •  Primary Functions: runs a sport end-to-end, from squad and staff to transfers and sponsor deals." },
+      { "emoji": "📋", "title": "Team Manager", "desc": "Key Access: Club Hub, Teams, Staff, Players, Training, Matches, Contracts, Reports.  •  Primary Functions: coordinates a team's roster, training schedule, fixtures and contract logistics." },
+      { "emoji": "🎯", "title": "Head Coach", "desc": "Key Access: Players, Teams, Training, Matches, Medical, Analytics, Reports, Alerts.  •  Primary Functions: leads coaching, sets up training and line-ups, and reviews performance and fitness." },
+      { "emoji": "🩺", "title": "Doctor / Physiotherapist", "desc": "Key Access: Medical, Players and Training (doctor also gets Alerts).  •  Primary Functions: manages medical profiles and the injury lifecycle, monitoring availability for training." },
+      { "emoji": "📊", "title": "Performance Analyst", "desc": "Key Access: Analytics, Training Analytics, Reports, Matches, Players and the ML Predictor & Rating tools.  •  Primary Functions: analyzes match and training data and runs AI predictions and ratings." },
+      { "emoji": "🔍", "title": "Scout", "desc": "Key Access: Scouting & Scouting Ops, Players, Matches, Competitions, Head-to-Head, Reports.  •  Primary Functions: tracks and evaluates prospects, logging scouting reports against players and fixtures." },
+      { "emoji": "👤", "title": "Player / Fan", "desc": "Key Access: read-only Club Hub, Players, Matches, Competitions and Head-to-Head (players also see Training and Medical).  •  Primary Functions: browses club info and follows matches in a view-only UI." }
+    ]
+  },
+  "architecture": {
+    "heading": "System Architecture",
+    "subtitle": "A cloud-native Spring Cloud microservice mesh behind one JWT-secured gateway",
+    "emoji": "🏗️",
+    "items": [
+      { "emoji": "🖥️", "title": "Next.js Front-End", "desc": "Serves the React dashboard and talks to the platform through a single API Gateway origin." },
+      { "emoji": "🚪", "title": "Spring Cloud Gateway", "desc": "Verifies Keycloak JWTs and load-balances every request to the right service on port 8080." },
+      { "emoji": "🧩", "title": "Six Domain Services", "desc": "Splits into user (8081), player (8084), training-match (8087), medical (8086), reports (8083) and notification (8085), each with a private database." },
+      { "emoji": "🧭", "title": "Eureka + Config", "desc": "Registers services in Eureka (8761) and feeds them centralized settings from the Config Server (8082)." },
+      { "emoji": "🔐", "title": "Keycloak Identity", "desc": "Issues and signs OAuth2 tokens for the mscms realm that every service validates as a resource server." },
+      { "emoji": "📨", "title": "Kafka Event Backbone", "desc": "Streams domain events asynchronously via an outbox publisher so notifications and analytics never block." },
+      { "emoji": "🤖", "title": "FastAPI ML Engine", "desc": "Exposes Python match-prediction and player-rating models that the gateway routes to under /ml." },
+      { "emoji": "🌐", "title": "football-data.org Feed", "desc": "Pulls real La Liga and Champions League fixtures and standings on a scheduled sync into the match service." }
+    ]
+  },
+  "training": {
+    "heading": "Plan-Driven Training",
+    "subtitle": "From season plan to scored session, one squad at a time",
+    "emoji": "🏃",
+    "items": [
+      { "emoji": "📝", "title": "Training Plans", "desc": "Anchors one plan to a single team and sport, with a start-to-end date range, training type, goals and focus that every session inherits." },
+      { "emoji": "📅", "title": "Scheduled Sessions", "desc": "Places each session at its own date and time inside the plan's range, then lists them in chronological order with a done count." },
+      { "emoji": "🎯", "title": "Ordered Drills", "desc": "Stamps each drill with a category, duration and sequence, and rejects the session if the drills' total minutes reach the session length." },
+      { "emoji": "✅", "title": "Squad Attendance", "desc": "Records a per-player status and offers only non-injured players who belong to that plan's team for call-up." },
+      { "emoji": "⭐", "title": "Drill Ratings", "desc": "Rates every drill 1-10 once the session time has passed, averaging them into a score that marks the session completed." },
+      { "emoji": "🗂️", "title": "Four-Tier Model", "desc": "Cascades the Plan → Sessions → Drills → Attendance hierarchy so deleting a parent cleanly removes its children." }
+    ]
+  },
+  "medical": {
+    "heading": "Advanced Injury Management",
+    "subtitle": "A medically-governed return-to-play pipeline, from first report to cleared",
+    "emoji": "🩺",
+    "items": [
+      { "emoji": "🔁", "title": "Staged Injury Lifecycle", "desc": "Drives every injury through REPORTED → DIAGNOSED → TREATING → RECOVERING → RECOVERED as the status that gates each next action." },
+      { "emoji": "🎯", "title": "Single Source of Truth", "desc": "Makes the medical service the one authority on availability, so card, stepper and squad all read the same status." },
+      { "emoji": "🚫", "title": "Auto-Removal When Injured", "desc": "Pulls an injured player out of match line-ups, training and attendance the moment the injury is logged, and notifies the team." },
+      { "emoji": "🏃", "title": "Mandatory Fitness Test", "desc": "Requires a passing return-to-play fitness test before the player flips to RECOVERED and is restored as AVAILABLE." },
+      { "emoji": "🏥", "title": "Treatment Room & Catalog", "desc": "Runs the per-player recovery journey from a reusable library of injury types, diagnoses, treatments, rehab and tests." },
+      { "emoji": "📋", "title": "Unified Medical Profile", "desc": "Consolidates each player's injuries, treatments, rehab, recovery and fitness records into one progress-tracked case view." }
+    ]
+  },
+  "matches": {
+    "heading": "Live-Match Engine",
+    "subtitle": "A broadcast-style match-day cockpit that runs the game minute by minute",
+    "emoji": "⚽",
+    "items": [
+      { "emoji": "⏱️", "title": "Phase State Machine", "desc": "Walks every match through scheduled → first half → half time → second half → full time, auto-going-live at kickoff." },
+      { "emoji": "📋", "title": "Phase-Bound Events", "desc": "Records goals, cards, subs and injuries against a live clock, clamping each event's minute to the phase in play." },
+      { "emoji": "🥅", "title": "Knockout Decider", "desc": "Triggers two extra-time periods and an alternating penalty shoot-out only when a true knockout tie is still level." },
+      { "emoji": "💾", "title": "Live Persistence", "desc": "Streams every score change, event and status flip to the training-match service so the timeline survives a reload." },
+      { "emoji": "🧩", "title": "Formation-First Line-up", "desc": "Builds the starting XI on a drag-and-drop pitch, persisting formation, match and line-up rows together." },
+      { "emoji": "📊", "title": "Result Write-Back", "desc": "At full time it pushes the final score back to the source fixture and fires alerts, feeding standings and analytics." }
+    ]
+  },
+  "competitions": {
+    "heading": "Real Competitions",
+    "subtitle": "Live football brought into the club — real tables, real brackets, one source of truth",
+    "emoji": "🏆",
+    "items": [
+      { "emoji": "🇪🇸", "title": "La Liga Live", "desc": "Shows live La Liga standings and fixtures, with results that update automatically as matches are played." },
+      { "emoji": "⭐", "title": "New-Format Champions League", "desc": "Renders the redesigned UCL as one 36-team league-phase table with qualification zones, then unlocks the knockout bracket." },
+      { "emoji": "🌎", "title": "World Cup 2026", "desc": "Presents the 48-team World Cup across 12 group tables and a knockout bracket, seeding the qualified teams into the Round of 32 when the draw is TBD." },
+      { "emoji": "⚔️", "title": "Head-to-Head", "desc": "Builds FC Barcelona's all-time win-draw-loss record, goals and win-rate against every opponent from finished matches." },
+      { "emoji": "📡", "title": "Real Data, One Source", "desc": "Ingests genuine fixtures and results from football-data.org into the back-end, which stays the single source of truth." },
+      { "emoji": "🏛️", "title": "Club Hub & Trophy Room", "desc": "Wraps it in the FC Barcelona Club Hub and a multi-sport Trophy Room cabinet of curated historical honours." }
+    ]
+  },
+  "future": {
+    "heading": "Future Work",
+    "subtitle": "Where Sportify goes next: mobile, ML and the wider sporting world",
+    "emoji": "🚀",
+    "items": [
+      { "emoji": "📱", "title": "Native Mobile Apps", "desc": "Ships dedicated iOS and Android apps with push notifications so staff and players manage the club on the move." },
+      { "emoji": "🧠", "title": "Deeper ML Models", "desc": "Extends the Python ML service with richer predictions fed by live in-match features, not just pre-game stats." },
+      { "emoji": "🏅", "title": "More Sports & Federations", "desc": "Expands the multi-sport engine with new disciplines and official federation data feeds beyond football-data.org." },
+      { "emoji": "⌚", "title": "Wearables & Biometrics", "desc": "Integrates wearables to stream training-load and biometric data straight into player medical and fitness profiles." },
+      { "emoji": "🎥", "title": "Live Video & Streaming", "desc": "Attaches live video and clip streaming to the match timeline so every key event links to its footage." }
+    ]
+  }
+}

@@ -15,6 +15,50 @@ export function isFitnessPass(test) {
     return FITNESS_PASS.includes(String(test?.resultCategory || "").toUpperCase().trim());
 }
 
+// ─── SINGLE SOURCE OF TRUTH for an injury's current stage ─────────────────────
+// The injury.status lifecycle is the ONLY thing that decides how far a player has
+// progressed. Both the landing card (5-stage bar) and the journey stepper (6-stage
+// timeline) derive their "current stage" from this — so they can never disagree.
+// A stray sub-record (a leftover diagnosis/treatment/fitness from a previous test
+// run) must NOT push the stage forward; only the status does.
+//
+// status      → stagesDone (how many lifecycle steps are COMPLETE)
+//   REPORTED   → 1  (injury reported; diagnosis is the next action)
+//   DIAGNOSED  → 2  (diagnosis done; treatment next)
+//   TREATING   → 3  (treatment done; rehabilitation next)
+//   RECOVERING → 4  (rehab/recovery done; fitness test next)
+//   RECOVERED  → 6  (fitness passed; fully fit / workflow complete)
+//   CHRONIC    → 3  (ongoing care, treat like under treatment — still active)
+const STATUS_STAGES_DONE = {
+    REPORTED: 1,
+    DIAGNOSED: 2,
+    TREATING: 3,
+    CHRONIC: 3,
+    RECOVERING: 4,
+    RECOVERED: 6,
+};
+
+// Statuses for which the player is still working back to fitness (NOT cleared).
+// A player is "currently injured / unavailable" iff they hold an injury whose
+// status is one of these (i.e. it is anything other than RECOVERED).
+export const ACTIVE_INJURY_STATUSES = ["REPORTED", "DIAGNOSED", "TREATING", "RECOVERING", "CHRONIC"];
+
+export function normStatus(injury) {
+    return String(injury?.status || "").toUpperCase().trim();
+}
+
+export function isActiveInjury(injury) {
+    return ACTIVE_INJURY_STATUSES.includes(normStatus(injury));
+}
+
+// The canonical "how far along" number, 0..6, derived ONLY from injury.status.
+// Used by both UIs as the one source of truth.
+export function stageFromInjury(injury) {
+    const st = normStatus(injury);
+    if (!injury) return 0;
+    return STATUS_STAGES_DONE[st] ?? 1; // any logged injury is at least "reported"
+}
+
 // All team members' keycloakIds (players via roster + staff via teamId), minus
 // the injured player themselves.
 function teamRecipients(teamId, excludePlayerId, ctx) {
@@ -76,4 +120,62 @@ export async function restrictInjuredPlayer(player, ctx = {}) {
 export async function clearInjuredPlayer(player) {
     try { await api.updatePlayerStatus(Number(player.id), "AVAILABLE"); return true; }
     catch (e) { console.error("clear failed", e); return false; }
+}
+
+// ─── Self-healing: guarantee an injury has a rehabilitation ──────────────────
+// The Recovery stage's POST /recovery-programs REQUIRES a non-null rehabilitationId.
+// Normally the Rehabilitation stage creates the rehab record, but an injury can
+// reach RECOVERING without one (legacy data / a stage that was skipped), e.g.
+// Ansu Fati's calf tear (injury 7 had no rehabilitation). Creating a recovery
+// program for such an injury 500s.
+//
+// ensureRehabilitation looks up the injury's existing rehabilitation; if none
+// exists it creates a sensible, fully-populated one (every required field with a
+// default) and returns its id. Returns null only if both the lookup and the
+// create fail — callers should guard on that.
+const DEFAULT_PHYSIO_ID = 6;
+const dateOnly = () => new Date().toISOString().split("T")[0];
+const isoNow = () => new Date().toISOString();
+
+export async function findRehabForInjury(injuryId) {
+    try {
+        const list = unwrap(await api.medical.Rehabilitation.get());
+        return list.find((r) => String(r.injuryId) === String(injuryId)) || null;
+    } catch (e) { console.error("rehab lookup failed", e); return null; }
+}
+
+export async function ensureRehabilitation(injury, player, overrides = {}) {
+    const injuryId = injury?.id;
+    if (!injuryId) return null;
+
+    // 1) reuse an existing rehab for this injury if there is one
+    const existing = await findRehabForInjury(injuryId);
+    if (existing?.id != null) return Number(existing.id);
+
+    // 2) none exists — create a complete rehabilitation record with defaults so
+    //    the recovery program (and the journey) always has one to link to.
+    const body = {
+        injuryId: Number(injuryId),
+        playerId: Number(player?.id ?? injury?.playerId),
+        physiotherapistId: DEFAULT_PHYSIO_ID,
+        status: "COMPLETED",
+        rehabPlan: "Phased return-to-play: pain management, strength, sport-specific, match fit.",
+        exercises: "Mobility, progressive strength, balance and sport-specific drills.",
+        durationWeeks: 3,
+        startDate: dateOnly(),
+        expectedEndDate: null,
+        actualEndDate: dateOnly(),
+        createdAt: isoNow(),
+        progressNotes: "Rehabilitation completed; player tolerating full loading.",
+        restrictions: "Cleared for non-contact; build contact load gradually.",
+        ...overrides,
+    };
+    try {
+        const created = await api.medical.Rehabilitation.post(body);
+        const id = created?.id ?? created?.data?.id;
+        return id != null ? Number(id) : null;
+    } catch (e) {
+        console.error("rehab auto-create failed", e);
+        return null;
+    }
 }

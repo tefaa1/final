@@ -1,0 +1,548 @@
+%==============================================================================
+%  Multi-Sport Club Management System (MSCMS) -- "Sportify"
+%  Graduation Project Report -- main.tex (master skeleton)
+%
+%  Compiles with pdflatex on Overleaf (no shell-escape, no biber).
+%  References use a manual thebibliography (IEEE numeric).
+%
+%  TEMPLATE NOTE: This layout follows the Menoufia University Faculty of
+%  Computers and Information graduation-project template. To re-target the
+%  report to another institution, edit the \univName / \facultyName macros
+%  in the COVER PAGE block below (search for "EDIT UNIVERSITY HERE").
+%==============================================================================
+
+\documentclass[12pt,a4paper]{report}
+
+%------------------------------------------------------------------------------
+%  Fonts and encoding (Times-like)
+%------------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}             % \tfrac, aligned math, etc.
+\usepackage{mathptmx}            % Times-like roman font
+
+%------------------------------------------------------------------------------
+%  Page geometry: A4, top/bottom/right = 1in, left = 1.5in
+%------------------------------------------------------------------------------
+\usepackage[a4paper,top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+
+%------------------------------------------------------------------------------
+%  Line spacing: 1.5
+%------------------------------------------------------------------------------
+\usepackage{setspace}
+\onehalfspacing
+
+%------------------------------------------------------------------------------
+%  Graphics: screenshots live in screenshots/ (relative to this file)
+%------------------------------------------------------------------------------
+\usepackage{graphicx}
+\graphicspath{{screenshots/}{../screenshots/}{./}}
+
+%------------------------------------------------------------------------------
+%  Captions, tables, colour
+%------------------------------------------------------------------------------
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,labelsep=period}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\setstretch{1}}  % single-space inside tables; avoids split-box infinite-glue warning
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{float}               % [H] exact placement for diagram figures
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+%  Brand-ish accent colours (used sparingly in listings / rules)
+\definecolor{mscmsBlue}{RGB}{0,77,152}
+\definecolor{mscmsRed}{RGB}{165,0,52}
+\definecolor{codeBg}{RGB}{248,248,248}
+\definecolor{codeKw}{RGB}{0,77,152}
+\definecolor{codeStr}{RGB}{0,128,0}
+\definecolor{codeCmt}{RGB}{120,120,120}
+\definecolor{codeFrame}{RGB}{200,200,200}
+
+%------------------------------------------------------------------------------
+%  TikZ / UML diagram styles and macros (architecture, use-case, class,
+%  ER, state, sequence). Defined in a dedicated file for reuse.
+%------------------------------------------------------------------------------
+\input{preamble-diagrams.tex}
+
+%------------------------------------------------------------------------------
+%  Source-code listings (Java / JavaScript / Bash)
+%------------------------------------------------------------------------------
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{codeBg},
+  keywordstyle=\color{codeKw}\bfseries,
+  stringstyle=\color{codeStr},
+  commentstyle=\color{codeCmt}\itshape,
+  numberstyle=\tiny\color{codeCmt},
+  frame=single,
+  rulecolor=\color{codeFrame},
+  breaklines=true,
+  breakatwhitespace=true,
+  showstringspaces=false,
+  tabsize=2,
+  captionpos=b,
+  numbers=left,
+  numbersep=6pt,
+  xleftmargin=14pt,
+  framexleftmargin=14pt,
+  columns=fullflexible,
+  keepspaces=true
+}
+
+% Convenience language aliases used by the chapter files.
+\lstdefinelanguage{JavaScriptES}{
+  keywords={break,case,catch,const,continue,default,delete,do,else,export,
+            extends,finally,for,function,if,import,in,instanceof,let,new,
+            return,super,switch,this,throw,try,typeof,var,void,while,with,
+            yield,async,await,of,class},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  morestring=[b]`,
+  sensitive=true
+}
+\lstdefinelanguage{bashx}{
+  keywords={cd,echo,export,docker,compose,mvn,java,curl,git,npm,run,build,up,down},
+  morecomment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]",
+  sensitive=true
+}
+
+%------------------------------------------------------------------------------
+%  Hyperlinks (no coloured boxes)
+%------------------------------------------------------------------------------
+\usepackage[hidelinks,breaklinks=true]{hyperref}
+\hypersetup{
+  pdftitle={Multi-Sport Club Management System (MSCMS) -- Sportify},
+  pdfauthor={MSCMS Team},
+  pdfsubject={Graduation Project Report},
+  pdfkeywords={microservices, Spring Boot, Next.js, Keycloak, sports management}
+}
+
+%------------------------------------------------------------------------------
+%  Headers / footers: footer page numbers, light chapter header
+%------------------------------------------------------------------------------
+\usepackage{lastpage}            % total page count for "Page N of M"
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyfoot[L]{\small Page~\textbf{\thepage}~of~\pageref{LastPage}}
+
+% Plain style (chapter-opening pages) carries the same footer.
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \fancyfoot[L]{\small Page~\textbf{\thepage}~of~\pageref{LastPage}}%
+}
+
+%------------------------------------------------------------------------------
+%  Decorative double-rule border drawn on every page (learnova style).
+%------------------------------------------------------------------------------
+\usepackage{eso-pic}
+\AddToShipoutPictureBG{%
+  \begin{tikzpicture}[overlay,remember picture]
+    \draw[line width=1.4pt]
+      ([shift={( 1.05cm,-1.05cm)}]current page.north west) rectangle
+      ([shift={(-1.05cm, 1.05cm)}]current page.south east);
+    \draw[line width=0.5pt]
+      ([shift={( 1.20cm,-1.20cm)}]current page.north west) rectangle
+      ([shift={(-1.20cm, 1.20cm)}]current page.south east);
+  \end{tikzpicture}}
+
+%------------------------------------------------------------------------------
+%  Spacing helpers
+%------------------------------------------------------------------------------
+%------------------------------------------------------------------------------
+%  Chapter headings: numbered chapters get a learnova-style DIVIDER PAGE
+%  (title alone, vertically centred on its own page); unnumbered front-matter
+%  chapters (Acknowledgment, Summary, References) keep a normal top heading.
+%------------------------------------------------------------------------------
+\makeatletter
+\renewcommand{\@makechapterhead}[1]{%
+  \vspace*{\fill}%
+  {\parindent\z@ \centering \normalfont
+    {\Huge\bfseries\color{mscmsBlue}\@chapapp\ \thechapter}\par\nobreak
+    \vskip 28\p@
+    {\Huge\bfseries #1}\par\nobreak}%
+  \vspace*{\fill}%
+  \clearpage}
+\renewcommand{\@makeschapterhead}[1]{%
+  \vspace*{6\p@}%
+  {\parindent\z@ \normalfont
+    {\Huge\bfseries\color{mscmsBlue} #1}\par\nobreak
+    \vskip 22\p@}}
+\makeatother
+
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{1.5em}
+
+%==============================================================================
+%  EDIT UNIVERSITY HERE -- change these two macros to re-target the institution.
+%  The previous report used Menoufia University; the placeholder below keeps the
+%  university name editable while defaulting to the Menoufia layout.
+%==============================================================================
+\newcommand{\univName}{Menoufia University}      % <-- {University Name}
+\newcommand{\facultyName}{Faculty of Computers and Information}
+\newcommand{\projectYear}{2025 -- 2026}          % <-- academic year
+\newcommand{\submissionDate}{June 2026}
+
+\begin{document}
+
+%==============================================================================
+%  COVER PAGE
+%==============================================================================
+\pagenumbering{arabic}           % single arabic sequence, cover = page 1 (learnova)
+\thispagestyle{fancy}
+{\setlength{\parskip}{0pt}%
+\begin{center}
+
+% --- University / faculty banner: two crests flanking the institution name ----
+\noindent
+\begin{minipage}[c]{0.22\textwidth}\centering
+  \IfFileExists{screenshots/fci-logo.png}{\includegraphics[height=2.2cm]{fci-logo.png}}{}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.52\textwidth}\centering
+  {\Large\bfseries \univName \par}\vspace{4pt}
+  {\large\bfseries \facultyName \par}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.22\textwidth}\centering
+  \IfFileExists{screenshots/menoufia-logo.png}{\includegraphics[height=2.2cm]{menoufia-logo.png}}{}
+\end{minipage}
+
+\vspace{1.1cm}
+
+% --- Title --------------------------------------------------------------------
+{\Huge\bfseries\color{mscmsBlue} Multi-Sport Club Management System \par}
+\vspace{0.35cm}
+{\LARGE\bfseries (MSCMS) \par}
+
+\vspace{0.8cm}
+
+{\Large\itshape A Cloud-Native Microservices Platform \par}
+\vspace{0.15cm}
+{\Large\itshape for Modern Sports Club Operations \par}
+
+\vspace{0.6cm}
+{\huge\bfseries\color{mscmsRed} Sportify \par}
+
+\vspace{1.0cm}
+\rule{0.6\textwidth}{0.4pt}
+\vspace{0.7cm}
+
+% --- Team members -------------------------------------------------------------
+{\large\bfseries Submitted by \par}
+\vspace{0.3cm}
+{\large
+\begin{tabular}{c}
+Mariam Mohamed Ahmed \\[2pt]
+Mohamed Abdellatief \\[2pt]
+Eman Ahmed Elboghdady \\[2pt]
+Khaled Mohamed \\[2pt]
+Shahd Abdelaziz \\[2pt]
+Mohamed Salem \\
+\end{tabular}\par}
+
+\vspace{0.8cm}
+
+% --- Supervisor ---------------------------------------------------------------
+{\large\bfseries Supervised by: Dr. Shaimaa Saber \par}
+
+\vspace{0.9cm}
+
+% --- Footer -------------------------------------------------------------------
+{\normalsize A graduation project submitted in partial fulfilment of the \par}
+{\normalsize requirements for the degree of B.Sc.\ in Computer Science \par}
+\vspace{0.5cm}
+{\Large\bfseries \projectYear \par}
+
+\end{center}}
+\clearpage
+
+%==============================================================================
+%  FRONT MATTER (continuous arabic numbering, learnova style)
+%==============================================================================
+
+%------------------------------------------------------------------------------
+%  Acknowledgment
+%------------------------------------------------------------------------------
+\chapter*{Acknowledgment}
+\addcontentsline{toc}{chapter}{Acknowledgment}
+\markboth{Acknowledgment}{Acknowledgment}
+
+First and foremost, the team expresses its sincere gratitude to its supervisor,
+\textbf{Dr.~Shaimaa Saber}, whose continuous guidance, technical insight and
+encouragement shaped this project from an initial idea into a complete,
+production-grade platform. Her thoughtful feedback at every milestone, and her
+patience throughout the long iterations of design and implementation, were
+invaluable to the work presented in this report.
+
+The team is also deeply grateful to the staff of the \facultyName{} at
+\univName{} for providing the academic environment, laboratories and curriculum
+that made this work possible. Special thanks are due to the instructors of the
+software-engineering, databases and distributed-systems courses, whose teaching
+laid the conceptual foundations on which the Multi-Sport Club Management System
+(MSCMS) was built.
+
+Finally, the team thanks its families and friends for their unwavering support,
+patience and motivation throughout the many months of design, development and
+testing. This project is the product of their collective encouragement as much
+as of the team's own effort.
+
+\vspace{1cm}
+\noindent\textit{The MSCMS Team, \submissionDate.}
+
+%------------------------------------------------------------------------------
+%  Summary / Abstract
+%------------------------------------------------------------------------------
+\chapter*{Summary}
+\addcontentsline{toc}{chapter}{Summary}
+\markboth{Summary}{Summary}
+
+The \textbf{Multi-Sport Club Management System (MSCMS)}, delivered under the
+product brand \textbf{Sportify}, is a cloud-native, microservices-based platform
+that unifies every operational concern of a modern multi-sport club into a
+single, role-aware web application. Taking the real organisational structure of
+FC~Barcelona as its working model, the system consolidates user and team
+administration, player and squad operations, training, match operations, medical
+and fitness management, scouting, sponsorship, analytics and fan engagement that
+are traditionally scattered across spreadsheets, e-mail threads and disconnected
+tools.
+
+The back-end is built as a set of Spring~Boot~3.5.6 / Java~21 microservices
+coordinated by Spring~Cloud: a Eureka discovery server, a centralised Config
+Server, and a single API Gateway that performs JWT verification and routing.
+Identity is delegated to Keycloak, each domain service owns its own PostgreSQL
+database, and asynchronous events flow over Apache~Kafka, with Redis caching and
+RabbitMQ available for messaging. The front-end is a Next.js~16 / React~19
+application styled with Tailwind~CSS~v4, enforcing the same role-based access
+control rules as the gateway. The entire stack is containerised with Docker and
+orchestrated through Docker Compose.
+
+This report documents the project's full lifecycle and, in particular, the
+substantial enhancements delivered since the previous milestone. Key capabilities
+of the platform include:
+
+\begin{itemize}[leftmargin=1.6em,itemsep=2pt]
+  \item \textbf{Cloud-native microservices architecture} -- seven Spring~Boot
+        services behind a Eureka/Config/Gateway control plane, each independently
+        deployable and backed by its own database.
+  \item \textbf{Centralised identity and expert RBAC} -- Keycloak-issued JWTs
+        and a fine-grained, per-role page-access map enforced at both the gateway
+        and the Next.js middleware.
+  \item \textbf{Database-backed Competitions} -- a real La~Liga season and the
+        new-format UEFA Champions League (single league phase plus a knockout
+        bracket), with completed competitions automatically locked read-only.
+  \item \textbf{Real match ingestion} -- scheduled synchronisation of fixtures
+        and standings from football-data.org, with the back-end as the single
+        source of truth.
+  \item \textbf{Live-match engine} -- a broadcast-style phase machine (first and
+        second half, stoppage time, and extra time plus penalties for knockout
+        ties only), with lineups locked at creation, per-sport substitution
+        limits and in-match injury events.
+  \item \textbf{Medical injury-management workflow} -- a Treatment Room that
+        separates currently-injured from recovered players and tracks each player
+        through a staged journey from injury to diagnosis, treatment,
+        rehabilitation, recovery and fitness testing.
+  \item \textbf{Real-time team messaging} -- a group-chat system with group
+        invitations and emoji reactions delivered over a WebSocket channel with a
+        polling fallback.
+  \item \textbf{Event-driven notifications and alerts} -- a top-bar notification
+        bell fed by Kafka-sourced events and live-match alerts.
+  \item \textbf{Persistent settings} -- profile, preference and notification
+        settings with real persistence and a Keycloak-verified password change.
+  \item \textbf{Sportify rebrand} -- a unified, club-themed visual identity across
+        the entire front-end.
+\end{itemize}
+
+The result is a scalable, observable and secure system that demonstrates how a
+microservices architecture, a central identity provider and event-driven
+integration can resolve the data fragmentation, multi-discipline complexity and
+analytical blindness that characterise traditional club-management tooling.
+
+%------------------------------------------------------------------------------
+%  Tables of contents / figures / tables
+%------------------------------------------------------------------------------
+\cleardoublepage
+\tableofcontents
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+
+%------------------------------------------------------------------------------
+%  Abbreviations
+%------------------------------------------------------------------------------
+\cleardoublepage
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+\markboth{List of Abbreviations}{List of Abbreviations}
+
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{p{0.20\textwidth} p{0.74\textwidth}}
+\toprule
+\textbf{Abbreviation} & \textbf{Meaning} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Abbreviation} & \textbf{Meaning} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+MSCMS   & Multi-Sport Club Management System \\
+API     & Application Programming Interface \\
+REST    & Representational State Transfer \\
+JWT     & JSON Web Token \\
+RBAC    & Role-Based Access Control \\
+ER      & Entity--Relationship \\
+UML     & Unified Modeling Language \\
+CRUD    & Create, Read, Update, Delete \\
+HTTP    & Hypertext Transfer Protocol \\
+HTTPS   & Hypertext Transfer Protocol Secure \\
+JSON    & JavaScript Object Notation \\
+SQL     & Structured Query Language \\
+RDBMS   & Relational Database Management System \\
+IdP     & Identity Provider \\
+OAuth   & Open Authorization \\
+OIDC    & OpenID Connect \\
+SPA     & Single-Page Application \\
+SSR     & Server-Side Rendering \\
+UI      & User Interface \\
+UX      & User Experience \\
+CL      & UEFA Champions League \\
+PD      & Primera Divisi\'on (La~Liga) competition code \\
+WC      & FIFA World Cup competition code \\
+XI      & Starting Eleven (match lineup) \\
+KPI     & Key Performance Indicator \\
+ML      & Machine Learning \\
+WS      & WebSocket \\
+DTO     & Data Transfer Object \\
+JPA     & Java Persistence API \\
+DB      & Database \\
+CI/CD   & Continuous Integration / Continuous Delivery \\
+TLS     & Transport Layer Security \\
+UUID    & Universally Unique Identifier \\
+CORS    & Cross-Origin Resource Sharing \\
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+%==============================================================================
+%  BODY (continuous arabic numbering)
+%==============================================================================
+
+\input{chapters/01-introduction}
+\input{chapters/02-literature-review}
+\input{chapters/03-methodology}
+\input{chapters/03b-system-design}
+\input{chapters/04-results}
+\input{chapters/05-conclusion}
+
+%==============================================================================
+%  APPENDICES
+%  06-appendices.tex begins with \appendix, so chapter numbering switches to
+%  A, B, C, ... here. The References (thebibliography) below still come last.
+%==============================================================================
+\cleardoublepage
+\input{chapters/06-appendices}
+
+%==============================================================================
+%  REFERENCES (IEEE numeric, manual thebibliography)
+%  KEYS ARE FIXED -- chapters cite only from this set.
+%==============================================================================
+\cleardoublepage
+\addcontentsline{toc}{chapter}{References}
+\begin{thebibliography}{99}
+\setlength{\itemsep}{4pt}
+
+\bibitem{springboot}
+VMware, Inc., ``Spring Boot Reference Documentation,'' Spring.io, 2024.
+[Online]. Available: \url{https://docs.spring.io/spring-boot/docs/current/reference/html/}.
+[Accessed: Jun. 2026].
+
+\bibitem{springcloud}
+VMware, Inc., ``Spring Cloud: Reference Documentation,'' Spring.io, 2024.
+[Online]. Available: \url{https://spring.io/projects/spring-cloud}.
+[Accessed: Jun. 2026].
+
+\bibitem{keycloak}
+Red Hat, Inc., ``Keycloak Server Administration Guide,'' Keycloak.org, 2024.
+[Online]. Available: \url{https://www.keycloak.org/documentation}.
+[Accessed: Jun. 2026].
+
+\bibitem{nextjs}
+Vercel, Inc., ``Next.js Documentation,'' Nextjs.org, 2024.
+[Online]. Available: \url{https://nextjs.org/docs}. [Accessed: Jun. 2026].
+
+\bibitem{react}
+Meta Platforms, Inc., ``React Documentation,'' React.dev, 2024.
+[Online]. Available: \url{https://react.dev/}. [Accessed: Jun. 2026].
+
+\bibitem{docker}
+Docker, Inc., ``Docker Documentation,'' Docker.com, 2024.
+[Online]. Available: \url{https://docs.docker.com/}. [Accessed: Jun. 2026].
+
+\bibitem{kafka}
+The Apache Software Foundation, ``Apache Kafka Documentation,'' Apache.org,
+2024. [Online]. Available: \url{https://kafka.apache.org/documentation/}.
+[Accessed: Jun. 2026].
+
+\bibitem{postgres}
+The PostgreSQL Global Development Group, ``PostgreSQL 16 Documentation,''
+PostgreSQL.org, 2024. [Online]. Available:
+\url{https://www.postgresql.org/docs/}. [Accessed: Jun. 2026].
+
+\bibitem{microservices}
+J. Lewis and M. Fowler, ``Microservices: a definition of this new architectural
+term,'' MartinFowler.com, Mar. 2014. [Online]. Available:
+\url{https://martinfowler.com/articles/microservices.html}.
+[Accessed: Jun. 2026].
+
+\bibitem{jwt}
+M. Jones, J. Bradley, and N. Sakimura, ``JSON Web Token (JWT),'' Internet
+Engineering Task Force, RFC 7519, May 2015. [Online]. Available:
+\url{https://www.rfc-editor.org/rfc/rfc7519}.
+
+\bibitem{footballdata}
+football-data.org, ``Football-Data API Documentation,'' 2024. [Online].
+Available: \url{https://www.football-data.org/documentation/quickstart}.
+[Accessed: Jun. 2026].
+
+\bibitem{restapi}
+R. T. Fielding, ``Architectural Styles and the Design of Network-based Software
+Architectures,'' Ph.D. dissertation, Univ. of California, Irvine, CA, USA, 2000.
+
+\bibitem{rbac}
+D. F. Ferraiolo, D. R. Kuhn, and R. Chandramouli, \textit{Role-Based Access
+Control}, 2nd ed. Norwood, MA, USA: Artech House, 2007.
+
+\bibitem{websocket}
+I. Fette and A. Melnikov, ``The WebSocket Protocol,'' Internet Engineering Task
+Force, RFC 6455, Dec. 2011. [Online]. Available:
+\url{https://www.rfc-editor.org/rfc/rfc6455}.
+
+\bibitem{agile}
+K. Beck \textit{et al.}, ``Manifesto for Agile Software Development,''
+AgileManifesto.org, 2001. [Online]. Available:
+\url{https://agilemanifesto.org/}. [Accessed: Jun. 2026].
+
+\bibitem{template}
+\facultyName, \univName, ``Graduation Project Report Template and Guidelines,''
+\projectYear.
+
+\end{thebibliography}
+
+\end{document}

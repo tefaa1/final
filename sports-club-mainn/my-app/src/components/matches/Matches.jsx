@@ -8,7 +8,7 @@ import MatchModal from './MatchModal';
 import Filters from './Filters';
 import { FiAward, FiCalendar, FiAlertCircle, FiArrowUp } from 'react-icons/fi';
 import useRole from "@/src/lib/useRole";
-import { parseKickoff } from "@/src/components/matches/liveClock";
+import { parseKickoff, hasKickedOff, toNaiveLocalDateTime, minKickoffLocal } from "@/src/components/matches/liveClock";
 
 // A scheduled/live match stays "in window" for this long after kickoff. Past it,
 // an unmanaged fixture is considered abandoned (see auto-clean below).
@@ -118,14 +118,52 @@ const Matches = () => {
         return changed;
     };
 
+    // ── AUTO GO-LIVE on LIST LOAD ───────────────────────────────────────────────
+    // A SCHEDULED match whose kickoff has passed should go LIVE "by itself" — not
+    // only when its card ticks, but the instant the hub loads. We flip any such
+    // match (still inside the live window so we don't fight the auto-clean below)
+    // to LIVE and persist it once. Returns true if anything changed.
+    const autoGoLiveMatches = async (matches) => {
+        const now = Date.now();
+        const due = matches.filter((m) => {
+            if (String(m.status || "").toUpperCase() !== "SCHEDULED") return false;
+            const k = parseKickoff(m.kickoffTime);
+            if (!k) return false;
+            // kickoff has arrived AND we're still within the live window (past that,
+            // autoCleanMatches finalizes it instead).
+            return hasKickedOff(m.kickoffTime, now) && now <= k.getTime() + LIVE_WINDOW_MS;
+        });
+        if (due.length === 0) return false;
+        let changed = false;
+        for (const m of due) {
+            try {
+                await api.updateMatch(m.id, {
+                    homeTeamScore: m.homeTeamScore ?? 0,
+                    awayTeamScore: m.awayTeamScore ?? 0,
+                    status: "LIVE",
+                });
+                changed = true;
+            } catch (e) {
+                console.error("Auto go-live failed for match", m.id, e);
+            }
+        }
+        return changed;
+    };
+
     const loadData = async () => {
         setLoading(true);
         try {
             let res = await api.getMatches();
             let finalData = unwrapArr(res);
 
-            // Sweep abandoned/fake matches before showing the list. If anything
-            // was deleted/finalized, re-fetch so the grid reflects the truth.
+            // 1) Flip any scheduled match whose kickoff has passed to LIVE (auto
+            //    go-live), then 2) sweep abandoned/fake matches. If anything was
+            //    changed/finalized, re-fetch so the grid reflects the truth.
+            try {
+                const wentLive = await autoGoLiveMatches(finalData);
+                if (wentLive) finalData = unwrapArr(await api.getMatches());
+            } catch (e) { console.error("Auto go-live error:", e); }
+
             try {
                 const changed = await autoCleanMatches(finalData);
                 if (changed) finalData = unwrapArr(await api.getMatches());
@@ -175,8 +213,12 @@ const Matches = () => {
                 matchSummary: form.matchSummary || "Scheduled fixture",
                 notes: form.notes || "N/A",
                 attendance: form.attendance ? Number(form.attendance) : null,
-                kickoffTime: form.kickoffTime ? new Date(form.kickoffTime).toISOString().slice(0, 19) : new Date().toISOString().slice(0, 19),
-                finishTime: form.finishTime ? new Date(form.finishTime).toISOString().slice(0, 19) : null,
+                // Send kickoff as a NAIVE LOCAL wall-clock string (no UTC shift) —
+                // the backend stores a naive LocalDateTime, so toISOString() here
+                // would shift the time by the local offset and make matches read
+                // ~3h early and appear LIVE immediately.
+                kickoffTime: form.kickoffTime ? toNaiveLocalDateTime(form.kickoffTime) : toNaiveLocalDateTime(minKickoffLocal()),
+                finishTime: form.finishTime ? toNaiveLocalDateTime(form.finishTime) : null,
                 ...(formationId ? { matchFormationId: formationId } : {}),
             };
 
@@ -308,7 +350,7 @@ const Matches = () => {
                                     match={match}
                                     onRefresh={loadData}
                                     onViewDetails={(m) => router.push(`/dashboard/matches/${m.id}`)}
-                                    onPlanLineup={(m) => router.push(`/dashboard/matches/${m.id}/lineup`)}
+                                    onPlanLineup={(m) => router.push(`/dashboard/matches/${m.id}`)}
                                     onEdit={(m) => { setEditItem(m); setShowModal(true); }}
                                     onGoLive={(m) => router.push(`/dashboard/matches/${m.id}/live`)}
                                 />

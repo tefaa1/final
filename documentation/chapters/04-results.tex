@@ -1,0 +1,1154 @@
+\chapter{Results and Analysis}
+\label{ch:results}
+
+This chapter presents the implemented system and demonstrates, feature by feature,
+how the requirements specified in Chapter~3 were realised in working software. Where
+the preceding chapters reasoned about the system in the abstract---its architecture,
+its data model and its planned behaviour---this chapter reports on the concrete
+artefact that was built, deployed and exercised. The discussion follows the user's
+journey through the deployed product---branded \textit{Sportify}---beginning with
+onboarding and authentication, proceeding through the club, squad, competition and
+match domains, and concluding with the medical, communication, analytics and
+configuration modules. Each module is described along four consistent axes so that the
+reader can move from \emph{intent} to \emph{mechanism} without losing the thread:
+\begin{enumerate}
+  \item the \emph{purpose} of the feature and the \emph{user experience} it delivers,
+        illustrated by a screenshot of the running application;
+  \item the \emph{back-end realisation}---which of the six Spring Boot
+        microservices~\cite{springboot,microservices} owns the behaviour, the REST
+        endpoints it exposes through the Spring Cloud Gateway~\cite{springcloud}, and
+        the JPA entities and database tables that persist its state~\cite{postgres};
+  \item the \emph{key logic and algorithms} in genuine detail---the fixture-generation
+        routines, the standings recomputation, the live-match phase machine, the
+        per-sport substitution rules, the in-match injury bridge, the status-driven
+        medical workflow, the chat group/invitation model and WebSocket
+        protocol~\cite{websocket}, the event-driven notification pipeline, the
+        three-layer enforcement of role-based access~\cite{rbac}, and the Keycloak
+        password re-verification~\cite{keycloak,jwt}; and
+  \item the \emph{validation and edge-case handling} that makes each feature robust in
+        the face of stale data, partial input and concurrent operation.
+\end{enumerate}
+The front-end is a Next.js~16 / React~19 application~\cite{nextjs,react} that talks to
+the back-end exclusively through a single gateway origin, and every state-changing
+action is persisted server-side so that a browser reload faithfully reconstructs the
+application state. A substantial analytical discussion at the end of the chapter
+(Section~\ref{sec:res-analysis}) evaluates how completely the delivered system
+satisfies the functional and non-functional requirements, reports performance and
+user-experience observations, and describes the testing approach that was followed.
+
+%======================================================================
+\section{Onboarding and Authentication}
+\label{sec:res-login}
+
+The entry point to the platform is a single sign-in surface that delegates identity
+to Keycloak~\cite{keycloak}, the system's dedicated OpenID Connect identity provider.
+Rather than implement its own credential store---an approach that would scatter
+password hashing, lockout policy and token issuance across the domain services---the
+platform treats identity as a cross-cutting concern owned by a purpose-built provider,
+which is one of the architectural decisions defended in Chapter~3.
+
+\paragraph{User experience.} A user submits a username and password on the sign-in
+screen (Figure~\ref{fig:login}). On success the user is taken directly to the
+operational home of the product; on failure a concise, non-revealing error is shown.
+There is deliberately no separate landing page per role: every authenticated user
+arrives at the single \texttt{/dashboard} route, whose contents are then computed from
+the resolved role so that the same URL renders a different, permission-appropriate
+surface for each user.
+
+\paragraph{Back-end realisation.} The credentials are posted to the gateway, which
+performs the OAuth~2.0 Resource Owner Password Credentials grant against the
+\texttt{mscms} realm. Keycloak validates the credentials and returns a signed JSON Web
+Token~\cite{jwt}. The token is the only proof of identity the rest of the system
+trusts: every subsequent request carries it as a bearer token, the gateway validates
+its signature and expiry before forwarding the request, and each microservice reads the
+claims to authorise the operation. The user-management service (port~8081) brokers the
+administrative side of identity---creating Keycloak users, assigning realm and client
+roles, and reconciling the local user profile with the identity provider---through a
+\texttt{KeycloakAdminService} that itself obtains a short-lived admin token from the
+\texttt{master} realm before each privileged call.
+
+\paragraph{Key logic.} The front-end decodes the \texttt{access\_token} client-side and
+extracts two pieces of information. The token's \texttt{sub} claim is persisted as the
+\texttt{keycloakId}---the canonical, stable identity used throughout the system, never
+an internal database primary key, so that a service can correlate a player, a chat
+member and an alert recipient without sharing a relational schema. The resolved role is
+stored both in \texttt{localStorage}, where the API client reads it, and as a cookie
+that the Next.js middleware reads on the server side to guard routes before a page is
+ever rendered~\cite{rbac}. This dual storage is what makes the three-layer access
+scheme described in Chapter~3 effective on the client tier: the cookie protects
+navigation, while the token protects the API.
+
+\paragraph{Validation and recovery.} Should a request later fail with HTTP~401---for
+example after a token has expired, or after a database re-seed has invalidated the
+previously issued token---the shared API client intercepts the response, clears local
+storage and redirects the user transparently back to the login screen. This converts
+what would otherwise be a confusing sequence of silently failing requests into a clean,
+self-healing recovery path, and it guarantees that the application never operates in a
+half-authenticated state.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth]{fig-login.png}
+  \caption{The Sportify sign-in screen. Credentials are validated against the Keycloak
+  \texttt{mscms} realm through the API gateway, which returns a signed JWT that the
+  front-end decodes to establish the user's identity and role.}
+  \label{fig:login}
+\end{figure}
+
+%======================================================================
+\section{Role-Aware Dashboard}
+\label{sec:res-dashboard}
+
+After authentication the user is presented with a unified dashboard that acts as the
+operational home of the platform. The design intent is that a member of staff should be
+able to assess the state of the club in a single glance, without first deciding which
+of a dozen modules to open.
+
+\paragraph{User experience.} Rather than maintaining a separate landing page per role,
+the dashboard is assembled dynamically (Figure~\ref{fig:dashboard}). It composes a hero
+banner carrying the club identity, a featured upcoming or most-recent match, a condensed
+La~Liga standings strip, and a set of summary cards---squad size, scheduled matches,
+active injuries and unread alerts---whose visibility is filtered by the permission
+map~\cite{rbac}. A medical doctor and a sponsor consequently see overlapping but
+distinct sets of cards, even though both navigated to the identical URL.
+
+\paragraph{Back-end realisation.} The dashboard is a true aggregation surface: it has no
+dedicated back-end of its own, but instead composes data fetched from several
+microservices through the gateway on a single origin. Player counts are read from the
+player-management service (port~8084), fixtures and live status from the training-match
+service (port~8087), medical figures from the medical-fitness service (port~8086), and
+unread-alert counts from the notification-mail service (port~8085). The fetch-based API
+client issues these requests in parallel and the React layer composes the responses,
+which keeps the perceived latency close to that of the slowest single call rather than
+the sum of all of them.
+
+\paragraph{Key logic and resilience.} Because the dashboard depends on several
+independent services, it is designed to degrade gracefully: each summary card resolves
+independently, so a momentarily unavailable medical service suppresses only the injuries
+figure rather than blanking the whole page. The featured-match selection logic prefers
+the next scheduled match and falls back to the most recent completed one, ensuring the
+hero area is never empty even outside the playing season. This combination of parallel
+aggregation and per-card isolation gives every member of staff an immediate,
+role-appropriate and fault-tolerant snapshot of club operations on entry.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-dashboard.png}
+  \caption{The role-aware dashboard. Summary cards, a featured match and a mini league
+  table aggregate data from multiple microservices into a single overview surface, with
+  card visibility governed by the user's role.}
+  \label{fig:dashboard}
+\end{figure}
+
+%======================================================================
+\section{Club Hub}
+\label{sec:res-clubhub}
+
+The Club Hub consolidates the modelled club's institutional identity into a single page.
+Where the dashboard answers ``what is happening right now?'', the Club Hub answers ``who
+are we?'', presenting the club as a continuous sporting institution rather than a set of
+disconnected records.
+
+\paragraph{User experience.} Taking FC~Barcelona as the working example, the Club Hub
+presents the club crest and colours, the head coach, the home stadium, a trophy cabinet,
+and the full squad rendered as player cards with real photographs
+(Figure~\ref{fig:club-hub}). Crucially, the page also surfaces \emph{live} sporting
+context rather than a static brochure: recent results are grouped by competition, a
+``last-five'' form strip summarises momentum at a glance using a colour-coded
+win/draw/loss sequence, and a \texttt{LIVE} badge appears whenever a match is in
+progress.
+
+\paragraph{Back-end realisation and the single-source-of-truth principle.} All of the
+sporting data on this page originates from the back-end, which is the single source of
+truth---the front-end never contacts the external football data provider directly. This
+is a deliberate architectural constraint with several payoffs: the API key is never
+exposed to the browser, the provider's rate limits are governed centrally, and the data
+the user sees is exactly the data the rest of the system reasons about. Concretely, the
+training-match service ingests fixtures and results on a schedule (see
+Section~\ref{sec:res-laliga}) and the Club Hub reads the consolidated \texttt{Match}
+records through the gateway, joining them client-side into the per-competition groupings
+and the form strip.
+
+\paragraph{Edge cases.} Because the modelled system date sits after the conclusion of
+the imported seasons, the ``live'' badge and ``upcoming'' groupings are written to behave
+correctly in the absence as well as the presence of in-progress matches: when no match is
+live the badge is simply omitted, and when no fixtures remain the recent-results view is
+shown in its place, so the page is always coherent regardless of where in the season the
+club currently sits.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-club-hub.png}
+  \caption{The Club Hub, presenting club identity, coaching and stadium details, the
+  trophy cabinet, the squad, and results grouped by competition with a last-five form
+  strip.}
+  \label{fig:club-hub}
+\end{figure}
+
+%======================================================================
+\section{Squad and Player Profiles}
+\label{sec:res-players}
+
+The Players module manages the multi-sport roster maintained by the player-management
+service (port~8084). It is the module that most directly demonstrates the platform's
+multi-discipline ambition.
+
+\paragraph{User experience.} Players are listed as cards filterable by sport and
+availability status, each carrying a real photograph, position and headline details
+(Figure~\ref{fig:players}). Selecting a card opens an expanded detail view with the
+player's biography, contract data and statistics, presented with a subtle ball-roll
+animation that gives the transition a polished, product-quality feel
+(Figure~\ref{fig:player-detail}).
+
+\paragraph{Back-end realisation and data model.} Each player is a \texttt{Player} entity
+keyed internally by a numeric identifier but correlated to identity by a
+\texttt{keycloakId}, so the same person can be a squad member here, a chat participant in
+the messaging service and an alert recipient in the notification service without any of
+those services sharing a database. The entity carries a \texttt{photoUrl} populated from
+public reference images, a \texttt{status} field (for example \texttt{AVAILABLE} or
+\texttt{INJURED}), a \texttt{sportType} discriminator and the position and attribute
+fields appropriate to the player's discipline. The module exposes the conventional REST
+surface for listing, retrieving, creating and updating players, plus a dedicated
+status-mutation endpoint that the live-match engine and the medical module call to flip a
+player between availability states (Sections~\ref{sec:res-live}
+and~\ref{sec:res-medical}).
+
+\paragraph{Key logic.} Because the underlying model is sport-aware, the same listing
+transparently accommodates footballers, basketballers, handball and tennis players, each
+with the positions and attributes appropriate to their discipline, which directly
+satisfies the multi-discipline requirement established in Chapter~2. The
+\texttt{status} field is consumed across the platform as the authoritative statement of a
+player's availability: a player marked \texttt{INJURED} is filtered out of lineup pickers,
+match selection and training attendance automatically, which is what allows the medical
+workflow to withdraw a player from operations simply by changing one field rather than by
+editing every dependent module.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-players.png}
+  \caption{The squad listing. Players are rendered as photograph-bearing cards,
+  filterable by sport and availability, and served by the player-management service.}
+  \label{fig:players}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig-player-detail.png}
+  \caption{The expanded player profile, showing biography, contract and statistics for an
+  individual squad member, opened with a subtle animation from the squad listing.}
+  \label{fig:player-detail}
+\end{figure}
+
+%======================================================================
+\section{Competitions}
+\label{sec:res-competitions}
+
+Competitions are modelled as first-class, database-backed entities owned by the
+training-match service, in contrast to the throwaway, in-memory league tables of a
+typical demonstration application. This decision is what allows the platform to enforce
+realistic competition rules, to recompute standings deterministically, and to write live
+results back to an authoritative fixture.
+
+\paragraph{Data model.} Three persistent JPA entities capture the domain.
+\texttt{Competition} records the competition's name, season, \texttt{type}
+(\texttt{LEAGUE} or a knockout-style type) and the number of \texttt{rounds} a league
+plays. \texttt{CompetitionTeam} records each participating team---its name, short name,
+crest URL and sport---scoped to a competition. \texttt{CompetitionFixture} records a
+single fixture: the home and away team identities and names, an optional \texttt{round}
+label (empty for a plain league fixture, \texttt{LEAGUE\_STAGE} or a knockout label such
+as \texttt{R16} otherwise), a \texttt{matchday} bucket, a \texttt{played} flag, the
+recorded scores, and the timestamp at which the result was entered. These three entities
+are exposed through a single controller mounted under \texttt{/matches/leagues} so that
+no additional gateway route is required---the existing route to the training-match service
+is reused, which keeps the gateway configuration small and auditable.
+
+\paragraph{Scope and user experience.} The platform deliberately scopes football
+competitions to the two that mirror the club's real calendar: \emph{La~Liga} (Spain's
+Primera Divisi\'on, which the system treats as one and the same competition rather than
+duplicating it) and the \emph{UEFA Champions League}. The Competitions landing page
+presents these as selectable tabs and acts as the gateway into each competition's detailed
+view (Figure~\ref{fig:competitions}). Real, completed seasons were imported as seed data
+through a dedicated \texttt{/matches/leagues/import} endpoint that reads a season's matches
+from the provider and materialises a competition, its teams and every finished fixture in
+one transaction.
+
+\paragraph{The read-only completed-competition rule.} A deliberate design decision marks
+any competition whose every fixture has been played as \emph{read-only}: such a
+competition displays a ``Completed---read-only'' badge and forbids result or date edits,
+while an ongoing competition remains editable until its final result is recorded, at which
+point it locks automatically. This rule exists to protect the integrity of historical
+records---a finished season is a fact, not a draft---while still permitting an in-progress
+competition to be updated match by match. Administrative deletion remains available in all
+cases, since removing an entire competition is a coarse, intentional act rather than an
+accidental edit.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-competitions.png}
+  \caption{The Competitions landing page, with selectable tabs for La~Liga and the UEFA
+  Champions League backed by persistent competition entities.}
+  \label{fig:competitions}
+\end{figure}
+
+\subsection{La~Liga: Standings and Fixtures}
+\label{sec:res-laliga}
+
+The La~Liga view renders a live standings table together with the fixture and results
+list for the season (Figure~\ref{fig:laliga}).
+
+\paragraph{Standings computation.} The standings are not stored; they are recomputed from
+the fixtures on every read, which guarantees they can never drift out of sync with the
+underlying results. The computation iterates over the played fixtures, and for each one
+credits three points to a win, one to each side of a draw, and zero to a loss, while
+accumulating goals for, goals against and the played/won/drawn/lost tallies. The resulting
+rows are then ordered by points, then by goal difference, then by goals scored---the
+ordering used by the real competition---so that recording a single result and reloading the
+table produces exactly the movement a spectator would expect. Because the recomputation is a
+pure function of the fixture set, it is deterministic and trivially testable.
+
+\paragraph{Ingestion pipeline.} For fixtures that are still to be played, the data is kept
+current through the training-match service's ingestion pipeline. A
+\texttt{FootballDataClient} together with a \texttt{MatchSyncService} polls the
+football-data.org provider~\cite{footballdata} on a thirty-minute schedule---implemented as
+a Spring \texttt{@Scheduled} task with an initial delay of roughly twenty-five seconds after
+boot and a configurable interval---and on demand through an administrative
+\texttt{/matches/sync-external} endpoint. The service reads the configured competitions
+(\texttt{PD} for La~Liga and \texttt{CL} for the Champions League), filters the modelled
+club's fixtures by the club's provider team identifier, and upserts them into the local
+\texttt{Match} table. Each fixture is de-duplicated by an \texttt{externalId} derived from the
+provider's match identifier, so repeated synchronisation is idempotent and never produces
+duplicates.
+
+\paragraph{Working within the provider's constraints.} The free tier of the provider forbids
+team-scoped endpoints---a request to \texttt{/teams/\{id\}/matches} is rejected---so the
+service instead reads the permitted competition-scoped match and standings endpoints and
+filters client-side for the modelled club. The competition standings are served through a
+read-through pass exposed at \texttt{/matches/standings/\{code\}} that is never persisted,
+so the live league position always reflects the provider's current figures without the
+platform attempting to mirror data it does not own. This design keeps the back-end
+authoritative for the data the platform manages while still presenting accurate, real-world
+league context, and it respects the provider's terms by centralising every external call
+behind the API key held only on the server.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-laliga.png}
+  \caption{The La~Liga competition view, showing the live standings table alongside the
+  season's fixtures and results.}
+  \label{fig:laliga}
+\end{figure}
+
+\subsection{Champions League: League Phase and Knockout Bracket}
+\label{sec:res-cl-bracket}
+
+The Champions League view reproduces the competition's modern format with exactly two tabs
+(Figure~\ref{fig:cl-bracket}). The first presents the single \emph{league phase}, in which
+all thirty-six participating teams accumulate points in one combined table; the fixtures of
+this stage are stored under a \texttt{LEAGUE\_STAGE} round so that the engine can distinguish
+them from knockout ties. The second presents the \emph{knockout bracket}, rendered as a
+progression of ties from the knockout play-off and round of sixteen through to the final. The
+knockout tab remains locked until the league phase is complete, mirroring the real
+competition's sequencing and preventing the user from advancing prematurely.
+
+\paragraph{Why the round label matters.} The same \texttt{CompetitionFixture} model underpins
+both stages, with each fixture's \texttt{round} value classifying it as either a points fixture
+or a knockout tie. This single discriminator carries real behavioural weight: as
+Section~\ref{sec:res-live} describes, the live-match engine consumes it to decide whether a
+draw is a valid result. A league-phase fixture permits a draw and the engine stops at full
+time; a knockout tie does not, and the engine extends into extra time and, if necessary, a
+penalty shootout. Threading the format rule through one authoritative field, rather than
+duplicating it in the user interface, is what keeps the live engine and the competition record
+consistent.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-cl-bracket.png}
+  \caption{The UEFA Champions League knockout bracket, presenting the progression of ties
+  from the round of sixteen to the final. The bracket is unlocked only once the league
+  phase has concluded.}
+  \label{fig:cl-bracket}
+\end{figure}
+
+\subsection{Creating a Competition}
+\label{sec:res-create-competition}
+
+Administrators may author a new competition through a guided, multi-step flow
+(Figure~\ref{fig:create-competition}). The user first selects a preset (La~Liga or
+Champions League), then a season from a curated list, and finally the participating teams:
+La~Liga is fixed at its twenty members, whereas the Champions League flow lets the
+administrator select thirty-six clubs from a curated European team pool.
+
+\paragraph{La~Liga generation: the double round-robin.} For a league competition the
+back-end pre-generates the entire schedule on creation so that the user can only ever enter
+results for genuine fixtures and can never inflate the table by recording the same pairing
+repeatedly. The generator implements a double round-robin: it iterates over the configured
+number of rounds (two for La~Liga) and, within each round, over every unordered pair of
+teams, emitting one fixture per pair. The home and away sides are swapped on alternate rounds
+so that each pairing is played once at home and once away, exactly as the real competition is
+structured, and each fixture is assigned an incrementing \texttt{matchday} for display
+grouping. For twenty teams this yields the expected $20 \times 19 = 380$ fixtures.
+
+\paragraph{Champions League generation: the league-phase rotation algorithm.} The Champions
+League league phase is the most algorithmically interesting case, because each of the
+thirty-six teams must play exactly eight \emph{distinct} opponents---it is not a full
+round-robin, in which every team would play every other. The platform generates this with a
+deterministic circle/rotation pairing. The algorithm maintains, for every team, a running
+\emph{degree} (the number of opponents already assigned) and a set of pair keys already used.
+It then sweeps over rotational offsets: for an offset $o$ it considers pairing team $i$ with
+team $(i + o) \bmod n$, and accepts the pairing only if both teams still have spare degree
+and the unordered pair has not already been scheduled. Home and away are assigned by a parity
+rule so that home counts stay balanced across the field. The sweep continues, increasing the
+offset, until the total number of fixtures reaches $\tfrac{n \times 8}{2} = 144$, at which
+point every team has exactly eight distinct opponents and no pairing is repeated. The
+fixtures are then distributed across eight matchday buckets purely for display grouping, and
+every fixture is tagged with the \texttt{LEAGUE\_STAGE} round so that it renders in the league
+phase and is correctly treated as draw-permitting by the live engine. Because the algorithm is
+deterministic, the same team list always produces the same regular, well-spread fixture graph,
+which makes the generated schedule reproducible and verifiable.
+
+\paragraph{Persistence and atomicity.} On confirmation the back-end generates the appropriate
+fixture set---the round-robin for a league, or a bulk insert of the rotation-generated
+league-phase fixtures for the Champions League via a \texttt{/matches/leagues/\{id\}/fixtures/bulk}
+endpoint---and persists the competition together with its teams and fixtures inside a single
+transaction. This converts what would traditionally be a manual, error-prone, spreadsheet-driven
+exercise into one auditable, all-or-nothing operation: either the entire competition is created
+correctly or none of it is.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig-create-competition.png}
+  \caption{The guided competition-creation flow: preset selection, season selection and
+  team selection culminate in a generated fixture set persisted by the training-match
+  service.}
+  \label{fig:create-competition}
+\end{figure}
+
+%======================================================================
+\section{Head-to-Head Records}
+\label{sec:res-h2h}
+
+The Head-to-Head view answers a question that fans and analysts ask constantly but that is
+tedious to compute by hand: how has the club fared against a given opponent over time?
+
+\paragraph{User experience.} The page lists every opponent the club has met, and for each one
+summarises the all-time record---matches played, won, drawn and lost, together with goals
+scored and conceded (Figure~\ref{fig:h2h}). Selecting an opponent expands the individual
+fixtures that make up the record, so a headline statistic can be traced back to the matches
+that produced it.
+
+\paragraph{Back-end realisation and logic.} The view is computed entirely from the
+authoritative \texttt{Match} records held by the training-match service, the same records that
+the ingestion pipeline populates and that the live engine writes back to. The front-end groups
+the club's matches by opponent and folds each group into a win/draw/loss and goals-for/against
+summary using the same scoring conventions as the standings computation, so a head-to-head row
+is always consistent with the competition tables. Because it derives from stored results rather
+than a separate data source, the record updates automatically as new matches complete---no
+manual maintenance of a head-to-head ledger is required.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-head-to-head.png}
+  \caption{The Head-to-Head view, summarising the club's all-time record against each opponent
+  (played, won, drawn, lost and goals) computed from the authoritative match records, with the
+  underlying fixtures expandable for any opponent.}
+  \label{fig:h2h}
+\end{figure}
+
+%======================================================================
+\section{World Cup}
+\label{sec:res-worldcup}
+
+The World Cup view brings a major international tournament into the platform as live
+sporting context, demonstrating that the competition machinery generalises beyond the
+club's own two domestic competitions.
+
+\paragraph{User experience.} The page presents the tournament in its real structure: a set
+of group tables followed by a knockout bracket that progresses to the final
+(Figure~\ref{fig:worldcup}). Group standings and knockout fixtures are shown with the same
+visual language as the club's own competitions, so a user moves between the domestic and
+international views without re-learning the interface.
+
+\paragraph{Back-end realisation.} As with every external dataset, the front-end never calls
+the provider directly. The training-match service exposes read-through endpoints for the
+tournament---one that returns the group tables and one that returns the tournament's
+matches---so the World Cup competition is available on the provider's free tier and is served
+to the browser through the gateway. The group tables are computed and the bracket assembled on
+the server side, keeping the browser a pure presentation layer and the API key confined to the
+back-end.
+
+\paragraph{Edge cases.} The view is written to render correctly at every phase of the
+tournament: before the knockout stage begins it shows only the group tables, and as ties are
+decided the bracket fills in progressively, so the page is coherent whether the tournament is
+in its group phase, its knockout phase, or complete.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-world-cup.png}
+  \caption{The World Cup view, presenting the tournament's group tables and knockout bracket.
+  Group standings and the bracket are computed on the server and served to the browser through
+  the gateway via read-through endpoints, so the external data provider is never called from
+  the client.}
+  \label{fig:worldcup}
+\end{figure}
+
+%======================================================================
+\section{Trophy Room}
+\label{sec:res-trophy}
+
+The Trophy Room is the celebratory counterpart to the operational modules: it presents the
+club's honours as a curated cabinet, reinforcing the institutional identity that the Club Hub
+introduces.
+
+\paragraph{User experience.} The page displays the club's trophies grouped by competition and
+era, each rendered as a distinct honour with its competition and the seasons in which it was
+won (Figure~\ref{fig:trophy}). The layout is intentionally visual and museum-like, contrasting
+with the dense tabular surfaces elsewhere in the product, and gives the platform a sense of
+heritage rather than presenting the club as a purely transactional set of records.
+
+\paragraph{Realisation.} The honours are presented as part of the club-identity surface,
+complementing the trophy summary shown on the Club Hub with a dedicated, expanded gallery. By
+giving the achievements their own room, the platform acknowledges that a club is defined as much
+by its history as by its current fixtures, which strengthens the product's claim to be a
+faithful digital home for the institution rather than a back-office tool.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig-trophy-room.png}
+  \caption{The Trophy Room, presenting the club's honours as a curated cabinet grouped by
+  competition and era, complementing the trophy summary on the Club Hub.}
+  \label{fig:trophy}
+\end{figure}
+
+%======================================================================
+\section{Match Hub}
+\label{sec:res-matches}
+
+The Match Hub is the operational list of the club's own matches---the matches it schedules,
+plays and reviews, as distinct from the external fixtures surfaced in the competition views.
+
+\paragraph{User experience.} It comprises a \emph{Schedule a match} action, four status filters
+(Scheduled, Live, Completed and a catch-all) and a team filter, with each match rendered as a
+card showing the opponent's name and crest, the kickoff time, and---for upcoming matches---a
+live countdown that flips the card to a \texttt{LIVE} state automatically when kickoff arrives
+(Figure~\ref{fig:matches}). The countdown is computed entirely client-side from the stored
+kickoff timestamp, so a card transitions to live without any server round-trip and without the
+user refreshing the page.
+
+\paragraph{Self-cleaning behaviour.} The Hub also performs housekeeping on load to keep the list
+trustworthy without manual intervention. Matches that were scheduled or marked live but have
+passed kickoff by more than ninety minutes with no recorded events are treated as abandoned and
+removed---these are typically test or mistakenly created matches that were never played. Matches
+that carry real events but were never formally ended are finalised to a completed state. To make
+finished matches self-consistent, goal events are backfilled so that each completed match's
+recorded scorers reconcile with its final score, drawing the scorers from the saved starting XI.
+The net effect is that the Match Hub always presents a clean, internally consistent record, and a
+stray or interrupted match cannot accumulate as noise.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-matches.png}
+  \caption{The Match Hub, listing the club's matches with status and team filters and a
+  schedule action. Upcoming cards display a live countdown and transition to a LIVE state
+  at kickoff.}
+  \label{fig:matches}
+\end{figure}
+
+\subsection{Scheduling a Match}
+\label{sec:res-match-schedule}
+
+Scheduling distinguishes between a \emph{Friendly} and an \emph{Official} match
+(Figure~\ref{fig:match-schedule}). A Friendly allows a free choice of opponent, whereas an
+Official match is bound to a real, still-running competition and offers only that competition's
+unplayed fixtures, carrying the fixture's identity forward so that the eventual result can be
+written back to the source. This binding is what closes the loop between the live engine and the
+competition record: an official match is not an island, but an instance of a specific
+competition fixture.
+
+\paragraph{Kickoff validation.} The kickoff time is validated to lie at least five minutes in the
+future. The validation is a pure function of the chosen timestamp and the current time: it rejects
+an empty value, an unparseable value, a value in the past, and a value less than five minutes
+ahead, returning a specific user-facing message for each case. The picker itself advertises a
+minimum selectable value of ``now plus five minutes'', nudging the user toward a valid choice
+before they even submit. A subtle but important detail is that the kickoff is stored as a naive
+local wall-clock string rather than being passed through a timezone conversion: an earlier defect
+in which times were shifted by the local UTC offset (making matches appear several hours early and
+spuriously live) was fixed by normalising the picker value to the back-end's naive
+\texttt{LocalDateTime} format without any UTC arithmetic.
+
+\paragraph{Lineup is mandatory.} Critically, a match is never persisted on its own: a lineup is
+required. The scheduling form stages its payload and hands off to the lineup builder, and only when
+a formation and starting eleven are confirmed does the system create the match, its formation and
+its lineup together in one coherent operation. This guarantees a key invariant exploited everywhere
+downstream---every match in the system, the moment it exists, already has a reconstructable starting
+XI.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig-match-schedule.png}
+  \caption{Scheduling a match. The Friendly/Official chooser, opponent or fixture
+  selection and a future-dated kickoff feed a draft that is only persisted once a lineup
+  has been confirmed.}
+  \label{fig:match-schedule}
+\end{figure}
+
+\subsection{The Lineup Builder}
+\label{sec:res-lineup}
+
+The lineup builder is a formation-first, interactive pitch (Figure~\ref{fig:lineup}).
+
+\paragraph{User experience.} The user begins by selecting a formation appropriate to the sport,
+after which players are placed and rearranged on the pitch by drag-and-drop, with each position
+rendered as a card bearing the player's photograph. A single-card drag ghost gives the drag
+operation a clean, unambiguous visual, and players can be swapped between positions or between the
+pitch and the bench. The starting eleven and the bench are assembled here.
+
+\paragraph{Back-end realisation and data model.} The builder is backed by two entities in the
+training-match service. A \texttt{MatchFormation} captures the chosen shape and a compact
+\texttt{formationDetails} description, while \texttt{MatchLineup} records the per-player placements.
+These are exposed through \texttt{/match-formations} and \texttt{/match-lineups} endpoints and are
+saved atomically with the match. A practical constraint worth recording is that the
+\texttt{formationDetails} column is a bounded \texttt{VARCHAR(255)}, so the encoding is kept compact
+to avoid an over-length write being rejected---a small but real example of the data model shaping
+the client encoding.
+
+\paragraph{Why this matters.} Because the lineup is captured at creation time and locked thereafter,
+every completed match in the system carries a genuine, reconstructable starting XI rather than a
+placeholder. This is precisely what makes the in-match event and substitution logic meaningful: a
+substitution refers to real players who were really on the pitch, an in-match injury flags a real
+squad member, and the match-details page can rebuild the exact eleven that started. The entire fifty-odd
+finished football matches in the seed data were backfilled with real starting elevens for the same
+reason, so that the historical record is as self-consistent as a freshly scheduled match.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-lineup.png}
+  \caption{The formation-first lineup builder. Players are positioned on the pitch by
+  drag-and-drop, and the resulting formation and starting XI are persisted atomically with
+  the match.}
+  \label{fig:lineup}
+\end{figure}
+
+%======================================================================
+\section{The Live-Match Engine}
+\label{sec:res-live}
+
+The live-match engine is the most behaviourally rich component of the platform, and the one in
+which the front-end and back-end cooperate most tightly. It transforms a static fixture into a
+real-time, broadcast-style operational surface (Figure~\ref{fig:live-match}).
+
+\subsection{Gating and Auto Go-Live}
+Control of the engine is gated until kickoff is reached or the match is already live, so a match
+cannot be operated before it is due to begin. The transition itself is automatic: pure timestamp
+helpers compute, from the stored kickoff and the current time, whether kickoff has arrived, the
+running match minute, and the phase the minute implies. When the kickoff moment passes, the match
+goes live on its own---the user never manually flips it---and the elapsed minute begins advancing.
+Because these computations are pure functions of two timestamps, the common case of simply watching
+the clock advance requires no server round-trip, which keeps the live view responsive.
+
+\subsection{The Phase Machine}
+The engine drives a broadcast-style \emph{phase machine}. Each phase is described by a small record
+giving its label, the base minute at which its clock starts, its regulation length, whether it is a
+playing phase with a running clock, and the phase that follows it. The regulation sequence is
+\texttt{FIRST\_HALF}~(45') $\rightarrow$ \texttt{HALF\_TIME} $\rightarrow$
+\texttt{SECOND\_HALF}~(45') $\rightarrow$ \texttt{FULL\_TIME}. For a true knockout tie that remains
+level at full time, the machine extends into \texttt{EXTRA\_FIRST}~(15') $\rightarrow$
+\texttt{EXTRA\_HALFTIME} $\rightarrow$ \texttt{EXTRA\_SECOND}~(15') and, if still level, a
+\texttt{PENALTIES} shootout, which is a non-timed state owned explicitly by the user interface. For a
+points fixture---including a Champions League league-phase match---a draw is a legitimate result and
+the engine stops at full time.
+
+\paragraph{Resolving knockout from points authoritatively.} The knockout-versus-points decision is
+the linchpin of the whole machine, and it is resolved authoritatively rather than guessed. A set of
+match types (league, friendly, group and the various league-stage labels) are treated as
+points fixtures for which a draw is valid; but when a match originates from a real competition fixture,
+the resolved round of that fixture is checked \emph{first} and overrides the loose type. The effect is
+that a match stored loosely as a tournament match is still correctly treated as a draw-permitting league
+fixture when its round indicates the league phase, and a genuine knockout tie correctly extends into
+extra time and penalties. Threading the decision through the originating fixture's round is what keeps
+the engine consistent with the competition format described in
+Section~\ref{sec:res-cl-bracket}.
+
+\subsection{The Clock, Stoppage Time and Phase-Bounded Minutes}
+Each playing phase exposes an administrator-set stoppage time, allowing the clock to read ``45+3''' or
+``90+5''' during added time. The clock is carefully bounded so that it can never run away into nonsense.
+The displayed minute is hard-capped at the phase's regulation length, and the added portion shown is the
+\emph{admin-set} stoppage only, never the raw elapsed overflow. Consequently a half left running for an
+extended period freezes at, for example, ``45+3''' (or simply ``45''' when no stoppage was set) rather
+than inflating into an absurd minute---a concrete defect (an observed ``45+132''') that was fixed by this
+capping rule. It is always the user who advances the phase; the clock follows, it does not lead.
+
+Event entry is likewise phase-bounded. The recordable-minute range is computed per phase: the first half
+accepts minutes one to forty-five plus any stoppage, the second half forty-six to ninety plus stoppage,
+and each extra-time period its fixed fifteen-minute window. Non-playing phases (the half-time and full-time
+intervals, the extra-time interval and the penalty shootout) carry no recordable minute. This prevents a
+nonsensical entry such as a first-half goal recorded at minute eighty, and it means that when state is
+reconstructed on reload, a stored event minute maps unambiguously back to the phase in which it occurred.
+
+\subsection{Events, Scoring and Substitutions}
+Events are entered against the live clock and persist immediately through the match-events API. A
+\texttt{MatchEvent} entity records the event type, the minute, the acting player's \texttt{keycloakId} and
+a free-text description; the event-type enumeration is broad and sport-aware, covering goals, assists,
+penalties scored and missed, own goals, yellow and red cards, corners, free kicks, offsides and VAR reviews
+for football, as well as the equivalent events for basketball, handball, tennis, volleyball and swimming.
+Scoring events increment the appropriate side's tally, and the running score is written back to the match as
+play proceeds.
+
+Substitutions have a dedicated control that records the outgoing and incoming players and the minute. Because
+the underlying \texttt{MatchEvent} carries a single player reference, a substitution encodes both players---their
+numeric identifiers, their \texttt{keycloakId}s and their names---in a parseable tag inside the event description,
+which lets the timeline render both faces and lets the post-match review form learn which substitutes actually
+came on. Substitutions are limited per sport: football permits the modern maximum of five, while free-interchange
+roster sports such as basketball and handball are effectively unlimited. The engine tracks which players have left
+the pitch, which substitutes have entered, and how many of the allowance has been consumed, and it rebuilds this
+on-pitch set on reload from the stored events so that the live state survives a page refresh.
+
+\subsection{The In-Match Injury Bridge}
+An in-match \texttt{INJURY} event does double duty and is the clearest demonstration of genuine cross-service
+integration. It is recorded as an ordinary match event \emph{and} simultaneously creates a real injury record in
+the medical-fitness service: the engine posts a new injury (in the \texttt{REPORTED} status, linked to the player,
+with a chosen injury type and severity) and then flips the affected player's status to \texttt{INJURED} through the
+player-management API. The consequences ripple outward without any further action: the injured player is forced off
+the pitch and, because an injury substitution is exempt from the normal sub-count, the replacement is always
+permitted even past the five-substitution limit; the player becomes unselectable in future lineups, match selection
+and training; and the incident appears in the Medical module's Treatment Room ready for the staged clinical journey
+described in Section~\ref{sec:res-medical}. A single click in the live engine thus drives three services at once.
+
+\subsection{Alerts and Result Write-Back}
+Recording a goal raises a real, persisted alert so that interested roles are notified as the match unfolds, and
+ending the match emits a result-available alert and writes the final score back to the source competition fixture.
+The alert posting is best-effort and resilient: the engine attempts a goal-scored alert type and, because the
+back-end alert enumeration must be respected, falls back to a valid match-scoped type if necessary so that a real
+alert is always created and the call never throws. Ending an official match writes the final score to its originating
+fixture, which in turn moves the competition standings (Section~\ref{sec:res-laliga}) and, where relevant, unlocks or
+advances the knockout bracket. This closes the loop between live operations, the notification fabric and the
+competition record, so that operating a live match is not a self-contained activity but one that updates the whole
+platform.
+
+\begin{figure}[htbp]
+  \centering
+  \IfFileExists{screenshots/fig-live-match.png}{\includegraphics[width=0.95\textwidth]{fig-live-match.png}}{\fbox{\parbox[c][5cm][c]{0.9\textwidth}{\centering\itshape Live-match control panel --- screenshot to be inserted (\texttt{fig-live-match.png}).}}}
+  \caption{The live-match engine. The broadcast-style phase machine, stoppage-time
+  control, event entry, per-sport substitutions and in-match injury recording drive the
+  match in real time and persist every action to the back-end.}
+  \label{fig:live-match}
+\end{figure}
+
+\subsection{Match Details: Events, Statistics and Reviews}
+\label{sec:res-match-details}
+
+Once a match is complete its detail page becomes a read-only record of what occurred
+(Figure~\ref{fig:match-details}). It reconstructs the saved starting XI on a pitch board, presents a
+chronological events timeline, a statistics panel, and a reviews wall on which coaching staff record
+post-match player assessments. The reviews wall reads the substitution events to learn which substitutes
+came on, so an assessment can be recorded for a player who only featured for the closing minutes, not merely
+for the eleven who started. Because every finished match carries a real lineup and a backfilled set of goal
+events consistent with its score, the detail page presents a faithful, self-consistent account of the match
+rather than a synthetic summary, and a finished match is rendered read-only in keeping with the platform-wide
+treatment of completed records.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-match-details.png}
+  \caption{The match details page, presenting the reconstructed starting XI, the events
+  timeline, match statistics and the post-match player-review wall for a completed match.}
+  \label{fig:match-details}
+\end{figure}
+
+%======================================================================
+\section{Medical and Fitness}
+\label{sec:res-medical}
+
+The medical module, served by the medical-fitness service (port~8086), manages the full clinical lifecycle
+of a player's injury. It is one of the modules that most clearly transcends simple record-keeping, encoding a
+genuine clinical workflow rather than a flat table of incidents.
+
+\paragraph{The Treatment Room.} The module's centrepiece is the \emph{Treatment Room}, which divides the squad
+into \emph{Currently Injured} and \emph{Recovered} cohorts (Figure~\ref{fig:medical-room}). A player is
+considered injured---and is automatically withdrawn from upcoming matches, lineups and training---from the moment
+an injury is logged until a passing fitness test clears them back to availability. This withdrawal is achieved
+not by editing every dependent module but by the player's single \texttt{status} field, which every other module
+already respects, so the squad's operational status stays consistent across the match and training modules without
+any manual reconciliation.
+
+\paragraph{Back-end realisation and data model.} An \texttt{Injury} entity records the affected player, the body
+part, the injury type and severity, the report metadata, and---most importantly---a \texttt{status} drawn from a
+small enumeration: \texttt{REPORTED}, \texttt{DIAGNOSED}, \texttt{TREATING}, \texttt{RECOVERING},
+\texttt{RECOVERED} and \texttt{CHRONIC}. The injury aggregates its associated clinical sub-records: diagnoses,
+treatments and rehabilitation entries, with recovery programmes and fitness tests recorded as the journey
+advances. The injury exposes a conventional REST surface for creation and retrieval, and it is this entity that the
+live-match engine targets when an in-match injury occurs.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-medical-room.png}
+  \caption{The Medical Treatment Room, separating currently injured players from those who
+  have recovered. Logging an injury automatically withdraws the player from matches,
+  lineups and training until a passing fitness test restores availability.}
+  \label{fig:medical-room}
+\end{figure}
+
+\subsection{The Injury Journey}
+\label{sec:res-medical-journey}
+
+Each injured player has a staged recovery journey rendered as a stepper:
+Injury~$\rightarrow$~Diagnosis~$\rightarrow$~Treatment~$\rightarrow$~Rehabilitation~$\rightarrow$~Recovery~$\rightarrow$~Fitness~Test~$\rightarrow$~Recovered
+(Figure~\ref{fig:medical-journey}).
+
+\paragraph{Status as the single source of truth.} The injury's own status is the single source of truth for how far
+the player has progressed, and this is the design decision that makes the workflow robust. Rather than inferring the
+current stage from whichever sub-records happen to exist---an approach that breaks down the moment a stray document
+is left over from a previous episode---the stepper reads the injury's status directly and maps it onto the stage. As
+the player progresses, the status advances through the enumeration: an initial report is \texttt{REPORTED}, a recorded
+diagnosis moves it to \texttt{DIAGNOSED}, treatment to \texttt{TREATING}, and so on through \texttt{RECOVERING} to
+\texttt{RECOVERED}. Because the stage is read from one authoritative field, the stepper always reflects the true
+clinical state and is immune to leftover sub-records, which was a concrete source of confusion before the status-driven
+design was adopted.
+
+\paragraph{Ordered progression.} Advancing a stage records a new clinical document---a diagnosis, a treatment, a
+rehabilitation plan, a recovery programme or a fitness-test result---and the journey enforces the correct ordering. It
+guarantees, for example, that a rehabilitation record exists before a recovery programme can be created, so the clinical
+history reads as a coherent sequence rather than an arbitrary set of documents. Only a \emph{passing} fitness test
+completes the journey: it moves the injury to recovered and returns the player to the available pool, at which point the
+player reappears in lineup pickers, match selection and training. A failing fitness test does not clear the player,
+keeping a not-yet-fit player correctly withheld from selection.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-medical-journey.png}
+  \caption{The per-player injury journey stepper, progressing from the initial injury
+  through diagnosis, treatment, rehabilitation, recovery and a fitness test to full
+  recovery. The injury's status is the single source of truth for the current stage.}
+  \label{fig:medical-journey}
+\end{figure}
+
+\subsection{General Medical Catalogs}
+\label{sec:res-medical-catalog}
+
+Alongside the per-player journey, the module exposes general catalogs for each clinical category---Injuries, Diagnoses,
+Treatments, Rehabilitation, Recovery and Fitness Tests (Figure~\ref{fig:medical-catalog}). These provide reusable,
+browsable records and serve as templates that the journey's stage pickers can draw upon.
+
+\paragraph{Copy, not link.} A subtle but deliberate design choice governs how a catalog entry is used: selecting one
+pre-fills the relevant stage form, but its content is then \emph{copied} into a fresh record for the current player rather
+than re-linked to the shared template. This preserves a clean, independent per-injury history---editing a player's
+treatment record cannot retroactively mutate the shared catalog, and the catalog cannot change a player's recorded
+history---while still saving the clinician the effort of re-entering common information. The result combines the
+convenience of templates with the integrity of immutable per-episode records.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-medical-catalog.png}
+  \caption{The general medical catalogs. Reusable injury, diagnosis, treatment,
+  rehabilitation, recovery and fitness-test records double as templates that pre-fill the
+  journey's stage forms.}
+  \label{fig:medical-catalog}
+\end{figure}
+
+%======================================================================
+\section{Team Communication}
+\label{sec:res-messages}
+
+The Messages module delivers a real-time, group-based team chat backed by the notification-mail service
+(port~8085). It gives the platform a self-contained communication channel without depending on any third-party
+messaging service.
+
+\paragraph{Group and invitation model.} The data model comprises a \texttt{ChatGroup} and a
+\texttt{ChatGroupMember}, the latter carrying a membership status (\texttt{INVITED} or \texttt{MEMBER}) that
+distinguishes an invited user from a confirmed member. A seeded general group is returned to everyone, while a
+user-created group makes its creator a member and places invitees in the invited state until they accept. The chat
+group controller is mounted at \texttt{/messages/groups}---a literal path chosen so it takes precedence over the
+parameterised \texttt{/messages/\{id\}} route---and exposes the full lifecycle: listing groups, fetching a group and
+its members, creating a group, listing a user's pending invitations, and accepting, declining or issuing invitations
+through dedicated \texttt{/accept}, \texttt{/decline} and \texttt{/invite} endpoints. The \texttt{Message} entity
+carries a \texttt{groupId}, scoping every message to its conversation, and supports threaded replies through a parent
+reference.
+
+\paragraph{Reactions and de-duplication.} The conversation supports emoji reactions and client-side de-duplication so
+that each message renders exactly once even when it arrives by more than one path (for instance, both echoed over the
+socket and returned by a poll). De-duplication is layered: a message is keyed first by its server identifier, then by a
+client-assigned message identifier, and finally by the combination of sender and content, which together resolved an
+earlier double-render defect.
+
+\paragraph{Real-time delivery over WebSocket.} Delivery is genuinely real-time. A native browser WebSocket connects
+directly to the notification service at \texttt{ws://localhost:8085/ws/chat}~\cite{websocket}. The path sits outside the
+\texttt{/messages} namespace and outside the gateway deliberately: the raw socket bypasses the gateway's JWT filter and
+connects straight to the service, where the endpoint is permitted, which avoids the complications of authenticating a
+long-lived socket through the HTTP gateway. The protocol is a small set of JSON text frames. A client first sends an
+\texttt{identify} frame carrying its identity; thereafter it sends \texttt{chat} frames carrying the group, sender and
+content, which the server re-broadcasts verbatim to every connected client; a \texttt{ping} frame keeps the connection
+alive; and the server emits a \texttt{presence} frame on every connect, identify and disconnect, reporting how many users
+are online. HTTP polling is retained as a fallback should the socket be unavailable, so the chat continues to function---if
+less instantly---even when a WebSocket connection cannot be established (Figure~\ref{fig:messages}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-messages.png}
+  \caption{The team group chat. Group conversations, invitations, threaded replies and
+  emoji reactions are delivered over a native WebSocket to the notification-mail service,
+  with polling as a fallback.}
+  \label{fig:messages}
+\end{figure}
+
+%======================================================================
+\section{Notifications and Alerts}
+\label{sec:res-notifications}
+
+Notifications are event-driven and surfaced through a bell in the top navigation bar (Figure~\ref{fig:notifications}).
+The notification fabric is one of the clearest expressions of the platform's event-driven, loosely coupled design.
+
+\paragraph{The event pipeline.} The notification-mail service consumes domain events from Kafka~\cite{kafka} through a
+set of \texttt{@KafkaListener} consumers, one per topic. When the medical service reports an injury, the player service
+completes a transfer, the training service cancels a session, or the match service schedules or completes a match, the
+producing service emits an event onto the corresponding Kafka topic following the outbox pattern, and the notification
+service's \texttt{EventConsumer} materialises it as a targeted alert with an appropriate type and priority. An injury
+event, for instance, becomes an \texttt{INJURY\_REPORTED} alert routed to medical staff, with the priority derived from
+the injury's severity; a transfer event becomes a \texttt{TRANSFER\_COMPLETED} alert and may additionally trigger an email
+to the affected player. The live-match engine contributes alerts directly over HTTP rather than through Kafka, posting a
+goal alert as the match unfolds and a result-available alert when it ends. The alert type enumeration is correspondingly
+broad, spanning medical, performance, match-and-training, player-management and scouting-and-sponsorship categories.
+
+\paragraph{The notification centre.} The bell opens a notification centre that presents alerts across two tabs,
+distinguishes alerts from notifications, carries unread badges, and refreshes on a short polling interval (on the order of
+a few seconds) so that critical events reach the relevant actor promptly. Competition fixtures deep-link from the
+notification and competition surfaces into the match-creation flow, pre-filling the teams and carrying the originating
+fixture's identity so that scheduling a match from an alert requires no re-entry of detail. This realises the role-aware
+notification fabric called for in the requirements and removes the reliance on ad-hoc, manual alerting.
+
+\paragraph{Why event-driven.} Routing notifications through Kafka rather than direct service-to-service calls is what keeps
+the producing services ignorant of who consumes their events. The medical service does not know that an injury produces an
+alert, an email and a player withdrawal; it simply records the injury and emits a fact. New consumers can be added without
+touching the producers, which is the loose coupling the microservice architecture set out to achieve.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig-notifications.png}
+  \caption{The notification centre opened from the top-bar bell. Alerts are generated
+  automatically from Kafka domain events and from the live-match engine, tagged by role and
+  unread state.}
+  \label{fig:notifications}
+\end{figure}
+
+%======================================================================
+\section{Training}
+\label{sec:res-training}
+
+The Training module presents the club's training schedule as managed by the training-match service, covering sessions,
+plans, drills, attendance and post-session assessments (Figure~\ref{fig:training}).
+
+\paragraph{User experience.} Sessions are displayed on a schedule with a \emph{live-now} indicator that highlights a
+session currently in progress, computed from the session's scheduled window in the same timestamp-driven manner as the
+match countdown. Plan-driven training ties drills to ratings, attendance and completion tracking, so a session is not a
+bare calendar entry but a structured plan whose execution can be recorded: which drills were run, who attended, how each
+drill was rated and whether the plan was completed.
+
+\paragraph{Integration with availability.} Because the medical module withdraws injured players from training
+automatically---again through the shared player status field---the training schedule always reflects the squad's true
+availability, and an injured player cannot be marked present at a session he is medically barred from. When a session is
+cancelled, the event flows onto Kafka and the notification fabric raises a training-cancelled alert, so the cancellation
+reaches the affected staff and players without a separate announcement step. This connects training to the medical and
+notification domains rather than leaving it as an isolated calendar.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-training.png}
+  \caption{The training schedule with a live-now indicator, showing plan-driven sessions
+  with drills, attendance and completion tracking.}
+  \label{fig:training}
+\end{figure}
+
+%======================================================================
+\section{Scouting}
+\label{sec:res-scouting}
+
+The Scouting module supports the club's recruitment workflow, allowing scouts to record prospect reports against
+detailed scouting fields and to route findings to the sport manager for consideration (Figure~\ref{fig:scouting}).
+
+\paragraph{Realisation and integration.} A scouting report captures structured attributes of a prospect rather than
+free prose, which makes reports comparable and searchable instead of opaque. When a report is submitted it can raise a
+scout-report alert to the sport manager through the same notification fabric, so a finding does not languish unread in an
+inbox. Reports feed the transfer and analytics surfaces, providing the audit trail that traditional email-and-PDF scouting
+processes lack and connecting the recruitment pipeline to the rest of the platform: a prospect assessed by a scout, transferred
+by the player service and analysed by the reports service is the same identity throughout, correlated by the canonical
+\texttt{keycloakId}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-scouting.png}
+  \caption{The Scouting module, where scouts record prospect reports against structured
+  fields for review by the sport manager.}
+  \label{fig:scouting}
+\end{figure}
+
+%======================================================================
+\section{Sponsors}
+\label{sec:res-sponsors}
+
+The Sponsors module digitises commercial negotiations (Figure~\ref{fig:sponsors}).
+
+\paragraph{Realisation.} Sponsor offers and contract terms are captured as structured records that move through a
+negotiation workflow, replacing the opaque email threads of traditional practice with an auditable, notification-generating
+process. An incoming offer can raise a sponsor-offer alert to the relevant commercial roles, and decisions taken on an offer
+are likewise surfaced through the platform's notification fabric, so the commercial pipeline is integrated with the rest of the
+system rather than conducted out of band. The structured representation also means the state of a negotiation is always
+explicit---which terms are on the table and where each offer stands---instead of being reconstructed from a thread of
+correspondence.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-sponsors.png}
+  \caption{The Sponsors module, presenting sponsor offers and contract negotiation as
+  structured, auditable records.}
+  \label{fig:sponsors}
+\end{figure}
+
+%======================================================================
+\section{Reports and Analytics}
+\label{sec:res-reports}
+
+The Reports module, served by the reports-analytics service (port~8083), aggregates data from across the platform into
+match analyses, team- and player-level analytics and training analytics (Figure~\ref{fig:reports}).
+
+\paragraph{Cross-domain insight.} By unifying the previously siloed domains behind a single analytics layer, the module makes
+cross-domain insight practical---for example relating match performance to squad availability or training load, a question
+that is impossible to answer when each domain lives in its own spreadsheet. The service reads from the operational services'
+data and presents the results through role-aware report views, so a performance analyst, a sport manager and a head coach each
+see the analyses pertinent to their responsibilities. Because every domain shares the canonical identity scheme, a player's
+match statistics, medical history and training attendance can be correlated into a single analytical picture without brittle
+name-matching across systems.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-reports.png}
+  \caption{The Reports and Analytics module, aggregating match, team, player and training
+  data served by the reports-analytics service.}
+  \label{fig:reports}
+\end{figure}
+
+%======================================================================
+\section{Settings}
+\label{sec:res-settings}
+
+The Settings module gives every user control over their profile, preferences, notification choices and security, with changes
+genuinely persisted rather than held only in the browser (Figure~\ref{fig:settings}).
+
+\paragraph{Persisted preferences.} Profile, preference and notification settings are saved per user so that the experience is
+consistent across sessions and devices. A user's notification choices govern which alerts they receive, and their preferences
+shape the interface, both surviving a logout and a change of machine because they are stored server-side rather than in
+\texttt{localStorage}.
+
+\paragraph{Keycloak-verified password change.} The security tab supports a password change that is genuinely authoritative
+across the platform, because it is mediated by the identity provider rather than by any local store. The change is a two-step
+operation handled by the user-management service. First, the user's \emph{current} password is re-verified: the service performs
+an OAuth password-grant against the \texttt{mscms} realm using the supplied username and current password, and treats the change
+as authorised only if the grant returns an access token. A wrong current password causes the grant to fail with an
+invalid-grant error, which the service interprets as a failed verification and rejects the change---so a stolen, unlocked
+session cannot silently change the credential without knowing the existing password. Second, only after that verification
+succeeds is the new password applied through the Keycloak administrative API. Because the credential lives in the identity
+provider, the change takes effect uniformly everywhere the platform authenticates, with no local password copy to fall out of
+sync.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig-settings.png}
+  \caption{The Settings module, with profile, preferences, notification and security tabs.
+  Password changes are verified and applied through Keycloak.}
+  \label{fig:settings}
+\end{figure}
+
+%======================================================================
+\section{Analysis and Evaluation}
+\label{sec:res-analysis}
+
+Having presented the implemented modules, this section steps back to evaluate the delivered system as a whole: how completely it
+satisfies the functional and non-functional requirements set out in Chapter~2, which design decisions proved most effective,
+what the system's performance and user experience are like in practice, and how the implementation was tested and validated.
+
+\subsection{Functional Requirements Coverage}
+The implemented system satisfies the functional requirements across every domain identified in Chapter~2.
+Authentication, role-based access and the role-aware dashboard realise the identity and onboarding
+requirements~\cite{keycloak,jwt,rbac}. The squad, competition and match modules realise the player and
+match-operations requirements, and in several respects exceed the original specification: the live-match engine's
+broadcast-style phase machine, with knockout-only extra time and penalty shootouts and phase-bounded event minutes,
+and the faithful reproduction of the modern Champions League format with its rotation-generated league phase, go beyond
+the basic match recording originally envisaged. The medical module realises the medical-and-fitness requirements with a
+complete, status-driven injury lifecycle from report to fitness-cleared recovery. The messages, notifications, training,
+scouting, sponsor and reports modules realise the communication, notification and analytics requirements, with the
+head-to-head, world-cup and trophy-room surfaces adding fan-facing context beyond the operational core. Crucially, the
+consistent enforcement of role-based access at the identity provider, at the gateway and in the front-end
+middleware---the three-layer scheme described in Chapter~3---means a permission rule applies uniformly whether a user
+navigates the interface or calls the API directly, so the access control is not merely cosmetic.
+
+\subsection{Non-Functional Requirements Coverage}
+The non-functional requirements were met chiefly through architectural choices rather than after-the-fact tuning.
+\emph{Maintainability and modularity} are served by the decomposition into six independently deployable services behind a
+gateway and a service registry, each owning its own database, so a change to the medical schema cannot break the match
+service. \emph{Security} is centralised in Keycloak and enforced at three layers, with no service trusting anything but a
+validated token, and with the most sensitive operation---a password change---re-verifying the current credential before
+proceeding. \emph{Scalability and loose coupling} follow from the event-driven notification pipeline: producers emit facts
+to Kafka and remain ignorant of consumers, so the system can grow new reactions to existing events without modifying the
+producers. \emph{Reliability} is supported by idempotent ingestion (de-duplicated by external identifier), the self-cleaning
+Match Hub, and graceful degradation on the dashboard where one slow service suppresses only its own card. \emph{Usability}
+is addressed by the single-origin API client, the automatic recovery on token expiry, and the timestamp-driven live clock and
+countdowns that keep the interface responsive without server round-trips.
+
+\subsection{Design Decisions That Worked Well}
+Several decisions proved especially effective in practice. Making the back-end the single source of truth for external data,
+with scheduled idempotent ingestion and read-through standings, kept the front-end simple and the data trustworthy while
+respecting the data provider's free-tier constraints and never exposing the API key to the browser. Capturing the lineup
+atomically with the match guaranteed that every match carries a reconstructable starting XI, which is precisely what makes the
+live engine, the substitution logic and the match-details page meaningful rather than synthetic. Deriving the medical journey's
+current stage solely from the injury status produced a workflow that is immune to leftover records and easy to reason about, and
+allowing an in-match injury event to create a real medical record and withdraw the player demonstrated genuine, end-to-end
+cross-service integration spanning the match, player and medical services in a single action. Resolving the knockout-versus-points
+decision from the originating fixture's round, rather than from a loose match type, kept the live engine consistent with the
+competition format. Finally, the event-driven notification fabric, fed by Kafka and the live engine, delivered the role-aware
+alerting the requirements demanded with no manual intervention.
+
+\subsection{Performance and User-Experience Observations}
+The microservice decomposition allowed each domain to be developed and reasoned about in isolation, and routing every browser
+request through a single gateway origin kept the API client and the cross-origin configuration straightforward~\cite{microservices,restapi}.
+The live clock and countdown are computed from pure timestamp helpers, so the common case of simply advancing the clock incurs no
+server round-trip and the live view stays responsive, while every state-changing action is persisted immediately so that a reload
+faithfully reconstructs the match---including the on-pitch set, the consumed substitutions and the running phase. The dashboard's
+parallel, per-card aggregation keeps perceived latency close to that of the slowest single dependency rather than the sum of all
+of them. The self-cleaning Match Hub and the status-driven medical and squad logic markedly reduce the manual reconciliation that
+burdens traditional tools, since a single status change propagates everywhere it is relevant. Two classes of defect encountered
+during development are worth recording because their fixes shaped the design: a timezone-conversion bug that made matches appear
+hours early was resolved by storing and parsing kickoff times as naive local wall-clock values, and a clock that could inflate into
+nonsensical added time (an observed ``45+132''') was resolved by hard-capping the displayed minute at the phase length and showing
+only admin-set stoppage. The principal real-world limitation observed is external rather than architectural: because the modelled
+system date sits after the imported seasons' conclusion, the freely available data contains no upcoming or in-progress fixtures, so
+live ingestion of genuinely new matches will populate only once a new season is published. The platform nonetheless demonstrates the
+full live and ingestion machinery against the schedulable, club-created matches, and the ingestion pipeline will auto-fill league
+fixtures when a new season appears in the provider's data.
+
+\subsection{Testing and Validation Approach}
+Validation combined automated and manual techniques appropriate to a system of this size. At the back-end, the domain services
+carry controller-level tests---for example, tests around the match-event, match-formation and match-lineup controllers in the
+training-match service and the injury and message controllers in the medical and notification services---that exercise the REST
+surface and the entity mappings. The most behaviourally complex logic was deliberately structured as pure functions to make it
+unit-testable in isolation: the live-clock and phase-machine helpers (phase derivation from a minute, phase-bounded recordable-minute
+ranges, the stoppage-capped clock label, and the kickoff validator) take only timestamps and configuration and return deterministic
+results, so their many edge cases---a minute past regulation, a knockout tie level at full time, a kickoff in the past or under the
+five-minute lead---can be asserted directly. The fixture generators are likewise deterministic: the double round-robin and the
+Champions League rotation algorithm produce the same fixture graph for the same input, which makes properties such as ``every team
+plays exactly eight distinct opponents'' and ``no pairing repeats'' verifiable. Beyond automated tests, the system was validated by
+end-to-end exercise of the user journeys against the running, containerised stack: provisioning a user through Keycloak and signing
+in, creating a competition and confirming the generated fixtures, scheduling a match with a mandatory lineup, driving a live match
+through its phases including a knockout tie into penalties, triggering an in-match injury and following the player through the
+medical journey to a cleared fitness test, exchanging real-time chat messages over the WebSocket, and confirming that the resulting
+Kafka-driven and live-engine alerts appeared in the notification centre. A noted constraint on this process was that automated
+screenshot-based visual verification could not attach to the developer's running instance, so visual changes were validated by
+inspecting routes, bundles and live-API behaviour and by manual review of the rendered interface, while behavioural correctness was
+established through the automated tests and the end-to-end journeys described above.
+
+\subsection{Summary}
+Taken together, the modules presented in this chapter show that the platform delivers on its central promise: to consolidate the
+fragmented operational concerns of a multi-sport club into a single, role-aware, cloud-native system in which match operations,
+medical care, communication, recruitment, commercial activity and analytics are connected rather than siloed. The combination of a
+real, idempotent ingestion pipeline, a behaviourally faithful live-match engine, a status-driven clinical injury workflow, a
+real-time WebSocket communication channel and an event-driven notification fabric distinguishes the delivered system from the simple
+CRUD application from which it evolved, and substantiates the design objectives stated at the outset of this report. The evaluation
+above confirms that the functional and non-functional requirements of Chapter~2 are met or exceeded, and identifies the small number
+of limitations---chiefly the post-season external data and the constraints on automated visual verification---that bound the present
+implementation and motivate the future work discussed in the next chapter.

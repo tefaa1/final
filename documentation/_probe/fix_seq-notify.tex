@@ -1,0 +1,18 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+\begin{sequencediagram}
+  \newthread{ds}{:domain service}
+  \newinst[1]{kf}{:Kafka}
+  \newinst[1]{nm}{:notification-mail}
+  \newinst[1]{db}{:DB}
+  \newinst[1]{fe}{:Recipient}
+  \mess{ds}{publish event / outbox}{kf}
+  \mess{kf}{deliver async}{nm}
+  \begin{call}{nm}{persist notification}{db}{saved}
+  \end{call}
+  \mess{fe}{GET /notifications}{nm}
+  \mess{nm}{unread list + bell badge}{fe}
+\end{sequencediagram}
+\end{document}

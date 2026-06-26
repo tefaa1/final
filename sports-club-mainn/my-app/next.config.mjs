@@ -9,6 +9,7 @@ const nextConfig = {
     return [
       { source: "/ml-proxy/match/:path*",  destination: "http://localhost:9000/:path*" },
       { source: "/ml-proxy/player/:path*", destination: "http://localhost:9001/:path*" },
+      { source: "/bot-proxy/:path*",       destination: "http://localhost:9100/:path*" },
     ];
   },
 };

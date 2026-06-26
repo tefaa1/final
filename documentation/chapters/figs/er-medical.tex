@@ -1,0 +1,66 @@
+% auto-generated figure: er-medical (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=14mm]
+  % central injury record and its staged journey
+  \Entity{inj}{INJURIES}{%
+    \underline{PK} id\\
+    playerKeycloakId\\
+    teamId\\
+    injuryType\\
+    severity\\
+    injuredBodyPart\\
+    injuryDate\\
+    expectedRecoveryDate\\
+    status}
+  \Entity[right=30mm of inj]{dia}{DIAGNOSES}{%
+    \underline{PK} id\\
+    \underline{FK} injuryId\\
+    playerKeycloakId\\
+    diagnosis\\
+    testResults\\
+    recommendations}
+  \Entity[above=12mm of dia]{trt}{TREATMENTS}{%
+    \underline{PK} id\\
+    \underline{FK} injuryId\\
+    treatmentType\\
+    status\\
+    startDate\\
+    endDate}
+  \Entity[below=12mm of dia]{reh}{REHABILITATIONS}{%
+    \underline{PK} id\\
+    \underline{FK} injuryId\\
+    playerKeycloakId\\
+    programmeDetail\\
+    status}
+  \Entity[right=30mm of reh]{rec}{RECOVERY\_PROGRAMS}{%
+    \underline{PK} id\\
+    \underline{FK} rehabilitationId\\
+    playerKeycloakId\\
+    programmeDetail}
+  % independent fitness / load entities
+  \Entity[below=14mm of reh]{fit}{FITNESS\_TESTS}{%
+    \underline{PK} id\\
+    playerKeycloakId\\
+    teamId\\
+    testType\\
+    sportType\\
+    testDate\\
+    result\\
+    resultCategory}
+  \Entity[right=30mm of fit]{tld}{TRAINING\_LOADS}{%
+    \underline{PK} id\\
+    playerKeycloakId\\
+    intensity\\
+    load}
+  % relationships
+  \Rel{inj}{trt}{1}{*}{has}
+  \Rel{inj}{dia}{1}{*}{has}
+  \Rel{inj}{reh}{1}{*}{has}
+  \Rel{reh}{rec}{1}{*}{drives}
+\end{tikzpicture}%
+}
+\caption{Entity-relationship diagram for the \texttt{mscms\_medical} database, showing the staged injury journey (injuries owning diagnoses, treatments and rehabilitations, with rehabilitations driving recovery programmes) alongside the independent fitness-test and training-load records.}
+\label{fig-er-medical}
+\end{figure}

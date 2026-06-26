@@ -1,0 +1,25 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[every edge/.style={draw=dLine,thick,-{Stealth[length=2.4mm]}}]
+  \node (start) {};
+  \node[stbox, right=10mm of start] (act)  {Active\\\scriptsize status=active};
+  \node[stbox, right=16mm of act]   (diag) {Diagnosis};
+  \node[stbox, right=16mm of diag]  (treat){Treatment\\\scriptsize $\rightarrow$ recovering};
+  \node[stbox, right=16mm of treat] (rehab){Rehabili-\\tation};
+  \node[stbox, right=16mm of rehab] (prog) {Recovery\\Program};
+  \node[stbox, right=16mm of prog]  (fit)  {Fitness\\Test};
+  \node[stbox, right=16mm of fit, fill=dFill2, draw=dLine2] (recd) {Recovered\\\scriptsize available};
+  \draw (start) edge node[lbl,above]{injury} (act);
+  \draw (act)   edge node[lbl,above]{diagnose} (diag);
+  \draw (diag)  edge node[lbl,above]{treat} (treat);
+  \draw (treat) edge node[lbl,above]{rehab} (rehab);
+  \draw (rehab) edge node[lbl,above]{programme} (prog);
+  \draw (prog)  edge node[lbl,above]{test} (fit);
+  \draw (fit)   edge node[lbl,above]{pass} (recd);
+  \draw (fit)   edge[loop below] node[lbl,below]{fail} (fit);
+\end{tikzpicture}%
+}
+\end{document}

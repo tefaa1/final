@@ -4,6 +4,7 @@ import { FiAward } from "react-icons/fi";
 import { lookupTeam } from "@/src/lib/teamDirectory";
 import PlayerAvatar from "@/src/components/shared/PlayerAvatar";
 import { resolveSport, resolveSportUpper } from "@/src/lib/playerSport";
+import { toLocalInputValue } from "@/src/components/matches/liveClock";
 
 const SPORT_TYPES = ["FOOTBALL", "BASKETBALL", "HANDBALL", "TENNIS"];
 const MATCH_TYPES = ["LEAGUE", "CUP", "FRIENDLY", "PLAYOFF"];
@@ -39,8 +40,10 @@ export default function MatchModal({ open, onClose, onAddMatch, initialData, tea
   React.useEffect(() => {
     if (initialData) {
       const formatted = { ...initialData };
-      if (formatted.kickoffTime) formatted.kickoffTime = new Date(formatted.kickoffTime).toISOString().slice(0, 16);
-      if (formatted.finishTime) formatted.finishTime = new Date(formatted.finishTime).toISOString().slice(0, 16);
+      // Pre-fill datetime-local inputs from LOCAL parts (NOT toISOString, which
+      // prints UTC and would shift the wall time by the local offset).
+      if (formatted.kickoffTime) formatted.kickoffTime = toLocalInputValue(formatted.kickoffTime);
+      if (formatted.finishTime) formatted.finishTime = toLocalInputValue(formatted.finishTime);
       setForm({ ...defaultForm, ...formatted, lineup: formatted.lineup || [] });
     } else {
       setForm(defaultForm);

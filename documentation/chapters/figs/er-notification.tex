@@ -1,0 +1,24 @@
+% auto-generated figure: er-notification (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=16mm]
+  \Entity{cg}{CHAT\_GROUP}{%
+    \underline{PK} id\\ name\\ \underline{FK} ownerKeycloakId}
+  \Entity[below=18mm of cg]{cgm}{CHAT\_GROUP\_MEMBER}{%
+    \underline{PK} id\\ \underline{FK} groupId\\ memberKeycloakId\\ status\\ invitedBy}
+  \Entity[right=34mm of cg]{msg}{MESSAGES}{%
+    \underline{PK} id\\ senderKeycloakId\\ \underline{FK} groupId\\ body\\ \underline{FK} parentMessageId}
+  \Entity[right=34mm of cgm]{ntf}{NOTIFICATIONS}{%
+    \underline{PK} id\\ recipientKeycloakId\\ type\\ category\\ title\\ body\\ read}
+  \Entity[below=18mm of cgm]{alr}{ALERTS}{%
+    \underline{PK} id\\ type\\ priority\\ targetRole\\ acknowledged\\ resolved}
+  \Rel{cg}{cgm}{1}{*}{has}
+  \Rel{cg}{msg}{1}{*}{contains}
+  \draw[dLine] (msg.north east) .. controls +(1.4,0.9) and +(1.4,-0.2) ..
+       node[lbl,pos=0.5,xshift=4mm]{\itshape replies to 0..1} (msg.east);
+\end{tikzpicture}%
+}
+\caption{Entity-relationship diagram of the \texttt{mscms\_notification} database, showing notifications, alerts, and the team-chat groups, members, and threaded messages.}
+\label{fig-er-notification}
+\end{figure}

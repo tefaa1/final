@@ -230,6 +230,31 @@ export function buildGroupThread(allMessages, groupId, myId) {
   return { visible };
 }
 
+// ── Fan / spectator gating ────────────────────────────────────────────────
+// Fans are spectator-only: they are NOT part of any team chat (not even the
+// implicit General group). The route guard (permissions.js + middleware) keeps
+// fans off /dashboard/messages; these helpers harden the chat UI + membership
+// as defense-in-depth so a fan can never read/post or appear in the roster.
+
+// True for the spectator role that must be excluded from all chats.
+export function isFanRole(role) {
+  return String(role || "").toLowerCase() === "fan";
+}
+
+// May this role be a member of / view the General team chat? Everyone except fans.
+export function canViewGeneral(role) {
+  const r = String(role || "").toLowerCase();
+  if (!r) return false;
+  return r !== "fan";
+}
+
+// Drop fans from a roster of user objects ({ keycloakId, role, … }). Used so the
+// implicit General membership never includes spectators.
+export function excludeFanMembers(users) {
+  if (!Array.isArray(users)) return [];
+  return users.filter((u) => u && !isFanRole(u.role));
+}
+
 // Roles that may NOT create groups or invite members (read-only fans).
 export function canCreateGroups(role) {
   const r = String(role || "").toLowerCase();

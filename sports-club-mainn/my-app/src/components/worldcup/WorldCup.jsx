@@ -158,6 +158,10 @@ export default function WorldCup() {
     return by;
   }, [matches]);
 
+  // The knockout bracket is rendered straight from the real football-data.org
+  // fixtures. Teams fill in as the official draw is made after the group stage,
+  // so a slot reads "TBD" until its match is actually drawn — no fabricated data.
+  const apiKoHasTeams = (matches || []).some((m) => m.stage && m.stage !== "GROUP_STAGE" && (m.homeTeam || m.awayTeam));
   const half = (arr = []) => { const mid = Math.ceil(arr.length / 2); return [arr.slice(0, mid), arr.slice(mid)]; };
   const [r32L, r32R] = half(ko.LAST_32);
   const [r16L, r16R] = half(ko.LAST_16);
@@ -244,7 +248,11 @@ export default function WorldCup() {
             <p className="text-center text-slate-600 italic py-16">Knockout fixtures appear once the group stage concludes — teams fill in automatically.</p>
           ) : (
             <>
-              <p className="text-center text-[11px] text-slate-500 mb-5">Teams &amp; scores update automatically as the tournament is played.</p>
+              <p className="text-center text-[11px] text-slate-500 mb-5">
+                {apiKoHasTeams
+                  ? "Live from football-data.org — teams & scores update automatically as the draw is made and ties are played."
+                  : "Knockout fixtures are drawn after the group stage — each slot shows TBD until its tie is officially set."}
+              </p>
               <div className="overflow-x-auto pb-4">
                 <div className="flex gap-5 min-w-max items-stretch justify-center">
                   <Col label="R32" matches={r32L} />

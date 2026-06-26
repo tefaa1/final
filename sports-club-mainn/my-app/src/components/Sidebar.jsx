@@ -7,7 +7,7 @@ import {
   FiActivity, FiCalendar, FiHeart, FiClipboard, FiSearch,
   FiFileText, FiTrendingUp, FiBarChart2, FiPieChart,
   FiDollarSign, FiGift, FiImage, FiMail, FiBell, FiSettings,
-  FiX, FiMenu, FiCpu, FiStar, FiAward, FiGlobe,
+  FiX, FiMenu, FiCpu, FiStar, FiAward, FiGlobe, FiMessageCircle,
 } from "react-icons/fi";
 import { MdOutlineSportsVolleyball, MdOutlineEmojiEvents, MdCompareArrows } from "react-icons/md";
 import { SIDEBAR_SECTIONS, canAccess } from "@/src/lib/permissions";
@@ -19,6 +19,7 @@ const ICONS = {
   "/dashboard/club":               FiShield,
   "/dashboard/trophies":           MdOutlineEmojiEvents,
   "/dashboard/world-cup":          FiGlobe,
+  "/dashboard/assistant":          FiMessageCircle,
   "/dashboard/players":            FiUsers,
   "/dashboard/users":              FiShield,
   "/dashboard/staff":              FiBriefcase,
@@ -78,12 +79,12 @@ const Sidebar = ({ onSidebarToggle }) => {
           <button onClick={handleToggle} aria-label="Toggle sidebar" className="flex items-center gap-3 group min-w-0">
             {/* Bare logo — no square/box around it, just the mark. */}
             <span className="grid place-items-center w-11 h-11 shrink-0 group-hover:scale-105 transition-transform">
-              <img src="/sportify/logo2-removebg-preview.png" alt="MSCMS" className="w-11 h-11 object-contain" />
+              <img src="/sportify/logo2-removebg-preview.png" alt="Sportify" className="w-11 h-11 object-contain" />
             </span>
             {expanded && (
               <span className="flex flex-col leading-none min-w-0">
                 <span className="text-2xl font-extrabold text-white tracking-[0.18em] uppercase truncate">
-                  MSCMS
+                  Sportify
                 </span>
                 <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-amber-400/80 truncate">
                   Més que un club

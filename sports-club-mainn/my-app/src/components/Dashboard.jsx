@@ -8,7 +8,7 @@ import { RiDashboardLine } from "react-icons/ri";
 import Link from "next/link";
 import InfoCard from "./InfoCard";
 import { api } from "@/src/lib/api";
-import { lookupTeam } from "@/src/lib/teamDirectory";
+import { lookupTeam, resolveCrest } from "@/src/lib/teamDirectory";
 import { PageHeader } from "@/src/components/shared/SharedComponents";
 
 // Home side of every Barça fixture. Football team id 1 → FC Barcelona crest.
@@ -43,7 +43,10 @@ const isBarcaRow = (r) => {
 // home is always Barça for these fixtures; resolve the rare non-football home via directory
 const homeOf = (m) => {
   const t = lookupTeam(m.homeTeamId);
-  return { name: t?.name || BARCA.name, short: t?.short || BARCA.short, crest: t?.crestUrl || BARCA_CREST };
+  const name = t?.name || BARCA.name;
+  // Prefer the directory crestUrl; else resolve by name; else the Barça crest.
+  const crest = resolveCrest({ url: t?.crestUrl, name }) || BARCA_CREST;
+  return { name, short: t?.short || BARCA.short, crest };
 };
 // Opponent resolution lives inside the component (it needs the outer-teams map),
 // see `awayOf` defined there. A match's opponent can be a free-typed name
@@ -150,10 +153,16 @@ function Dashboard() {
   const awayOf = (m) => {
     const outer = m.outerTeamId != null ? outerMap[m.outerTeamId] : null;
     const name = m.opponentName || outer?.name || "Opponent";
+    // The outer-teams API returns crest-less rows, so resolve by NAME when no
+    // explicit crest URL is on the match/outer record — never leave it blank.
+    const crest = resolveCrest({
+      url: m.opponentCrest || outer?.crestUrl,
+      name,
+    });
     return {
       name,
       short: name.slice(0, 3).toUpperCase(),
-      crest: m.opponentCrest || outer?.crestUrl || null,
+      crest,
     };
   };
 
@@ -467,7 +476,7 @@ function Dashboard() {
                         <td className={`py-2 pl-1 font-mono font-bold w-5 ${r.position <= 4 ? "text-emerald-400" : "text-slate-500"}`}>{r.position}</td>
                         <td className="py-2">
                           <span className={`flex items-center gap-2 font-bold ${barca ? "text-emerald-300" : "text-slate-200"}`}>
-                            <Crest url={r.crest} size={16} fallback={r.team} />
+                            <Crest url={resolveCrest({ url: r.crest, name: r.team })} size={16} fallback={r.team} />
                             <span className="truncate max-w-[92px]">{r.team}</span>
                           </span>
                         </td>
@@ -487,7 +496,7 @@ function Dashboard() {
             {barcaRow && barcaRow.position > 6 && !loading && (
               <div className="mt-2 pt-2 border-t border-slate-800/60 flex items-center gap-2 text-xs bg-emerald-500/10 rounded-lg px-2 py-1.5">
                 <span className="font-mono font-bold text-emerald-400 w-5">{barcaRow.position}</span>
-                <Crest url={barcaRow.crest} size={16} fallback={barcaRow.team} />
+                <Crest url={resolveCrest({ url: barcaRow.crest, name: barcaRow.team })} size={16} fallback={barcaRow.team} />
                 <span className="font-bold text-emerald-300 truncate flex-1">{barcaRow.team}</span>
                 <span className="font-black text-slate-100">{barcaRow.points}</span>
               </div>

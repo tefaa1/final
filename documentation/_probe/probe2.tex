@@ -1,0 +1,54 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\section*{ER (fixed: positioned + relationship)}
+\begin{tikzpicture}[node distance=18mm]
+  \Entity{inj}{INJURY}{\underline{PK} id\\ status : Status\\ bodyPart\\ severity}
+  \Entity[right=28mm of inj]{dia}{DIAGNOSIS}{\underline{PK} id\\ \underline{FK} injuryId\\ findings\\ date}
+  \Entity[below=14mm of inj]{reh}{REHABILITATION}{\underline{PK} id\\ \underline{FK} injuryId\\ phase}
+  \Rel{inj}{dia}{1}{*}{owns}
+  \Rel{inj}{reh}{1}{*}{owns}
+\end{tikzpicture}
+
+\section*{Class (\texttt{\textbackslash UmlClass}, rebranded)}
+\begin{tikzpicture}[node distance=14mm]
+  \UmlClass{m}{Match}{- homeTeamId : Long\\ - status : MatchStatus\\ - score}{+ addEvent()\\ + finish()}
+  \UmlClass[below=16mm of m]{e}{MatchEvent}{- type : EventType\\ - minute : int}{+ validate()}
+  \draw[flow] (m) -- node[lbl,pos=0.5]{\itshape owns 1..*} (e);
+\end{tikzpicture}
+
+\section*{Use-case (\texttt{\textbackslash UCactor})}
+\begin{tikzpicture}
+  \UCactor{0}{0}{Doctor}
+  \node[usecase] (u1) at (4,0.6){Diagnose injury};
+  \node[usecase] (u2) at (4,-0.8){Advance recovery};
+  \draw[dLine] (0.5,-0.4) -- (u1);
+  \draw[dLine] (0.5,-0.4) -- (u2);
+\end{tikzpicture}
+
+\section*{State machine}
+\begin{tikzpicture}[node distance=20mm, on grid]
+  \node[st,initial] (a){Active};
+  \node[st,right=of a](r){Recover\\-ing};
+  \node[st,right=of r,accepting](d){Recov\\-ered};
+  \draw[flow](a)--node[lbl,above]{treat}(r);
+  \draw[flow](r)--node[lbl,above]{fitness test}(d);
+\end{tikzpicture}
+
+\section*{Sequence (pgf-umlsd, rebranded)}
+\begin{sequencediagram}
+  \newthread{u}{:Doctor}
+  \newinst[1]{c}{:Controller}
+  \newinst[1]{s}{:Service}
+  \newinst[1]{db}{:DB}
+  \begin{call}{u}{advanceRecovery()}{c}{200 OK}
+    \begin{call}{c}{save(stage)}{s}{saved}
+      \begin{call}{s}{persist}{db}{row}
+      \end{call}
+    \end{call}
+  \end{call}
+\end{sequencediagram}
+
+\end{document}

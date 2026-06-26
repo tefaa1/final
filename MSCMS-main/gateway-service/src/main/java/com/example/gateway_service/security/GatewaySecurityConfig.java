@@ -67,33 +67,42 @@ public class GatewaySecurityConfig {
                         .requestMatchers("/team-managers/**").hasAnyRole("ADMIN", "SPORT_MANAGER", "TEAM_MANAGER")
                         .requestMatchers("/staff/**").hasAnyRole("ADMIN", "SPORT_MANAGER", "TEAM_MANAGER")
 
-                        // Players - ADMIN + coaching/medical staff
+                        // Players: any authenticated user may VIEW the squad (Club Hub, dashboard,
+                        // key players); writes stay staff-only. The GET rule MUST come FIRST — the
+                        // method-specific write matchers below would otherwise shadow the squad read.
+                        .requestMatchers(HttpMethod.GET, "/players/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/players/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/players/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/players/**").hasAnyRole(
-                                "ADMIN", "HEAD_COACH", "ASSISTANT_COACH", "SPECIFIC_COACH",
-                                "FITNESS_COACH", "PERFORMANCE_ANALYST", "TEAM_DOCTOR",
-                                "PHYSIOTHERAPIST", "TEAM_MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/players/**").hasAnyRole(
                                 "ADMIN", "HEAD_COACH")
 
                         // ===== Medical & Fitness =====
+                        // READ access for medical staff, head coach, fitness coach + the player (own record)
+                        .requestMatchers(HttpMethod.GET, "/injuries/**", "/diagnoses/**", "/treatments/**",
+                                "/rehabilitations/**", "/recovery-programs/**", "/fitness-tests/**").hasAnyRole(
+                                "ADMIN", "TEAM_DOCTOR", "PHYSIOTHERAPIST", "HEAD_COACH", "FITNESS_COACH", "PLAYER")
                         .requestMatchers("/injuries/**").hasAnyRole(
                                 "ADMIN", "TEAM_DOCTOR", "PHYSIOTHERAPIST", "HEAD_COACH")
                         .requestMatchers("/diagnoses/**").hasAnyRole(
                                 "ADMIN", "TEAM_DOCTOR")
+                        // Treatment → doctor only; rehab & recovery → physio only; fitness test → fitness coach only.
                         .requestMatchers("/treatments/**").hasAnyRole(
-                                "ADMIN", "TEAM_DOCTOR", "PHYSIOTHERAPIST")
+                                "ADMIN", "TEAM_DOCTOR")
                         .requestMatchers("/rehabilitations/**").hasAnyRole(
-                                "ADMIN", "TEAM_DOCTOR", "PHYSIOTHERAPIST")
+                                "ADMIN", "PHYSIOTHERAPIST")
                         .requestMatchers("/recovery-programs/**").hasAnyRole(
-                                "ADMIN", "TEAM_DOCTOR", "PHYSIOTHERAPIST")
+                                "ADMIN", "PHYSIOTHERAPIST")
                         .requestMatchers("/fitness-tests/**").hasAnyRole(
-                                "ADMIN", "TEAM_DOCTOR", "FITNESS_COACH")
+                                "ADMIN", "FITNESS_COACH")
                         .requestMatchers("/training-loads/**").hasAnyRole(
                                 "ADMIN", "FITNESS_COACH", "HEAD_COACH", "PERFORMANCE_ANALYST")
 
                         // ===== Training & Match =====
+                        // READ access for staff + the player viewing their own plan/sessions/drills
+                        .requestMatchers(HttpMethod.GET, "/training-sessions/**", "/training-plans/**",
+                                "/training-drills/**", "/training-attendance/**", "/player-training-assessments/**").hasAnyRole(
+                                "ADMIN", "HEAD_COACH", "ASSISTANT_COACH", "SPECIFIC_COACH", "FITNESS_COACH",
+                                "TEAM_MANAGER", "TEAM_DOCTOR", "PHYSIOTHERAPIST", "PLAYER")
                         .requestMatchers("/training-sessions/**").hasAnyRole(
                                 "ADMIN", "HEAD_COACH", "ASSISTANT_COACH", "SPECIFIC_COACH", "FITNESS_COACH")
                         .requestMatchers("/training-plans/**").hasAnyRole(
@@ -104,6 +113,10 @@ public class GatewaySecurityConfig {
                                 "ADMIN", "HEAD_COACH", "ASSISTANT_COACH")
                         .requestMatchers("/player-training-assessments/**").hasAnyRole(
                                 "ADMIN", "HEAD_COACH", "ASSISTANT_COACH", "SPECIFIC_COACH", "FITNESS_COACH")
+                        // Spectator READ access — fixtures, results, competitions, standings, World Cup,
+                        // head-to-head (all under /matches/**) + match detail — any authenticated user.
+                        .requestMatchers(HttpMethod.GET, "/matches/**", "/match-events/**", "/match-formations/**",
+                                "/match-lineups/**", "/player-match-statistics/**", "/match-performance-reviews/**").authenticated()
                         .requestMatchers("/matches/**").hasAnyRole(
                                 "ADMIN", "HEAD_COACH", "ASSISTANT_COACH", "PERFORMANCE_ANALYST")
                         .requestMatchers("/match-events/**").hasAnyRole(
@@ -112,12 +125,18 @@ public class GatewaySecurityConfig {
                                 "ADMIN", "HEAD_COACH")
                         .requestMatchers("/match-lineups/**").hasAnyRole(
                                 "ADMIN", "HEAD_COACH")
+                        // Player performance reviews: any staff role that sees the "Add player
+                        // review" composer (everyone except read-only fan/player) may create one.
                         .requestMatchers("/match-performance-reviews/**").hasAnyRole(
-                                "ADMIN", "HEAD_COACH", "PERFORMANCE_ANALYST")
+                                "ADMIN", "HEAD_COACH", "ASSISTANT_COACH", "SPECIFIC_COACH", "FITNESS_COACH",
+                                "PERFORMANCE_ANALYST", "TEAM_DOCTOR", "PHYSIOTHERAPIST", "TEAM_MANAGER",
+                                "SPORT_MANAGER", "SCOUT", "SPONSOR")
                         .requestMatchers("/player-match-statistics/**").hasAnyRole(
                                 "ADMIN", "HEAD_COACH", "PERFORMANCE_ANALYST")
 
                         // ===== Player Management =====
+                        // Club Hub / squad viewing — any authenticated user may READ teams, sports, rosters.
+                        .requestMatchers(HttpMethod.GET, "/teams/**", "/sports/**", "/rosters/**").authenticated()
                         .requestMatchers("/teams/**").hasAnyRole(
                                 "ADMIN", "SPORT_MANAGER", "TEAM_MANAGER", "HEAD_COACH")
                         .requestMatchers("/sports/**").hasAnyRole(
@@ -141,6 +160,9 @@ public class GatewaySecurityConfig {
                         .requestMatchers("/notifications/**").authenticated()
                         .requestMatchers("/alerts/**").hasAnyRole(
                                 "ADMIN", "HEAD_COACH", "TEAM_DOCTOR")
+                        // /messages backs BOTH team chat AND the community match-review wall, so it
+                        // must allow every authenticated user (incl. fans posting match reviews). The
+                        // team-chat PAGE stays fan-free via the frontend route guard + locked screen.
                         .requestMatchers("/messages/**").authenticated()
 
                         // ===== Reports & Analytics =====
@@ -150,6 +172,9 @@ public class GatewaySecurityConfig {
                                 "ADMIN", "HEAD_COACH", "PERFORMANCE_ANALYST", "SCOUT")
                         .requestMatchers("/scout-reports/**").hasAnyRole(
                                 "ADMIN", "SCOUT")
+                        // Any authenticated user may VIEW offers (the service hides the amount for
+                        // non-admin / non-owner); only admin & sponsors create / act on them.
+                        .requestMatchers(HttpMethod.GET, "/sponsor-offers/**").authenticated()
                         .requestMatchers("/sponsor-offers/**").hasAnyRole(
                                 "ADMIN", "SPONSOR")
                         .requestMatchers("/team-analytics/**").hasAnyRole(

@@ -1,0 +1,398 @@
+\chapter{Introduction}
+\label{ch:introduction}
+
+\section{Context}
+\label{sec:context}
+
+Contemporary sports clubs have evolved into complex, data-intensive organisations whose
+day-to-day operations bear little resemblance to the amateur structures of previous
+decades. A modern professional club is no longer a single team supported by a coach and a
+physiotherapist; it is a multi-discipline enterprise that simultaneously fields teams across
+several sports, employs dozens of specialised staff, manages hundreds of contracted
+athletes, and engages a global audience of supporters. Each of these activities continuously
+generates operational data: training sessions and the load they impose, match fixtures and
+the events that unfold within them, medical incidents and the rehabilitation journeys that
+follow, scouting assessments of prospective signings, sponsorship negotiations, contract
+renewals, and the constant stream of communication that binds these functions together.
+A club of this kind is, in effect, a small enterprise whose product is sporting performance
+and whose raw material is information: who is fit, who is in form, who the next opponent is,
+what the medical staff have advised, and what the commercial department has agreed.
+
+To appreciate why the management of this information has become a first-order engineering
+problem, it is useful to situate the present work within the broader sports-technology
+landscape. Over the past two decades the discipline now widely referred to as
+\emph{sports analytics} has matured from a niche curiosity into a mainstream competitive
+advantage. Professional clubs routinely instrument their athletes with wearable sensors that
+sample heart rate, acceleration and positional data hundreds of times per second; they
+record and tag every match with frame-accurate video; and they purchase event-level data
+feeds that describe every pass, shot and tackle in a fixture. The volume and velocity of this
+data have grown to the point where it can no longer be managed by hand, and the clubs that
+extract value from it are precisely those that have invested in the software infrastructure to
+collect, integrate and reason over it. Sport, in other words, has become a software-intensive
+domain, and the quality of a club's information systems is now a genuine determinant of its
+performance both on and off the field.
+
+This transformation has been mirrored on the supporter side. Consumer-facing data
+platforms such as SofaScore and ESPN have reset public expectations about how sporting
+information should be presented: fixtures, results, league standings and minute-by-minute
+event timelines are now expected to be available instantly, updated live as matches unfold,
+and rendered through polished, responsive interfaces on any device. A supporter who can
+watch a match update second-by-second on a free mobile application will not tolerate a club
+portal that displays last week's results entered by hand. The bar for immediacy, breadth and
+presentation has been set by the consumer web, and any platform that a club exposes to its
+own staff and supporters is implicitly measured against it.
+
+The working setting for this project is the multi-sport club model exemplified by
+FC~Barcelona, an organisation that operates several professional teams under a single
+governing body while sharing common medical, scouting, analytics and commercial
+departments. This setting was chosen deliberately because it captures the full breadth of
+the problem: the same governing entity must reason about distinct sports, each with its own
+positions, formations, competition calendars and performance indicators, while still
+enforcing a single coherent identity, a unified access-control policy and a shared analytical
+backbone. A platform that can serve such an organisation must therefore be genuinely
+multi-tenant across disciplines, role-aware down to the level of individual job functions, and
+capable of ingesting and presenting real competition data rather than merely storing
+hand-entered records. The multi-sport club is not an arbitrary stress test; it is the natural
+habitat of the very fragmentation problem this project sets out to solve, because every
+shared department---medical, scouting, analytics, commercial---must serve teams whose
+sporting logic differs while still drawing on one common pool of people, contracts and money.
+
+The technical context is equally important. The systems that successfully manage data at
+this scale in other industries---banking, logistics, e-commerce---have converged on a
+common architectural style: rather than a single large program, they are built as a federation
+of small, independently deployable services, each owning a well-defined slice of the domain
+and its data, communicating over network protocols, and coordinated by shared
+infrastructure for discovery, configuration and routing. This \emph{cloud-native
+microservices} style~\cite{microservices} is not a fashion but a response to a concrete set of
+pressures that a multi-sport club exhibits in full: heterogeneous domains that evolve at
+different rates, the need to isolate failures so that an outage in one area does not take down
+the whole organisation, and the desirability of scaling read-heavy public surfaces
+independently of write-heavy internal tooling. The live-match engine, for example, is a
+bursty, real-time workload that behaves nothing like the steady, transactional load of the
+medical records subsystem, and forcing both into a single deployable unit would mean that
+neither could be tuned, scaled or released on its own terms.
+
+In practice, the data that should knit these activities together is instead scattered across
+disconnected spreadsheets, third-party SaaS subscriptions, e-mail threads and printed
+forms. A player's injury record maintained by the medical department is invisible to the
+coach planning the next training block; a scout's report on a prospect never reaches the
+sport manager negotiating the transfer in a structured form; and a supporter following the
+club has no window onto the same fixtures, results and squad information that the club
+itself maintains internally. The cost of this fragmentation is not merely inconvenience: it is
+duplicated effort, reconciliation errors, stale information driving real decisions, and the
+practical impossibility of asking cross-domain questions---such as whether a particular
+training regime correlates with a rise in soft-tissue injuries, or whether a scout's
+recommendations have historically panned out. This fragmentation is the central motivation
+for the \emph{Multi-Sport Club Management System} (MSCMS), delivered under the product
+brand \emph{Sportify}: a single, cloud-native platform that consolidates the operational
+concerns of a multi-sport club and exposes each of them through one consistent, secured
+interface, while adopting the real-time, data-rich presentation philosophy that the
+consumer web has made the baseline expectation.
+
+\section{Motivation}
+\label{sec:motivation}
+
+The motivation behind MSCMS is to consolidate every operational concern of a multi-sport
+club into one cohesive platform, in which each professional role is presented only with the
+information relevant to its responsibilities, and in which every data point is traceable,
+secured and analytically meaningful. The design draws directly on the real organisational
+structure of a large European club: a single governing body managing multiple professional
+teams across several sports, supported by shared medical, scouting, analytics and
+sponsorship functions. Modelling a real club rather than an abstract one forces the system
+to confront the genuine complexity of multi-discipline operation instead of solving an
+artificially simplified problem. Concretely, the platform models a catalogue of fourteen
+distinct professional roles---administrator, head coach, assistant coach, specific coach,
+fitness coach, performance analyst, team doctor, physiotherapist, team manager, sport
+manager, scout, sponsor, player and supporter---each of which sees a different slice of the
+system. Designing for fourteen roles rather than the three or four that generic team tools
+assume is itself a forcing function: it exposes exactly the access-control, navigation and
+data-ownership questions that a real club must answer and that simpler products are free to
+ignore.
+
+A second, equally important motivation is the desire to move beyond static record-keeping
+towards a living, real-time platform. Earlier generations of club-management software
+treated data as something to be entered after the fact: a fixture was recorded once it had
+been played, an injury was logged once treatment had begun. The expectations of modern
+staff and supporters, shaped by data-rich consumer platforms such as SofaScore and ESPN,
+are very different. Users now expect matches to update live, notifications to arrive the
+moment an event occurs, and dashboards to reflect the current state of the club rather than
+yesterday's. MSCMS is therefore motivated not only by the goal of unifying fragmented
+data, but by the goal of doing so in a manner that is real-time, event-driven and
+operationally trustworthy. This ambition manifests in three concrete capabilities that recur
+throughout this report: a live-match engine that drives a fixture through its phases as it is
+actually played, recording goals, substitutions and injuries against a phase-bounded clock;
+an event-driven notification fabric in which a significant occurrence in one domain
+automatically surfaces an alert in another, without the two domains being directly coupled;
+and a real-time team chat that lets staff coordinate over a persistent connection. Each of
+these is real-time not as a veneer but as a structural property of the architecture.
+
+A third motivation is correctness and trustworthiness of data. For a system to serve as a
+single source of truth, it is not enough to gather data in one place; the data must be
+internally consistent and protected against both accidental corruption and unauthorised
+disclosure. This motivates two design commitments that shape much of the system. The first
+is that the backend, not the browser or any external feed, is the authoritative source for
+every fact the platform presents: when real competition data is ingested from an external
+provider it is normalised and stored internally, and the front-end reads only from the
+backend, so that there is exactly one version of the truth and one place to audit it. The
+second is that sensitive operations are guarded consistently: medical and financial data are
+visible only to the roles entitled to see them, and a destructive or irreversible action---such
+as changing a password---is verified against the identity provider before it is allowed to
+proceed. Trust, in a system that a club would actually rely on, is not a feature bolted on at
+the end; it is a property that must be designed in from the data model outward.
+
+Finally, the project is motivated by sound engineering practice. A platform of this breadth,
+spanning identity, squad management, competitions, live matches, medical workflows,
+messaging, notifications and analytics, cannot reasonably be built or maintained as a single
+monolithic application. The motivation to adopt a cloud-native microservices
+architecture~\cite{microservices} arises directly from the need for independent
+deployability, fault isolation between domains, and the ability to evolve one functional area
+(for example the live-match engine) without destabilising another (for example the medical
+records subsystem). Decomposing the system along domain boundaries also yields a clean
+mapping between the organisational structure of the club and the structure of the
+software---squad operations, competitions and matches, medical and fitness, analytics and
+reporting, and communication each become their own service with their own database---which
+makes the system easier to reason about, to test in isolation, and to assign to different
+developers working in parallel. The choice of Spring Boot~\cite{springboot} for the backend,
+the Spring Cloud~\cite{springcloud} ecosystem for the discovery, configuration and gateway
+control plane, and a RESTful inter-service contract~\cite{restapi} complemented by
+asynchronous events follows naturally from this motivation.
+
+\section{Scope}
+\label{sec:scope}
+
+The scope of MSCMS spans the principal operational domains of a multi-sport club, each
+realised as a coherent feature area within the platform:
+
+\begin{enumerate}
+  \item \textbf{Identity and Role Management} --- centralised authentication through a
+        self-hosted identity provider~\cite{keycloak} issuing signed JSON Web
+        Tokens~\cite{jwt}, with a rich catalogue of fourteen professional roles organised
+        into permission tiers and enforced uniformly across the system at three layers: the
+        identity provider, the API gateway, and the front-end route guards~\cite{rbac}.
+  \item \textbf{Squad and Club Operations} --- player and staff rosters, player profiles
+        with photographs and detailed attributes, contracts, transfers and call-ups, and a
+        dedicated Club Hub presenting the club's identity, squad, trophy cabinet and recent
+        form.
+  \item \textbf{Competitions} --- database-backed competitions covering a domestic league
+        (La~Liga, modelled as a double round-robin) and the newly formatted UEFA
+        Champions League (a single thirty-six-team league phase generated algorithmically,
+        followed by a two-legged knockout bracket), with standings, fixtures and results
+        recomputed and presented per competition, and completed competitions automatically
+        locked read-only.
+  \item \textbf{Match Operations} --- fixture creation with a mandatory starting line-up
+        locked at creation, a live-match engine that drives a match through its phases in
+        real time and automatically goes live at the exact scheduled kickoff, in-match event
+        recording bounded by the current phase, per-sport substitution limits, and read-only
+        match details for completed fixtures.
+  \item \textbf{Medical and Fitness} --- a structured injury-management workflow that
+        carries each affected player through a staged recovery journey---injury, diagnosis,
+        treatment, rehabilitation, recovery and fitness testing---driven by the injury status
+        as a single source of truth, alongside general medical catalogues, organised within a
+        dedicated Treatment Room view that separates currently-injured from recovered
+        players.
+  \item \textbf{Communication} --- real-time team group chat with group membership,
+        invitations that must be accepted, and message reactions, delivered over a persistent
+        WebSocket connection~\cite{websocket} with a polling fallback.
+  \item \textbf{Notifications and Alerts} --- an event-driven notification fabric, fed by a
+        message broker~\cite{kafka}, that surfaces role-aware, priority-tagged alerts through
+        an in-application notification centre reachable from a top-bar bell.
+  \item \textbf{Reports, Analytics and Machine Learning} --- aggregated dashboards,
+        downloadable reports, scouting and sponsorship workflows, and decoupled
+        machine-learning services for match-outcome prediction and player-rating estimation,
+        consumed transparently through the interface.
+\end{enumerate}
+
+The scope explicitly includes the ingestion of real competition data~\cite{footballdata} so
+that competitions, fixtures and results reflect genuine football rather than synthetic
+placeholders, and it includes a fan-facing surface so that supporters can follow the club
+through the same platform the club uses internally. The scope deliberately excludes building
+a bespoke identity provider, a custom message broker or a proprietary data feed; instead the
+system integrates mature, well-understood components for these concerns and concentrates
+its engineering effort on the club-management domain itself. Equally, the scope is bounded to
+the football discipline for competitions and live matches---the domain in which authoritative
+external data is available---while the role model, squad operations and medical workflows are
+designed to generalise across sports. The boundaries of the system are drawn so that the
+project demonstrates depth in the domains it claims rather than shallow breadth across
+domains it cannot fully support.
+
+\section{Problem Definition}
+\label{sec:problem}
+
+A modern multi-sport club faces a constellation of operational problems that no single
+off-the-shelf product addresses end-to-end:
+
+\begin{itemize}
+  \item \textbf{Fragmented data across departments.} Medical, coaching, scouting,
+        analytics and commercial functions each maintain isolated spreadsheets, documents
+        and SaaS subscriptions. A player's injury record is invisible to the coach planning
+        the next session, and a scout's assessment never reaches the sport manager in a
+        structured, actionable form. The same fact is entered repeatedly in different places,
+        each copy drifts out of step with the others, and no copy is authoritative.
+  \item \textbf{Multi-discipline complexity.} A single club may field several sports under
+        one governing body, each with distinct positions, formations, substitution rules,
+        competition formats and performance indicators that generic, single-sport team tools
+        cannot model simultaneously. A product that hard-codes the assumptions of one
+        sport cannot serve a club whose departments must reason about several at once.
+  \item \textbf{Inconsistent role-based access.} Tools lacking fine-grained access
+        control either over-share data---exposing salary or medical information through a
+        public portal---or over-restrict it, preventing legitimate staff from performing
+        their duties. Worse, where access control exists only in the user interface, it can be
+        bypassed simply by calling the underlying interfaces directly, so the apparent
+        protection is illusory.
+  \item \textbf{Absence of real-time operation.} Conventional systems record events after
+        the fact and offer no live view of an in-progress match, no immediate notification
+        when a significant event occurs, and no real-time channel through which staff can
+        coordinate. The information they present is always, by construction, out of date.
+  \item \textbf{Unstructured medical workflows.} Injuries are typically tracked as free
+        text with no enforced progression from diagnosis through treatment, rehabilitation
+        and fitness testing back to availability, making it impossible to reason about a
+        player's recovery state at a glance, or to aggregate recovery patterns across the
+        squad.
+  \item \textbf{Limited analytical insight.} Without a unified data layer, computing
+        cross-domain indicators---such as win-rate against a given opponent, injury
+        incidence per position, or the contribution of a particular scout---is impractical,
+        because the data needed to correlate one domain with another never sits in the same
+        place.
+  \item \textbf{Weak commercial and transfer workflows.} Sponsorship offers, contract
+        negotiations and transfer windows are usually managed over e-mail and attached
+        documents, with no audit trail, no structured state, and no automatic notification
+        of the relevant stakeholders when an offer changes hands.
+  \item \textbf{Brittle deployments and inconsistent identity.} Monolithic legacy systems
+        force every domain onto a single release cadence, so that a small change to one area
+        risks the stability of all the others, and the absence of a central identity provider
+        leaves each department maintaining its own accounts, slowing onboarding,
+        off-boarding and audit, and multiplying the surface for credential mismanagement.
+\end{itemize}
+
+Taken together, these problems define the gap that MSCMS sets out to close: the lack of a
+unified, real-time, role-aware and independently deployable platform that models the genuine
+complexity of a multi-sport club while remaining trustworthy enough to serve as a single
+source of truth. The problem is not that any one of these capabilities is unprecedented---live
+scores, video analysis, team scheduling and identity management all exist as separate
+products---but that no single system combines them, and the act of combining them is itself
+the substantive engineering challenge, because it forces consistent identity, consistent
+access control and consistent data semantics across domains that the market has hitherto
+treated in isolation.
+
+\section{Goals and Objectives}
+\label{sec:goals}
+
+In response to the problems defined above, MSCMS pursues the following concrete,
+measurable objectives:
+
+\begin{itemize}
+  \item \textbf{Unify operations} into a single platform that spans identity, squad and
+        club operations, competitions, live matches, medical and fitness management,
+        communication, notifications and analytics, so that every role works against one
+        consistent data set rather than a patchwork of disconnected tools.
+  \item \textbf{Enforce role-based access control consistently} at multiple layers---the
+        identity provider, the API gateway, and the front-end route guards---so that the same
+        permission rules apply whether a user navigates through the interface or calls the
+        underlying APIs directly~\cite{rbac}. The objective is concretely measurable: a
+        request for a resource a role is not entitled to must be refused regardless of the
+        path by which it arrives.
+  \item \textbf{Decompose the backend} into independently deployable Spring
+        Boot~\cite{springboot} microservices, discoverable through a service registry and
+        reachable through a single API gateway, configured from a central configuration
+        server~\cite{springcloud}, communicating over a RESTful contract~\cite{restapi} and
+        asynchronous events~\cite{microservices}.
+  \item \textbf{Model real multi-sport structure} by representing distinct sports, each
+        with its own positions, formations, substitution limits and competition formats,
+        taking a real club as the working example so that the model is validated against
+        genuine rather than imagined complexity.
+  \item \textbf{Ingest real competition data}~\cite{footballdata} so that competitions,
+        fixtures, results and standings reflect genuine matches, with the backend acting as
+        the single source of truth for all externally sourced data and the front-end never
+        contacting the external provider directly.
+  \item \textbf{Deliver real-time operation} through a live-match engine that drives a
+        fixture through its phases as it is played, an event-driven notification fabric, and a
+        real-time team chat delivered over a persistent connection with a graceful polling
+        fallback.
+  \item \textbf{Structure medical care} as an explicit, staged recovery journey, driven by
+        the injury status as the single source of truth, that makes each player's availability
+        and rehabilitation state immediately legible at the level of both the individual and
+        the squad.
+  \item \textbf{Centralise analytics} into role-aware dashboards and downloadable reports,
+        augmented by machine-learning predictions consumed transparently through the
+        interface without exposing the non-technical user to the mechanics of the models.
+  \item \textbf{Guarantee independent deployability} so that each domain ships on its own
+        release cadence behind backward-compatible API contracts, and so that the failure or
+        redeployment of one service does not compromise the availability of the others.
+  \item \textbf{Deliver a coherent, club-branded experience} under the Sportify identity,
+        so that staff and supporters interact with a polished, unified product rather than an
+        assemblage of disjoint internal tools.
+\end{itemize}
+
+\section{Solutions}
+\label{sec:solutions}
+
+\subsection{Traditional Solutions}
+\label{subsec:traditional}
+
+Historically, multi-sport clubs have coordinated their operations through a combination of
+manual and semi-digital tools. Coaching staff maintain training plans and line-ups in
+spreadsheets or printed binders; medical departments record injuries and treatments in
+paper charts or local workbooks; and scouts compile player reports as documents that
+circulate by e-mail. Sponsorship and transfer negotiations are conducted over e-mail
+threads with attached contracts, while supporter communication is handled separately
+through generic websites and social-media channels. Where dedicated software is adopted,
+it is typically single-sport and single-purpose---a video-analysis suite here, a fixture
+scheduler there---so that the club ends up operating a patchwork of unconnected products,
+each with its own login, its own data model and its own export format.
+
+This patchwork places a heavy coordination burden on administrators: data is duplicated
+across systems, reconciliation is manual, and any change to a player's status---an injury,
+a transfer, a contract renewal---requires parallel updates across disconnected silos. The
+approach scales poorly with the number of disciplines and makes cross-domain analytics
+effectively impossible, because no single store holds the data required to correlate, for
+example, training load with injury frequency, or scouting activity with transfer outcomes.
+Crucially, traditional approaches also lack consistent role-based access control: sensitive
+medical or financial data is either over-shared through common drives or over-restricted to
+the point that legitimate staff cannot perform their work. None of these arrangements offers
+a live view of an in-progress match, an immediate notification when an event occurs, or a
+structured medical workflow, and none presents a coherent, club-branded surface to
+supporters. The cumulative effect is an organisation that spends a substantial fraction of its
+administrative effort simply keeping copies of the same information in agreement with one
+another---effort that produces no sporting value and that grows worse, not better, as the
+club adds disciplines and staff.
+
+\subsection{Technological Solution}
+\label{subsec:technological}
+
+To overcome these limitations, MSCMS (Sportify) was developed as a cloud-native,
+multi-sport club-management platform built on a modern microservices
+architecture~\cite{microservices}. The system unifies every operational concern of a
+multi-discipline club into a single coherent interface, while preserving the independent
+deployability of each functional domain. The backend comprises six Spring
+Boot~\cite{springboot} domain microservices---user management, player management,
+training-and-match, medical-and-fitness, reports-and-analytics, and notification-and-mail
+---supported by a Spring Cloud~\cite{springcloud} control plane of a Eureka discovery
+server, a centralised configuration server and an API gateway, and complemented by
+dedicated, decoupled machine-learning services for match-outcome prediction and
+player-rating estimation. Every domain service is registered with the discovery server, draws
+its configuration from the central configuration server, and is reached through the single API
+gateway, which performs token verification, request routing and cross-origin handling.
+Services expose RESTful interfaces~\cite{restapi} for synchronous calls and emit
+asynchronous events through a message broker~\cite{kafka} for cross-domain reactions, so
+that, for instance, a goal recorded by the live-match engine automatically produces a
+notification without any direct coupling between the two domains.
+
+Authentication is delegated to a self-hosted identity provider~\cite{keycloak} that owns a
+dedicated realm and manages the full catalogue of fourteen professional roles spanning club
+leadership, coaching staff, medical and fitness staff, analytics and scouting roles, commercial
+roles, and end-users such as players and supporters. Access tokens issued by the identity
+provider take the form of signed JSON Web Tokens~\cite{jwt}; they are verified at the
+gateway and decoded by the front-end so that the same permission map is enforced on both
+layers~\cite{rbac}, and a request for an unauthorised resource is refused whether it arrives
+through the user interface or through a direct API call. Each microservice owns its own
+relational database~\cite{postgres}, following the database-per-service pattern, while
+asynchronous events flow through the message broker and a shared cache accelerates
+read-heavy paths. The front-end is a modern single-page application built with
+Next.js~\cite{nextjs} and React~\cite{react} that presents role-aware navigation, a
+fan-facing read-only surface, real-time match and chat views, and aggregated analytics
+dashboards. The entire stack is containerised and orchestrated with Docker~\cite{docker},
+so that the whole platform can be brought up reproducibly and self-hosted by the club.
+The result is a scalable, observable and role-aware platform that directly addresses the
+fragmentation, multi-discipline complexity, absence of real-time operation and analytical
+blindness that characterise the traditional approaches described above, delivering them
+within one cohesive, self-hostable system.

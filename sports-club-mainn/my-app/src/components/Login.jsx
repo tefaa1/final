@@ -11,9 +11,40 @@ import {
   ShieldCheckIcon,
   TrophyIcon,
 } from "@heroicons/react/24/outline";
-import { setToken } from "@/src/lib/auth"; 
+import { setToken } from "@/src/lib/auth";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
+
+// The 14 canonical app roles used for routing. Keycloak tokens may carry
+// MULTIPLE realm roles, including coarse GROUP roles (STAFF/COACH/DOCTOR)
+// that are NOT app routing roles, in arbitrary order. We must pick the first
+// realm role that maps to one of these — not blindly take roles[0].
+const CANONICAL_ROLES = new Set([
+  "admin",
+  "sport_manager",
+  "team_manager",
+  "head_coach",
+  "assistant_coach",
+  "specific_coach",
+  "fitness_coach",
+  "performance_analyst",
+  "team_doctor",
+  "physiotherapist",
+  "scout",
+  "sponsor",
+  "player",
+  "fan",
+]);
+
+// Lowercase each realm role and return the first one that is a canonical
+// app role; fall back to "fan" (spectator) if none match.
+function pickAppRole(realmRoles) {
+  return (
+    (realmRoles || [])
+      .map((r) => String(r).toLowerCase())
+      .find((r) => CANONICAL_ROLES.has(r)) || "fan"
+  );
+}
 
 export default function Login() {
   const router = useRouter();
@@ -51,8 +82,7 @@ export default function Login() {
         const decoded = jwtDecode(data.access_token);
         console.log("Decoded Content:", decoded);
 
-        const rawRole = decoded.realm_access?.roles?.[0] || "fan";
-        const userRole = rawRole.toLowerCase();
+        const userRole = pickAppRole(decoded.realm_access?.roles);
 
         // Persist Keycloak user id (JWT "sub") so other pages
         // (Messages, ProfileTab, ...) can use it for filtering.

@@ -162,6 +162,17 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 
+        // Require + verify the CURRENT password before allowing the change.
+        String current = request.resolveCurrentPassword();
+        if (current == null || current.isBlank()) {
+            throw new InvalidOperationException("Current password is required");
+        }
+        String loginId = (user.getUsername() != null && !user.getUsername().isBlank())
+                ? user.getUsername() : user.getEmail();
+        if (!keycloakAdminService.verifyPassword(loginId, current)) {
+            throw new InvalidOperationException("Current password is incorrect");
+        }
+
         try {
             keycloakAdminService.updateUserPassword(user.getKeycloakId(), request.getNewPassword());
             log.info("Password updated successfully for user: {}", id);

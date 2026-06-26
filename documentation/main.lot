@@ -1,0 +1,36 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {2.1}{\ignorespaces Multi-dimensional comparison of MSCMS (Sportify) against representative sports platforms across functional, architectural and audience dimensions. \emph {Yes} denotes first-class support, \emph {Part.} partial or domain-limited support, and \emph {No} the absence of the capability.}}{40}{table.caption.7}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {3.1}{\ignorespaces Representative development iterations and their primary deliverables.}}{44}{table.caption.8}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces Functional requirements: identity, administration, squad and training modules.}}{47}{table.caption.9}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces Functional requirements: competitions, live matches, medical workflow, messaging, notifications, RBAC and settings.}}{48}{table.caption.10}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces Non-functional requirements grouped by quality attribute.}}{50}{table.caption.15}%
+\contentsline {table}{\numberline {3.5}{\ignorespaces Domain microservices, their databases and responsibilities.}}{54}{table.caption.18}%
+\contentsline {table}{\numberline {3.6}{\ignorespaces Principal tables per service database.}}{59}{table.caption.19}%
+\contentsline {table}{\numberline {3.7}{\ignorespaces Representative API endpoints per service (selected, not exhaustive).}}{63}{table.caption.26}%
+\contentsline {table}{\numberline {3.8}{\ignorespaces Technology stack across the back-end, front-end and infrastructure tiers.}}{65}{table.caption.27}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Complete functional requirements catalogue, grouped by module.}}{149}{table.A.1}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Complete non-functional requirements catalogue, grouped by quality attribute.}}{152}{table.A.2}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {B.1}{\ignorespaces Gateway authentication endpoints (\texttt {/auth}).}}{155}{table.B.1}%
+\contentsline {table}{\numberline {B.2}{\ignorespaces Representative user-management endpoints (port 8081).}}{155}{table.B.2}%
+\contentsline {table}{\numberline {B.3}{\ignorespaces Representative player-management endpoints (port 8084).}}{156}{table.B.3}%
+\contentsline {table}{\numberline {B.4}{\ignorespaces Representative training-and-match endpoints (port 8087).}}{156}{table.B.4}%
+\contentsline {table}{\numberline {B.5}{\ignorespaces Representative medical-and-fitness endpoints (port 8086).}}{157}{table.B.5}%
+\contentsline {table}{\numberline {B.6}{\ignorespaces Representative reports-and-analytics endpoints (port 8083).}}{158}{table.B.6}%
+\contentsline {table}{\numberline {B.7}{\ignorespaces Representative notification, alert and messaging endpoints (port 8085).}}{158}{table.B.7}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {C.1}{\ignorespaces Principal tables and key columns in \texttt {mscms\_user}.}}{160}{table.C.1}%
+\contentsline {table}{\numberline {C.2}{\ignorespaces Principal tables and key columns in \texttt {mscms\_player}.}}{160}{table.C.2}%
+\contentsline {table}{\numberline {C.3}{\ignorespaces Principal tables and key columns in \texttt {mscms\_training}.}}{161}{table.C.3}%
+\contentsline {table}{\numberline {C.4}{\ignorespaces Principal tables and key columns in \texttt {mscms\_medical}.}}{162}{table.C.4}%
+\contentsline {table}{\numberline {C.5}{\ignorespaces Principal tables and key columns in \texttt {mscms\_reports} and \texttt {mscms\_notification}.}}{162}{table.C.5}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {D.1}{\ignorespaces Technology stack and versions.}}{165}{table.D.1}%
+\contentsline {table}{\numberline {D.2}{\ignorespaces Service ports and gateway routing prefixes.}}{166}{table.D.2}%
+\addvspace {10\p@ }

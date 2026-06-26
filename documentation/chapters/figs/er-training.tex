@@ -1,0 +1,112 @@
+% auto-generated figure: er-training (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=10mm,
+    every node/.append style={font=\scriptsize}]
+
+  % ===== Matches cluster (left/centre) ==================================
+  \Entity{m}{MATCHES}{%
+    \underline{PK} id\\
+    home\_team\_id\\
+    opponent\_name\\
+    status, sport\_type\\
+    \underline{FK} competition\_id\\
+    home/away\_score\\
+    kickoff\_time}
+  % formations / lineups stacked to the right of MATCHES
+  \Entity[right=34mm of m]{mf}{MATCH\_FORMATIONS}{%
+    \underline{PK} id\\
+    team\_id\\
+    formation\\
+    tactical\_approach}
+  \Entity[below=14mm of mf]{ml}{MATCH\_LINEUPS}{%
+    \underline{PK} id\\
+    \underline{FK} match\_id\\
+    player\_keycloak\_id\\
+    position, starter}
+  % events / statistics stacked below MATCHES
+  \Entity[below=16mm of m]{me}{MATCH\_EVENTS}{%
+    \underline{PK} id\\
+    \underline{FK} match\_id\\
+    event\_type\\
+    minute, extra\_time}
+  \Entity[below=14mm of me]{pms}{PLAYER\_MATCH\_\\STATISTICS}{%
+    \underline{PK} id\\
+    \underline{FK} match\_id\\
+    player\_keycloak\_id\\
+    sport\_type, stats}
+
+  % ===== Competition cluster (right) ====================================
+  \Entity[right=40mm of mf]{cmp}{COMPETITION}{%
+    \underline{PK} id\\
+    name, season\\
+    type, rounds}
+  \Entity[below=16mm of cmp]{ct}{COMPETITION\_TEAM}{%
+    \underline{PK} id\\
+    \underline{FK} competition\_id\\
+    name, sport\\
+    crest\_url}
+  \Entity[below=14mm of ct]{cf}{COMPETITION\_FIXTURE}{%
+    \underline{PK} id\\
+    \underline{FK} competition\_id\\
+    home/away\_score\\
+    round, matchday, played}
+
+  % ===== Training cluster (bottom row) ==================================
+  \Entity[below=24mm of pms]{ts}{TRAINING\_SESSIONS}{%
+    \underline{PK} id\\
+    team\_id\\
+    session\_type, status\\
+    scheduled\_date}
+  \Entity[right=34mm of ts]{tp}{TRAINING\_PLANS}{%
+    \underline{PK} id\\
+    \underline{FK} training\_session\_id\\
+    category, intensity}
+  \Entity[below=14mm of tp]{td}{TRAINING\_DRILLS}{%
+    \underline{PK} id\\
+    \underline{FK} training\_session\_id\\
+    name, duration}
+  \Entity[right=34mm of tp]{ta}{TRAINING\_ATTENDANCE}{%
+    \underline{PK} id\\
+    \underline{FK} training\_session\_id\\
+    player\_keycloak\_id\\
+    attended, perf\_score}
+
+  % ===== Relationships : MATCHES hub ===================================
+  % to formations (right) and lineups (lower-right) from the right edge
+  \draw[dLine] (m.east) -- node[lbl,pos=0.18]{1} node[lbl,pos=0.55]{\itshape set by}
+       node[lbl,pos=0.9]{1} (mf.west);
+  \draw[dLine] (m.east) -- node[lbl,pos=0.12]{1} node[lbl,pos=0.6]{\itshape names}
+       node[lbl,pos=0.92]{*} (ml.west);
+  % to events / statistics straight down
+  \Rel{m}{me}{1}{*}{records}
+  \draw[dLine] (me.south) -- node[lbl,pos=0.5]{\itshape measures}
+       node[lbl,pos=0.9]{*} (pms.north);
+
+  % ===== Relationships : COMPETITION hub ===============================
+  % COMPETITION 1--* MATCHES (competition_id FK) routed over the top so it
+  % never crosses the formations/lineups boxes
+  \draw[dLine] (cmp.north) |- ($(m.north)+(0,7mm)$)
+       node[lbl,pos=0.55]{\itshape groups} -- (m.north);
+  \node[lbl] at ($(cmp.north)+(0,4mm)$){1};
+  \node[lbl] at ($(m.north)+(3mm,4mm)$){*};
+  % vertical chain, offset so it never crosses a box
+  \draw[dLine] (cmp.south) -- node[lbl,pos=0.2]{1} node[lbl,pos=0.55]{\itshape includes}
+       node[lbl,pos=0.85]{*} (ct.north);
+  \draw[dLine] (ct.east) -- ++(8mm,0) |- node[lbl,pos=0.75]{\itshape schedules} (cf.east);
+  \node[lbl] at ($(ct.east)+(10mm,-7mm)$){*};
+
+  % ===== Relationships : TRAINING hub ==================================
+  \draw[dLine] (ts.east) -- node[lbl,pos=0.18]{1} node[lbl,pos=0.55]{\itshape follows}
+       node[lbl,pos=0.9]{*} (tp.west);
+  \draw[dLine] (tp.south) -- node[lbl,pos=0.5]{\itshape runs}
+       node[lbl,pos=0.85]{*} (td.north);
+  \draw[dLine] (tp.east) -- node[lbl,pos=0.5]{\itshape tracks}
+       node[lbl,pos=0.9]{*} (ta.west);
+
+\end{tikzpicture}%
+}
+\caption{Entity-relationship diagram of the \texttt{mscms\_training} database, showing the matches subsystem (formations, line-ups, events and per-player statistics), the database-backed competition subsystem (teams and fixtures), and the training subsystem (plans, drills and attendance) with their principal columns and foreign-key relationships.}
+\label{fig-er-training}
+\end{figure}

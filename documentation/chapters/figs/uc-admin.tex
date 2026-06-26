@@ -1,0 +1,40 @@
+% auto-generated figure: uc-admin (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+  % actors on the left
+  \UCactor{0}{6.2}{Administrator}
+  \UCactor{0}{2.8}{Sport Manager}
+  \UCactor{0}{-0.6}{Team Manager}
+
+  % use cases in a column on the right
+  \node[usecase] (uc1) at (7,8.0){Manage user accounts\\(create / edit /\\deactivate / delete)};
+  \node[usecase] (uc2) at (7,6.0){Onboard staff\\with roles};
+  \node[usecase] (uc3) at (7,4.0){Manage sports\\\& teams};
+  \node[usecase] (uc4) at (7,2.0){Maintain\\competitions};
+  \node[usecase] (uc5) at (7,0.0){Manage transfers\\(incoming / outgoing /\\call-ups)};
+  \node[usecase] (uc6) at (7,-2.0){Manage rosters};
+  \node[usecase] (uc7) at (7,-4.0){Manage player\\contracts};
+  \node[usecase] (uc8) at (7,-6.0){View Club Hub};
+
+  % Administrator -> user accounts \& staff
+  \draw[dLine] (0.5,5.8) -- (uc1);
+  \draw[dLine] (0.5,5.8) -- (uc2);
+
+  % Sport Manager -> teams / transfers / competitions
+  \draw[dLine] (0.5,2.4) -- (uc3);
+  \draw[dLine] (0.5,2.4) -- (uc4);
+  \draw[dLine] (0.5,2.4) -- (uc5);
+
+  % Team Manager -> rosters / contracts
+  \draw[dLine] (0.5,-1.0) -- (uc6);
+  \draw[dLine] (0.5,-1.0) -- (uc7);
+
+  % everyone can view the Club Hub
+  \draw[dLine] (0.5,-1.0) -- (uc8);
+\end{tikzpicture}%
+}
+\caption{Use-case diagram for administration and club management, showing the Administrator, Sport Manager and Team Manager actors and the account, staffing, team, transfer, competition, roster, contract and Club Hub operations each performs.}
+\label{fig-uc-admin}
+\end{figure}

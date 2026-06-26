@@ -1,0 +1,41 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\begin{tikzpicture}[node distance=10mm]
+  \UmlClass{comp}{Competition}{%
+    - name : String\\
+    - type : CompetitionType\\
+    - status : CompetitionStatus}{%
+    + isCompleted()\\
+    + standings()}
+  \UmlClass[below left=16mm and -22mm of comp]{team}{CompetitionTeam}{%
+    - name : String\\
+    - shortName : String\\
+    - crestUrl : String\\
+    - sport : Sport}{}
+  \UmlClass[below right=16mm and -22mm of comp]{fix}{CompetitionFixture}{%
+    - homeTeamId : Long\\
+    - awayTeamId : Long\\
+    - group : String [0..1]\\
+    - matchday : int\\
+    - round : String\\
+    - homeScore : Integer\\
+    - awayScore : Integer}{%
+    + isPlayed()}
+
+  % compositions (filled diamond at the Competition / whole end)
+  \draw[{Diamond[fill=dLine,length=3mm,width=2mm]}-,draw=dLine,thick]
+        (comp.south) -- node[lbl,pos=0.85,left]{1..*} (team.north);
+  \draw[{Diamond[fill=dLine,length=3mm,width=2mm]}-,draw=dLine,thick]
+        (comp.south) -- node[lbl,pos=0.85,right]{1..* \{ordered\}} (fix.north);
+
+  \node[lbl,align=left,text width=52mm,font=\scriptsize,
+        below=4mm of fix.south,anchor=north]
+       {\itshape round distinguishes the Champions League league
+        phase (e.g.\ ``League Phase'') from the knockout rounds
+        (e.g.\ ``Round of 16'', ``Final'').};
+\end{tikzpicture}
+
+\end{document}

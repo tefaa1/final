@@ -35,6 +35,29 @@ const isLive = (s) => ["LIVE", "IN_PROGRESS", "ONGOING", "HALF_TIME"].includes(S
 const isFinished = (s) => ["FINISHED", "FT", "COMPLETED", "FULL_TIME"].includes(String(s).toUpperCase());
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString(undefined, { day: "numeric", month: "short" }) : "TBD");
 
+// ── Competition display name ────────────────────────────────────────────────
+// Matches carry a raw `competition` string straight from the data source. The
+// football-data.org sync stores La Liga under its API code-name "Primera
+// Division", while seeded/demo fixtures store the friendly "La Liga" — the same
+// competition under two labels. We canonicalise the raw value to a single, clean
+// display name so the same competition isn't split (and so the raw API code-name
+// never surfaces in the UI). Unknown names pass through trimmed; blank/garbage
+// names resolve to null so the caller can drop them rather than render a broken
+// label like "Primera Division (".
+const COMP_ALIASES = {
+  "primera division": "La Liga",
+  "primera división": "La Liga",
+  "laliga": "La Liga",
+  "la liga": "La Liga",
+  "uefa champions league": "UEFA Champions League",
+  "champions league": "UEFA Champions League",
+};
+const compName = (raw) => {
+  const trimmed = String(raw ?? "").trim();
+  if (!trimmed) return null;
+  return COMP_ALIASES[trimmed.toLowerCase()] || trimmed;
+};
+
 // Position → short label for player chips.
 const POS_SHORT = {
   GOALKEEPER: "GK", RIGHT_BACK: "RB", LEFT_BACK: "LB", CENTER_BACK: "CB",
@@ -203,11 +226,14 @@ export default function ClubHub() {
   const goalsFor = finishedSorted.reduce((s, m) => s + (m.homeTeamScore ?? 0), 0);
   const goalsAgainst = finishedSorted.reduce((s, m) => s + (m.awayTeamScore ?? 0), 0);
 
-  // Results grouped by competition.
+  // Results grouped by competition — keyed by the CANONICAL competition name
+  // resolved from each match's real `competition` field (so "Primera Division"
+  // and "La Liga" merge, and the raw API code-name never shows). Matches with no
+  // usable competition name are filed under "Other" rather than a broken label.
   const resultsByComp = useMemo(() => {
     const acc = {};
     for (const m of finishedSorted) {
-      const k = m.competition || "Other";
+      const k = compName(m.competition) || "Other";
       (acc[k] ||= []).push(m);
     }
     return acc;
@@ -362,7 +388,7 @@ export default function ClubHub() {
                         ) : (
                           <span className="text-[11px] font-bold text-slate-300">{fmtDate(m.kickoffTime)}</span>
                         )}
-                        <p className="mt-0.5 text-[9px] uppercase tracking-widest text-slate-600">{m.competition || "Friendly"}</p>
+                        <p className="mt-0.5 text-[9px] uppercase tracking-widest text-slate-600">{compName(m.competition) || "Friendly"}</p>
                       </div>
                     </div>
                   );

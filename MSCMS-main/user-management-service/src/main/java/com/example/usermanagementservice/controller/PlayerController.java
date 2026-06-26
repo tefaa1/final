@@ -36,7 +36,7 @@ class PlayerController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HEAD_COACH', 'ASSISTANT_COACH', 'SPECIFIC_COACH', 'FITNESS_COACH', 'PERFORMANCE_ANALYST', 'TEAM_DOCTOR', 'PHYSIOTHERAPIST') or @securityService.isCurrentUser(#id)")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get player by ID")
     public ResponseEntity<ApiResponse<PlayerResponse>> getPlayerById(@PathVariable Long id) {
         PlayerResponse player = playerService.getPlayerById(id);
@@ -45,7 +45,9 @@ class PlayerController {
 
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'HEAD_COACH', 'ASSISTANT_COACH')")
+    // Squad list is public spectator info (Club Hub, dashboard squad count & key players);
+    // any authenticated user may read it. Writes above stay role-restricted.
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Get players by status")
     public ResponseEntity<ApiResponse<List<PlayerResponse>>> getPlayersByStatus(
             @RequestParam StatusOfPlayer status) {

@@ -1,0 +1,47 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=10mm and 14mm]
+  % --- aggregate root ---
+  \UmlClass{inj}{Injury \textit{(root)}}{%
+    - status : InjuryStatus\\
+    \ \ = active $|$ recovering $|$ recovered\\
+    - bodyPart : String\\
+    - severity : Severity\\
+    - dateOccurred : Date\\
+    - expectedReturn : Date}{%
+    + journeyStage() : Stage}
+
+  % --- owned children of Injury ---
+  \UmlClass[right=of inj]{dia}{Diagnosis}{%
+    - findings : String\\
+    - testResults : String}{}
+  \UmlClass[below=of dia]{trt}{Treatment}{%
+    - type : String\\
+    - status : Status}{}
+  \UmlClass[below=of trt]{reh}{Rehabilitation}{%
+    - programDetail\\
+    - status : Status}{}
+  \UmlClass[right=of reh]{rec}{RecoveryProgram}{%
+    - programDetail : String}{}
+
+  % --- independent measurement classes ---
+  \UmlClass[below=18mm of inj]{fit}{FitnessTest}{%
+    - result : String\\
+    - date : Date}{}
+  \UmlClass[below=of fit]{load}{TrainingLoad}{%
+    - intensity : int\\
+    - load : double\\
+    - heartRate : int}{}
+
+  % --- composition (filled diamond) lines from Injury ---
+  \draw[flow] (inj.east) -- node[lbl,pos=0.5]{\itshape owns 1..*} (dia.west);
+  \draw[flow] (inj.east) -- node[lbl,pos=0.6]{\itshape owns 1..*} (trt.west);
+  \draw[flow] (inj.east) -- node[lbl,pos=0.7]{\itshape owns 0..1} (reh.west);
+  \draw[flow] (reh.east) -- node[lbl,pos=0.5]{\itshape owns 1..*} (rec.west);
+\end{tikzpicture}}
+
+\end{document}

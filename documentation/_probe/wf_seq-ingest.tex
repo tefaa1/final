@@ -1,0 +1,31 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{sequencediagram}
+  \newthread{sch}{:Scheduler}
+  \newinst[1]{svc}{:training-match}
+  \newinst[2]{api}{football-data.org}
+  \newinst[1]{db}{:matches DB}
+  \newinst[1]{fe}{:Frontend}
+
+  \mess{sch}{every 30 min / POST sync-external}{svc}
+
+  \begin{call}{svc}{GET competition matches + standings}{api}{collections}
+  \end{call}
+
+  \begin{sdblock}{loop}{over each fixture: filter to club, de-duplicate by external id}
+    \begin{call}{svc}{upsert new/updated match}{db}{ok}
+    \end{call}
+  \end{sdblock}
+
+  \mess{svc}{standings: read-through (not stored)}{svc}
+
+  \begin{call}{fe}{GET /matches (platform model)}{svc}{fixtures + table}
+  \end{call}
+\end{sequencediagram}%
+}
+
+\end{document}

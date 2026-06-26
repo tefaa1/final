@@ -18,10 +18,28 @@ export const prettify = (s) =>
         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
         .join(" ");
 
+// Backend timestamps (alert.triggeredAt / notification.createdAt) are generated
+// server-side in UTC but serialised WITHOUT a timezone marker
+// (e.g. "2026-06-23T16:56:58.366285"). new Date() would then parse them as the
+// browser's LOCAL time, so a brand-new event reads ~3h in the past for a UTC+3
+// user. Append "Z" when the string carries no zone so it is parsed as UTC, and
+// it then renders at the correct local wall-clock time.
+export const parseServerDate = (value) => {
+    if (!value) return null;
+    if (value instanceof Date) return isNaN(value) ? null : value;
+    let s = String(value).trim();
+    // Already zone-aware? (ends with Z, or +hh:mm / -hh:mm after the time part)
+    const hasZone = /[zZ]$/.test(s) || /[+-]\d{2}:?\d{2}$/.test(s);
+    if (!hasZone && /\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(s)) {
+        s = s.replace(" ", "T") + "Z";
+    }
+    const d = new Date(s);
+    return isNaN(d) ? null : d;
+};
+
 export const fmtDate = (iso) => {
-    if (!iso) return null;
-    const d = new Date(iso);
-    if (isNaN(d)) return null;
+    const d = parseServerDate(iso);
+    if (!d) return null;
     return d.toLocaleString(undefined, {
         month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
     });
@@ -29,9 +47,8 @@ export const fmtDate = (iso) => {
 
 // Relative time: "just now", "5m ago", "3h ago", "2d ago".
 export const relativeTime = (iso) => {
-    if (!iso) return null;
-    const d = new Date(iso);
-    if (isNaN(d)) return null;
+    const d = parseServerDate(iso);
+    if (!d) return null;
     const secs = Math.floor((Date.now() - d.getTime()) / 1000);
     if (secs < 45) return "just now";
     if (secs < 90) return "1m ago";

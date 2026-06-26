@@ -32,3 +32,13 @@ services:
     build:
       context: ./training-match-service
       dockerfile: Dockerfile.prebuilt
+
+  gateway-service:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile.prebuilt
+
+  reports-analytics-service:
+    build:
+      context: ./reports-analytics-service
+      dockerfile: Dockerfile.prebuilt

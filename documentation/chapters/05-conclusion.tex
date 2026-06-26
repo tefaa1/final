@@ -1,0 +1,408 @@
+\chapter{Conclusions and Recommendations}
+\label{ch:conclusion}
+
+This final chapter draws together the work presented in the preceding chapters. It first
+states the overall conclusion of the project and situates it against the objectives set out
+in Chapter~\ref{ch:introduction}; it then itemises in detail what was actually delivered;
+it reflects on the technical and teamwork lessons that emerged during development; it
+discusses the system's honest limitations without overstating its maturity; and it finally
+sets out a prioritised programme of future work and recommendations. Taken as a whole, the
+chapter is intended to serve two audiences: an assessor seeking a candid appraisal of the
+degree to which the project met its goals, and a future maintainer seeking a clear sense of
+where the platform stands and where it could profitably be taken next.
+
+\section{Conclusion}
+\label{sec:conclusion-summary}
+
+The objective of this graduation project was to design and build a single, coherent,
+cloud-native platform that consolidates the fragmented operational concerns of a
+multi-sport club into one secure and analytically rich system. Taking FC~Barcelona as
+the working organisational model and \textit{Sportify} as the product brand, the
+project set out to replace the patchwork of spreadsheets, e-mail threads and
+disconnected SaaS tools described in Chapter~\ref{ch:introduction} with a unified platform
+on which each professional role---from leadership through coaching, medical, scouting and
+commercial staff down to players and fans---sees exactly the information relevant to its
+responsibilities, and nothing more. The thesis underpinning the work was that the
+structural problems of club management---data fragmentation, multi-discipline complexity
+and analytical blindness---are not problems of any single feature but of architecture, and
+that a properly decomposed, identity-centred, event-driven system could dissolve them at
+their root.
+
+This objective was met. The Multi-Sport Club Management System (MSCMS) is a working
+platform built on a microservices architecture~\cite{microservices} of six domain
+services and a three-part control plane---together seven independently deployable
+Spring~Boot~3.5.6 / Java~21 services~\cite{springboot}---discovered through Eureka and
+reached through a single Spring Cloud Gateway~\cite{springcloud}, fronted by a
+Next.js~16 / React~19 application~\cite{nextjs,react}, and orchestrated as containers
+through a single Docker~Compose stack~\cite{docker}. Every request is authenticated against
+a Keycloak realm and verified as a JSON Web Token at the gateway~\cite{keycloak,jwt}, and
+persistence follows the database-per-service pattern over PostgreSQL~\cite{postgres} with
+asynchronous, event-driven coordination over Apache~Kafka~\cite{kafka}. The architectural
+hypothesis was therefore not merely asserted but demonstrated in running software: each of
+the structural problems identified at the outset is answered by a concrete architectural
+mechanism---fragmentation by a shared identity and a single gateway origin, multi-discipline
+complexity by sport-aware domain models, and analytical blindness by a reporting service
+that aggregates across the previously siloed domains.
+
+Beyond reproducing the operational baseline, the project advanced the system from a
+predominantly CRUD-oriented tool into a genuinely interactive sports platform. The
+headline outcomes are a database-backed competitions module that models La~Liga and the
+new-format UEFA Champions League with a single league phase and a knockout bracket, fed by
+real fixture data ingested from football-data.org~\cite{footballdata}; a broadcast-style
+live-match engine that drives a match through its phases in real time, complete with
+extra time and penalty shoot-outs for knockout ties; a clinical injury-management
+workflow that follows each injured player through a staged recovery journey; a real-time
+team messaging facility built over WebSocket~\cite{websocket}; an event-driven
+notification centre; and consistent role-based access control~\cite{rbac} enforced at
+identity, gateway and user-interface layers. Collectively, these capabilities
+demonstrate that the architectural decisions taken early in the project---service
+decomposition, a central identity provider, an asynchronous event backbone and a
+REST-based contract between front-end and back-end~\cite{restapi}---scaled gracefully to
+accommodate substantially richer behaviour without structural rework. It is worth
+emphasising this last point: none of the later, behaviourally complex modules required a
+new service, a new gateway route or a change to the authentication model. The competitions
+module and the live-match engine were absorbed by the training-match service because they
+share the match and line-up schema; the staged injury workflow was absorbed by the
+medical-fitness service; and the group chat and alert centre were absorbed by the
+notification-mail service, which already owned messages and consumed the events that drive
+alerts. That the architecture could grow this much at the leaves while remaining stable at
+the trunk is, in the team's assessment, the project's strongest evidence that its founding
+design choices were sound.
+
+In short, the system is not a prototype that merely gestures at its intended scope. It is a
+runnable, role-aware, secure platform in which the day-to-day operations of a multi-sport
+club---squad administration, training, match operations, medical care, recruitment,
+commercial negotiation, analytics and fan engagement---are connected through a common
+identity and a common data backbone rather than scattered across disconnected tools.
+
+\section{What Was Delivered}
+\label{sec:delivered}
+
+The project delivered a complete, runnable multi-sport club management platform whose
+principal artefacts are summarised below. The itemisation is deliberately concrete: each
+entry names the artefact, its location in the architecture, and the requirement family it
+satisfies, so that the claim of completeness can be checked against the requirements
+catalogue reproduced in Appendix~A.
+
+\begin{itemize}
+  \item \textbf{A microservices back-end.} Seven Spring~Boot services---the six domain
+        services user-management, player-management, training-match, medical-fitness,
+        reports-analytics and notification-mail, fronted by an API gateway, a configuration
+        server and a Eureka service registry---all orchestrated by a single Docker~Compose
+        definition alongside Keycloak, PostgreSQL, Kafka, Redis and RabbitMQ. Each domain
+        service owns a dedicated database, registers itself for discovery on boot, and
+        draws its configuration from the Config Server, so that the entire control plane
+        and data plane come up from one reproducible command.
+
+  \item \textbf{Layered identity and access control.} Every request is authenticated
+        against the Keycloak \texttt{mscms} realm using the \texttt{keycloakId}
+        identifier (the JWT \texttt{sub} claim, never an internal database key), and
+        authorisation is enforced consistently at three layers---the identity provider, the
+        API gateway and the Next.js route guards---so that the same per-role permission
+        rules apply whether a user navigates the interface or calls the APIs directly. The
+        front-end permission map is the single source of truth that drives both the
+        navigation a user sees and the routes the middleware will admit, eliminating drift
+        between what is shown and what is allowed.
+
+  \item \textbf{A real competitions module.} Database-backed competitions modelling
+        La~Liga and the new-format UEFA Champions League (a single combined league phase
+        followed by a knockout bracket that unlocks only once the league phase concludes),
+        with a guided multi-step creation flow, automatic round-robin fixture generation
+        for league formats, completed competitions automatically locked as read-only with a
+        ``Completed'' badge, and real, finished seasons imported from the football-data.org
+        API as seed data. Standings are recomputed from the recorded fixture results rather
+        than stored, so the table is always consistent with the matches that produced it.
+
+  \item \textbf{A live-match engine.} A broadcast-style phase machine advancing a match
+        through first half, half-time, second half and full time---and, for knockout
+        ties, through two periods of extra time and a penalty shoot-out---with the line-up
+        locked at creation, phase-bounded and administrator-set stoppage time, per-sport
+        substitution limits, in-match event and injury recording, real goal and result
+        alerts raised as events occur, and automatic write-back of the final score to the
+        source competition fixture. The knockout-versus-points decision is resolved from
+        the originating fixture's round, so a draw is correctly permitted for a league-phase
+        fixture and correctly disallowed for a knockout tie.
+
+  \item \textbf{A clinical injury-management workflow.} A medical \emph{Treatment Room}
+        separating currently-injured from recovered players, with each player advancing
+        through a staged journey---injury, diagnosis, treatment, rehabilitation, recovery,
+        fitness test and return to fitness---driven by the injury's own status as the single
+        source of truth for the current stage. Logging an injury automatically withdraws the
+        player from upcoming matches, line-ups and training, and only a passing fitness test
+        returns the player to the available pool; the journey is supported by general
+        medical reference catalogues for injuries, diagnoses, treatments, rehabilitation,
+        recovery programmes and fitness tests.
+
+  \item \textbf{Real-time team messaging.} A group-chat facility built on persistent
+        \texttt{ChatGroup} and \texttt{ChatGroupMember} entities, with a seeded general
+        group returned to everyone, user-created groups, membership invitations carrying an
+        invited-or-member state with explicit accept and decline actions, threaded replies
+        and emoji reactions, and client-side de-duplication so each message renders exactly
+        once. Delivery uses a native WebSocket channel connected directly to the
+        notification service at \texttt{ws://localhost:8085/ws/chat}, deliberately outside
+        the gateway's JWT filter, with authenticated polling retained as a resilient
+        fallback.
+
+  \item \textbf{An event-driven notification centre.} A top-bar alert bell backed by a
+        Kafka consumer that turns domain events---scheduled and completed matches,
+        injuries, transfers and cancelled training, together with live-match goal and
+        result alerts contributed directly by the live engine---into role-aware,
+        priority-tagged notifications. The centre presents alerts and notifications across
+        two tabs, carries unread badges, and refreshes on a short polling interval so that
+        critical events reach the relevant actor promptly.
+
+  \item \textbf{A polished, role-aware front-end.} A Next.js application providing
+        per-role dashboards, a public-facing Club Hub and player profiles with real
+        photographs, the competitions and match surfaces described above, aggregated
+        analytics and reports, a read-only mode for players and fans, and a settings area
+        with real persistence and a Keycloak-verified password-change flow, all presented
+        under the \textit{Sportify} brand identity. Auxiliary surfaces such as a head-to-head
+        record view and a real FIFA World Cup view, computed entirely from back-end data,
+        round out the consumer-facing experience.
+
+  \item \textbf{Project documentation and deployment assets.} Alongside the running code,
+        the project delivered an entity-relationship description of the six databases, an
+        authentication sequence description, a complete features-and-endpoints reference, a
+        Docker quick-start guide, and the prebuilt-image build workflow that allows the
+        stack to be assembled reproducibly on a host where in-container Maven cannot reach
+        the network. The deployment and run procedure is reproduced in Appendix~E.
+\end{itemize}
+
+\section{Lessons Learned}
+\label{sec:lessons}
+
+Developing a distributed system of this scope as a student team yielded several
+durable lessons, both technical and organisational. They are recorded here not as
+platitudes but as concrete observations that changed how the team worked.
+
+\paragraph{Contract drift is the dominant cost of distributed development.}
+The single most expensive recurring problem was the drift between the front-end client,
+the back-end data-transfer objects and the database schema. A field renamed on one side,
+or a status value spelled differently across services, repeatedly produced silent
+failures that were costly to trace because no single component was obviously at fault: the
+front-end believed it was sending the right shape, the back-end believed it was receiving
+the wrong one, and the only evidence was an empty list or a swallowed error. The team
+mitigated this by nominating a single source of truth for each cross-cutting concern---for
+example a shared permissions module on the front-end and seed-identifier constants on the
+back-end---and by treating the REST contract~\cite{restapi} as a deliberate interface
+rather than an incidental byproduct of implementation. The broader lesson is that in a
+distributed system the interface between components deserves at least as much design care as
+the components themselves.
+
+\paragraph{Asynchronous, event-driven design pays for itself as features grow.}
+Adopting a Kafka event backbone~\cite{kafka} early meant that later features such as
+the notification centre and live-match alerts could be added by consuming events already
+being published, rather than by threading new synchronous calls through multiple
+services. When the live-match engine needed to announce a goal or a final result, it did
+not need to know who cared---it published an event, and the notification service, which
+already consumed the domain's event stream, turned it into an alert. This validated the
+decision to favour loose coupling and demonstrated, in practice, why event-driven
+microservices~\cite{microservices} scale better with feature count than a tightly coupled
+design: the cost of adding a consumer is independent of the number of producers.
+
+\paragraph{Centralised identity simplifies everything downstream.}
+Delegating authentication to Keycloak~\cite{keycloak} and propagating identity as a
+signed JWT~\cite{jwt} removed an entire class of problems---password storage, session
+handling and per-service user tables---and made the three-layer RBAC~\cite{rbac} model
+tractable. Because every service trusts the same signed token and refers to a person by the
+same \texttt{keycloakId}, identity never had to be reconciled across service boundaries.
+The lesson was that investing in a single identity provider before building features,
+rather than retrofitting one later, repaid the effort many times over; the two-step,
+Keycloak-verified password change is a small but telling example of the leverage this
+gained, since the same provider that issues tokens also authoritatively re-verifies the
+current credential before allowing it to change.
+
+\paragraph{Idempotent, deterministic seeding makes a distributed system safe to operate.}
+Guarding every seeding routine so that it runs only against an empty store, and preserving a
+deterministic insertion order so that cross-service numeric identifiers remain stable, made
+the full stack safe to tear down and redeploy without corrupting data. This proved
+indispensable when iterating across seven services with independent databases: the team
+could wipe the volumes, bring the stack back up, and rely on a consistent baseline in which
+FC~Barcelona always carried the same team identifier in every service that referenced it.
+
+\paragraph{A container-first discipline removes a whole category of integration pain.}
+Running every service through Docker~Compose from the earliest iterations~\cite{docker}
+eliminated the ``works on my machine'' class of defect and gave every iteration a
+reproducible integration environment. The discovery that in-container Maven could not reach
+the network on the development machine forced a prebuilt-image workflow---building fat jars
+on the host and copying them into minimal runtime images---which, although born of a
+constraint, ultimately produced faster, more predictable rebuilds.
+
+\paragraph{Teamwork lessons.}
+Working as a multi-person team across loosely coupled services, an agile, iterative
+process~\cite{agile} with short cycles and frequent integration was essential: the
+team learned to agree interface contracts before parallel work began, to integrate often
+rather than at the end, and to keep shared documentation and conventions current so that
+a service owned by one member could be safely consumed by another. Clear ownership of
+each service, combined with disciplined communication at the integration boundaries,
+was the practical key to progressing in parallel without constant blocking. The team also
+learned the value of a vertical-slice habit---finishing each iteration with an integrated,
+runnable system rather than a drawer of disconnected parts---because it surfaced
+integration problems while they were still small and cheap to fix.
+
+\section{Limitations}
+\label{sec:limitations}
+
+In the interest of an honest appraisal, the system carries a number of limitations that a
+production deployment would need to address. These are stated plainly; none of them
+undermines the project's central claim, but each marks a boundary between what was built and
+what a fully operational product would require.
+
+\begin{itemize}
+  \item \textbf{Single-region, single-host deployment.} The platform runs as a single
+        Docker~Compose~\cite{docker} stack on one host. There is no clustering,
+        horizontal autoscaling or multi-region redundancy, so the current deployment is
+        appropriate for demonstration and evaluation rather than high-availability
+        production use. The architecture is designed to permit horizontal scaling---each
+        service is stateless behind the gateway and discoverable through Eureka---but that
+        capability has not been exercised against a real orchestrator.
+
+  \item \textbf{Manual operational tasks.} Several operational steps remain manual,
+        including building service artefacts on the host before image assembly and the
+        manual triggering of certain data-synchronisation tasks. There is no continuous
+        integration or deployment pipeline, and observability is limited to container
+        logs rather than dedicated metrics, dashboards and distributed tracing, which makes
+        diagnosing a cross-service problem more laborious than it would be in a mature
+        operational setup.
+
+  \item \textbf{Client-side medical reference templates.} The general medical
+        catalogue templates that support the injury workflow are partly held on the client
+        rather than being fully persisted server-side, which means they are not yet
+        centrally managed or shared consistently across sessions and users. The per-player
+        clinical records themselves are persisted; it is the reusable template library that
+        is incompletely server-backed.
+
+  \item \textbf{Constraints of the external data feed.} Because real fixture data is
+        drawn from the free tier of football-data.org~\cite{footballdata}, the system
+        is limited to the competitions and seasons that tier exposes; team-scoped endpoints
+        are forbidden on the free tier, so the service reads competition-scoped endpoints
+        instead. At the project's reference date the available data is post-season and
+        therefore consists of finished matches, so the live-match engine is best
+        demonstrated on manually created fixtures rather than on genuinely upcoming
+        real-world ones.
+
+  \item \textbf{Approximated real-time presence.} Real-time messaging operates over a
+        WebSocket channel~\cite{websocket} with a polling fallback, but the system does
+        not yet include a dedicated presence service tracking online status, typing
+        indicators and delivery and read receipts reliably across all clients. Presence is
+        approximated rather than authoritative.
+
+  \item \textbf{Evaluation by inspection rather than automated UI testing.} Validation
+        of the user interface was performed largely by manual inspection and by
+        screenshots of each role's surfaces (presented in Chapter~\ref{ch:results}),
+        rather than by an automated end-to-end test suite, so regression protection on the
+        front-end is limited and a future change could silently break a flow that is not
+        re-checked by hand.
+
+  \item \textbf{No commercial transaction layer.} The platform models sponsorship and
+        transfer workflows but does not implement payment, ticketing or merchandising,
+        and therefore does not handle real financial transactions or the compliance,
+        reconciliation and fraud concerns that accompany them.
+
+  \item \textbf{Decoupled, snapshot machine learning.} The match-prediction and
+        player-rating models are served by standalone FastAPI services reached through a
+        proxy rather than the gateway, and they operate on static trained snapshots rather
+        than a continuously retrained pipeline, so their predictions do not yet improve
+        automatically as fresh match data accumulates.
+\end{itemize}
+
+\section{Future Work and Recommendations}
+\label{sec:future-work}
+
+The architecture leaves ample room for extension. The following recommendations are
+ordered roughly by the value they would add relative to the effort required, and are
+grouped into product extensions, which add user-facing capability, and platform
+extensions, which raise operational maturity. In every case the recommendation builds on a
+mechanism the platform already possesses---the shared identity, the event backbone, the
+gateway origin or the reporting service---rather than requiring an architectural departure.
+
+\subsection{Product Extensions}
+
+\begin{itemize}
+  \item \textbf{Native mobile application.} A native or cross-platform mobile client
+        for players, coaches and fans would reuse the existing gateway and Keycloak
+        realm without introducing a new identity surface. Players would receive push
+        notifications for line-ups, training schedules and injury updates; coaches would
+        log attendance and rate sessions in the field; and an offline-first cache would
+        keep the app usable on poor connections at training grounds and stadiums.
+
+  \item \textbf{Payments, ticketing and merchandising.} An e-commerce surface---branded
+        kit, season tickets and match-day tickets---wired into the same Keycloak
+        identity and fan navigation, owned by a new service with its own database and
+        integrated with a payment gateway. Revenue events would flow into the
+        reports-analytics service so that commercial performance can be correlated with
+        on-pitch results, closing the loop between the sporting and commercial sides of the
+        club within a single analytical surface.
+
+  \item \textbf{A true presence and delivery service.} Promoting the current messaging
+        layer to a dedicated presence service would add reliable online-status tracking,
+        typing indicators and delivery and read receipts over the existing WebSocket
+        channel~\cite{websocket}, removing the present reliance on a polling fallback and
+        turning approximated presence into authoritative presence.
+
+  \item \textbf{Fan-engagement layer.} Polls, player-of-the-match voting and
+        predict-the-score mini-games, all tied to the same fan identity and driven by
+        Kafka events~\cite{kafka} already published by the back-end, would deepen
+        engagement without adding new write paths to the operational schema. Because the
+        live-match engine already emits goal and result events, a predict-the-score game
+        could be settled automatically from the event stream.
+
+  \item \textbf{A global clubs and players directory.} Replacing the static reference data
+        that currently backs the rival-club directory and the competition team pools with a
+        real back-end catalogue would let administrators compose competitions from a
+        managed, searchable set of clubs and players, and would enable team and player
+        comparison features across the whole directory rather than only the modelled club.
+
+  \item \textbf{Cross-platform search.} A unified search surface spanning players, staff,
+        matches, competitions and messages would shorten navigation for power users and is a
+        natural addition now that the domains share a common identity and gateway origin.
+\end{itemize}
+
+\subsection{Platform Extensions}
+
+\begin{itemize}
+  \item \textbf{Deeper AI and machine learning.} The existing match-prediction and
+        player-rating models could be promoted from static snapshots to a production
+        pipeline that periodically retrains on fresh match data through a versioned
+        model registry, with drift alerts delivered through the existing notification
+        fabric. Further models---injury-risk estimation from training load, or
+        opponent-style classification---would extend the analytical value of the
+        platform and would consume data the medical-fitness and training-match services
+        already capture.
+
+  \item \textbf{Horizontal scaling and high availability.} Migrating the
+        single-host Docker~Compose stack to a container orchestrator with
+        per-service horizontal autoscaling would allow the system to absorb fan-traffic
+        bursts on match days and to provide the redundancy that production operation
+        requires, building naturally on the service decomposition already in
+        place~\cite{microservices} and on the stateless, discoverable design of each
+        service.
+
+  \item \textbf{Continuous integration, observability and auditing.} Introducing an
+        automated build-test-deploy pipeline, centralised metrics and dashboards,
+        distributed tracing across services, and a granular audit log of every
+        state-changing administrative action would substantially improve operational
+        maturity and governance, and would replace the current reliance on raw container
+        logs for diagnosis.
+
+  \item \textbf{Automated end-to-end testing.} An automated front-end and integration
+        test suite, exercising the key per-role flows against the REST
+        contract~\cite{restapi}, would replace much of the present manual inspection
+        and provide durable regression protection as the platform evolves; pairing it with
+        contract tests at the service boundaries would directly attack the contract-drift
+        problem identified among the lessons learned.
+
+  \item \textbf{Hardening for production identity and transport.} Enabling TLS end to
+        end, moving refresh-token handling and the WebSocket handshake fully behind the
+        gateway, and tightening CORS and cookie flags for an HTTPS deployment would close
+        the gap between the demonstration configuration and a production-grade security
+        posture, again leveraging Keycloak~\cite{keycloak} as the single identity authority.
+\end{itemize}
+
+In summary, MSCMS---delivered under the \textit{Sportify} brand---fulfils its stated
+goal of unifying the operations of a modern multi-sport club into a single secure,
+cloud-native platform, and its modular, event-driven architecture provides a sound
+foundation on which the extensions outlined above can be built incrementally. The project
+therefore concludes not as a finished product but as a robust, extensible platform whose
+design has already been shown to absorb substantial new behaviour without structural
+change---which is precisely the property a long-lived club-management system most needs.

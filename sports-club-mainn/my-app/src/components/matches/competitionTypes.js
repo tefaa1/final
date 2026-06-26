@@ -96,6 +96,46 @@ export function resolveCompetitionKind(option, name) {
 
 export const isKnockout = (kind) => normaliseKind(kind) === COMPETITION_KIND.KNOCKOUT;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// FIXTURE-ROUND CLASSIFICATION — the AUTHORITATIVE league-vs-knockout signal.
+//
+// A modern competition can be BOTH: e.g. the UEFA Champions League is a KNOCKOUT
+// competition overall, yet its early "league phase" (formerly group stage) is a
+// POINTS table where a DRAW is a perfectly valid final result. The competition
+// `type` alone (KNOCKOUT) is therefore NOT enough — the deciding factor is which
+// ROUND a given fixture belongs to:
+//
+//   • LEAGUE-PHASE rounds  → points match → ends at FULL TIME on a draw.
+//       LEAGUE_PHASE, LEAGUE_STAGE, GROUP_STAGE, GROUP, REGULAR_SEASON, MATCHDAY…
+//   • KNOCKOUT rounds      → a winner is required → extra time, then penalties.
+//       PLAYOFF(S), LAST_16, ROUND_OF_16, QUARTER/SEMI_FINAL(S), FINAL, KNOCKOUT…
+//
+// classifyFixtureRound(round) → COMPETITION_KIND.LEAGUE | KNOCKOUT | null
+// (null = the round is unknown/blank and carries no signal, so the caller falls
+// back to the competition/matchType heuristics).
+// ─────────────────────────────────────────────────────────────────────────────
+
+const LEAGUE_ROUND_HINTS = [
+  "league_phase", "league phase", "league_stage", "league stage",
+  "group_stage", "group stage", "group", "regular_season", "regular season",
+  "matchday", "match day", "round_robin", "round-robin", "round robin",
+];
+const KNOCKOUT_ROUND_HINTS = [
+  "play_off", "play-off", "playoff", "knockout", "knock-out",
+  "round_of", "round of", "last_16", "last 16", "last_8", "round_16",
+  "ro16", "ro32", "quarter", "semi", "final", "elimination", "bracket",
+];
+
+export function classifyFixtureRound(round) {
+  const r = norm(round);
+  if (!r) return null;
+  // League hints win first — "league phase" must not be misread as knockout, and
+  // the word "final" inside e.g. a custom name is only checked after league hints.
+  if (LEAGUE_ROUND_HINTS.some((h) => r.includes(h))) return COMPETITION_KIND.LEAGUE;
+  if (KNOCKOUT_ROUND_HINTS.some((h) => r.includes(h))) return COMPETITION_KIND.KNOCKOUT;
+  return null;
+}
+
 // Pull the sport out of a custom competition row (the API is inconsistent about
 // the field name and may omit it entirely).
 export function competitionSport(c) {

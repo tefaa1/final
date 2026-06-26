@@ -15,8 +15,9 @@ import { FiStar } from "react-icons/fi";
 //   players:    full squad (resolve playerId → name/photo)
 //   coachName:  (id) => string  — resolve reviewedByCoachId → coach name
 //   sport:      title-case sport for the avatar fallback
+//   addSlot:    optional React node rendered at the top (the "Add review" form)
 // ─────────────────────────────────────────────────────────────────────────────
-export default function MatchReviewsPanel({ reviews = [], players = [], coachName, sport = "Football" }) {
+export default function MatchReviewsPanel({ reviews = [], players = [], coachName, sport = "Football", addSlot = null }) {
   const byId = (id) => players.find((p) => String(p.id) === String(id));
 
   return (
@@ -32,6 +33,7 @@ export default function MatchReviewsPanel({ reviews = [], players = [], coachNam
       </div>
 
       <div className="p-3 space-y-3 max-h-[80vh] overflow-y-auto custom-scrollbar">
+        {addSlot && <div>{addSlot}</div>}
         {reviews.length === 0 ? (
           <div className="px-3 py-10 text-center">
             <div className="text-2xl mb-2">⭐</div>

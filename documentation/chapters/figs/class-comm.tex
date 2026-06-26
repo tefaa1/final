@@ -1,0 +1,40 @@
+% auto-generated figure: class-comm (source: wf)
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=10mm]
+  \UmlClass{notif}{Notification}{%
+    - recipientKeycloakId\\
+    - type\\
+    - category\\
+    - title\\
+    - body\\
+    - read : boolean\\
+    - createdAt}{}
+  \UmlClass[right=10mm of notif]{alert}{Alert}{%
+    - type\\
+    - priority\\
+    - targetRole : opt.\\
+    - acknowledged : boolean\\
+    - resolved : boolean}{}
+  \UmlClass[below=12mm of notif]{msg}{Message}{%
+    - senderKeycloakId\\
+    - groupId\\
+    - body\\
+    - parentMessageId : opt.\\
+    - createdAt}{}
+  \UmlClass[right=22mm of msg]{grp}{ChatGroup}{%
+    - name\\
+    - ownerKeycloakId}{}
+  \UmlClass[below=12mm of grp]{mem}{ChatGroupMember}{%
+    - memberKeycloakId\\
+    - status : invited / member\\
+    - invitedBy}{}
+
+  % composition: ChatGroup composes 1..* ChatGroupMember
+  \draw[flow] (grp) -- node[lbl,pos=0.5]{\itshape composes 1..*} (mem);
+  % reference: Message -> ChatGroup
+  \draw[flow] (msg) -- node[lbl,pos=0.5]{\itshape posted in 1} (grp.west);
+\end{tikzpicture}
+\caption{Class model of the communication subsystem (\texttt{mscms\_notification}), showing per-recipient notifications, role-targeted alerts, threaded messages, and chat groups that compose their members.}
+\label{fig-class-comm}
+\end{figure}

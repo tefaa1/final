@@ -1,0 +1,166 @@
+%==============================================================================
+%  CHAPTER: System Design and Models
+%  A diagram-rich chapter that visualises the architecture, behaviour and data
+%  of the platform. Figures are generated TikZ/UML diagrams stored in
+%  chapters/figs/ and pulled in with \input.
+%==============================================================================
+\chapter{System Design and Models}
+\label{ch:design}
+
+The previous chapter described \emph{what} the platform must do and the
+principles that shape it. This chapter makes the design concrete by modelling
+the system from six complementary viewpoints: the static \textbf{architecture}
+of the deployed services, the \textbf{use cases} each role performs, the
+\textbf{class} (domain) model of every subsystem, the
+\textbf{entity-relationship} model of each database, the \textbf{behavioural
+sequences} that exercise the architecture at run time, and the \textbf{state
+machines} that govern the most important life cycles. Together these models
+provide a complete blueprint of the Multi-Sport Club Management System (MSCMS)
+and form the bridge between the requirements of
+Chapter~\ref{ch:methodology} and the delivered system of
+Chapter~\ref{ch:results}. All diagrams in this chapter are drawn to reflect the
+system as actually implemented.
+
+%==============================================================================
+\section{System Architecture}
+\label{sec:design-arch}
+
+The platform is a cloud-native, microservices system in which a single Next.js
+front-end communicates exclusively with a Spring Cloud API gateway, and the
+gateway routes authenticated traffic to a set of independent domain services.
+Figure~\ref{fig-arch-overview} presents the high-level architecture: the gateway
+verifies the Keycloak-issued JWT on every request and forwards it to one of the
+six domain services, each of which owns a private PostgreSQL database, so that no
+service ever reaches into another's data. A Eureka/Config control plane provides
+discovery and centralised configuration, Apache~Kafka carries domain events
+asynchronously to the notification service, and a decoupled Python/FastAPI
+machine-learning service and the external football-data.org feed sit at the
+edges of the system. The raw chat WebSocket is the single channel that
+deliberately bypasses the gateway.
+
+\input{chapters/figs/arch-overview}
+
+Figure~\ref{fig-arch-deploy} shows the same system from a deployment standpoint:
+every component is a container orchestrated by Docker Compose on a single shared
+network, grouped into infrastructure backing services, the Spring Cloud control
+plane, the six domain services, the machine-learning service and the front-end.
+This is the unit of reproducible deployment described in Appendix~\ref{app:deploy}.
+
+\input{chapters/figs/arch-deploy}
+
+%==============================================================================
+\section{Use-Case Models}
+\label{sec:design-usecase}
+
+The platform serves many roles, each with a distinct surface of operations.
+The following use-case diagrams group those operations by the actors that
+perform them. Figure~\ref{fig-uc-admin} covers administration and club
+management (the administrator, sport manager and team manager);
+Figure~\ref{fig-uc-match} covers match and training operations (coaching staff
+and analysts); Figure~\ref{fig-uc-medical} covers the medical and fitness staff;
+and Figure~\ref{fig-uc-business} covers scouting, sponsorship and the read-only
+surface presented to players and fans.
+
+\input{chapters/figs/uc-admin}
+\input{chapters/figs/uc-match}
+\input{chapters/figs/uc-medical}
+\input{chapters/figs/uc-business}
+
+%==============================================================================
+\section{Class and Domain Models}
+\label{sec:design-class}
+
+The relational schema is materialised in the running services as a set of JPA
+entity classes related by composition (an owning parent that manages the life
+cycle of its children) and by reference (an identifier the application resolves
+on demand). The class diagrams below capture each subsystem in turn. The user
+identity model (Figure~\ref{fig-class-user}) shows the central \texttt{User}
+specialised by a one-to-one profile per role. The squad model
+(Figure~\ref{fig-class-squad}) expresses the team hierarchy and the transfer
+market. The match and training model (Figure~\ref{fig-class-match}) and the
+competition model (Figure~\ref{fig-class-competition}) show why a match, its
+formation and its starting line-up form a single atomic aggregate. The medical
+model (Figure~\ref{fig-class-medical}) encodes the recovery journey as a
+composition hierarchy rooted at \texttt{Injury}, and the communication
+(Figure~\ref{fig-class-comm}) and analytics (Figure~\ref{fig-class-reports})
+models complete the picture.
+
+\input{chapters/figs/class-user}
+\input{chapters/figs/class-squad}
+\input{chapters/figs/class-match}
+\input{chapters/figs/class-competition}
+\input{chapters/figs/class-medical}
+\input{chapters/figs/class-comm}
+\input{chapters/figs/class-reports}
+
+%==============================================================================
+\section{Entity-Relationship (Database) Models}
+\label{sec:design-er}
+
+Because every domain service owns its own database, the data model is best
+presented one database at a time. Each diagram shows the principal tables of a
+service database, their primary and foreign keys and the relationships between
+them. Figure~\ref{fig-er-user} models the user database with its central
+\texttt{user} table and per-role extension tables;
+Figure~\ref{fig-er-player} the squad and transfer market;
+Figure~\ref{fig-er-training} the (largest) training, match and competition
+schema; Figure~\ref{fig-er-medical} the injury aggregate and independent
+measurement tables; Figure~\ref{fig-er-notification} the notification,
+alerting and group-chat tables; and Figure~\ref{fig-er-reports} the derived
+analytics and authored artefacts, which reference the operational domains only
+by opaque identifier.
+
+\input{chapters/figs/er-user}
+\input{chapters/figs/er-player}
+\input{chapters/figs/er-training}
+\input{chapters/figs/er-medical}
+\input{chapters/figs/er-notification}
+\input{chapters/figs/er-reports}
+
+%==============================================================================
+\section{Behavioural Sequence Models}
+\label{sec:design-seq}
+
+The static models above are exercised at run time by a number of behavioural
+flows. The sequence diagrams in this section trace the cooperation between the
+front-end, the gateway, the domain services, Keycloak and Kafka for the most
+important interactions. They cover authentication and token issuance
+(Figure~\ref{fig-seq-login}); the atomic scheduling of an official match with
+its line-up (Figure~\ref{fig-seq-schedule}); live-match phase progression and
+the minute-bounded goal event (Figure~\ref{fig-seq-live}); an in-match injury
+that forces a substitution and creates a real medical record across two services
+(Figure~\ref{fig-seq-injury-sub}); the staged injury-to-recovery workflow
+(Figure~\ref{fig-seq-medical}); real-time group messaging over WebSocket with a
+polling fallback (Figure~\ref{fig-seq-messaging}); the scheduled ingestion of
+external fixtures (Figure~\ref{fig-seq-ingest}); event-driven notification
+creation over Kafka (Figure~\ref{fig-seq-notify}); and a password change that is
+only permitted after the current password is verified
+(Figure~\ref{fig-seq-password}).
+
+\input{chapters/figs/seq-login}
+\input{chapters/figs/seq-schedule}
+\input{chapters/figs/seq-live}
+\input{chapters/figs/seq-injury-sub}
+\input{chapters/figs/seq-medical}
+\input{chapters/figs/seq-messaging}
+\input{chapters/figs/seq-ingest}
+\input{chapters/figs/seq-notify}
+\input{chapters/figs/seq-password}
+
+%==============================================================================
+\section{State and Lifecycle Models}
+\label{sec:design-state}
+
+Finally, three entities have a life cycle rich enough to deserve an explicit
+state machine. Figure~\ref{fig-state-match} models the broadcast-style phase
+machine of a live match, including the extra-time and penalty branch reserved
+for unresolved knockout ties. Figure~\ref{fig-state-injury} models the injury
+life cycle, whose stage is read directly from the injury's status and which
+returns a player to availability only on a passing fitness test.
+Figure~\ref{fig-state-competition} models the competition life cycle, including
+the Champions League specialisation in which the knockout bracket is locked
+until the league phase is complete and a finished competition becomes read-only.
+
+\input{chapters/figs/state-match}
+\input{chapters/figs/state-injury}
+\input{chapters/figs/state-competition}

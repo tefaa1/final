@@ -1,0 +1,35 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=20mm and 22mm, on grid, auto]
+  % top regulation row
+  \node[st,initial,initial text={}] (sc) {Sched\\-uled};
+  \node[st,right=of sc] (fh) {First\\Half};
+  \node[st,right=of fh] (ht) {Half\\Time};
+  \node[st,right=of ht] (sh) {Second\\Half};
+  \node[st,right=of sh] (ft) {Full\\Time};
+  % accepting state and knockout branch
+  \node[st,accepting,below=24mm of sh] (fin) {Fin\\-ished};
+  \node[st,below=24mm of ft] (pen) {Penal\\-ties};
+  \node[st,right=of pen] (et) {Extra\\Time};
+
+  % regulation progression
+  \draw[flow] (sc) -- node[lbl,above]{kick-off} (fh);
+  \draw[flow] (fh) -- node[lbl,above]{half-time} (ht);
+  \draw[flow] (ht) -- node[lbl,above]{resume} (sh);
+  \draw[flow] (sh) -- node[lbl,above]{90 mins} (ft);
+
+  % league / draw allowed: straight to Finished
+  \draw[flow] (ft) -- node[lbl,pos=0.45,sloped]{league / level OK} (fin);
+
+  % knockout & level branch: Full Time -> Extra Time -> Penalties -> Finished
+  \draw[flow] (ft) -- node[lbl,right]{knockout \& level} (et);
+  \draw[flow] (et) -- node[lbl,above]{still level} (pen);
+  \draw[flow] (pen) -- node[lbl,above]{shoot-out} (fin);
+\end{tikzpicture}%
+}
+
+\end{document}

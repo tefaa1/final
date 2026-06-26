@@ -1,0 +1,80 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=4mm and 6mm]
+
+  % ---- Infrastructure group --------------------------------------------
+  \node[comp] (pg) {PostgreSQL\,14\\\scriptsize one DB/service};
+  \node[comp, right=of pg] (kc) {Keycloak\,26\\\scriptsize realm \texttt{mscms}};
+  \node[comp, right=of kc] (kf) {Kafka\,+\,Zookeeper};
+  \node[comp, right=of kf] (rd) {Redis};
+  \node[comp, right=of rd] (rmq) {RabbitMQ};
+  \begin{scope}[on background layer]
+    \node[draw=dLine, dashed, rounded corners=4pt, fill=dFill!40,
+          inner sep=6pt, fit=(pg)(kc)(kf)(rd)(rmq),
+          label={[font=\small\bfseries,dBlue]above:Infrastructure}] (infra) {};
+  \end{scope}
+
+  % ---- Control plane group ---------------------------------------------
+  \node[svc, below=16mm of pg, xshift=8mm] (eureka) {Eureka\\\scriptsize :8761};
+  \node[svc, right=of eureka] (config) {Config Server\\\scriptsize :8082};
+  \node[svc, right=of config] (gw) {API Gateway\\\scriptsize :8080};
+  \begin{scope}[on background layer]
+    \node[draw=dLine, dashed, rounded corners=4pt, fill=dFill!40,
+          inner sep=6pt, fit=(eureka)(config)(gw),
+          label={[font=\small\bfseries,dBlue]above:Control plane}] (control) {};
+  \end{scope}
+
+  % ---- Domain services group -------------------------------------------
+  \node[svc, below=18mm of eureka, xshift=-2mm] (usr) {user-management\\\scriptsize :8081};
+  \node[svc, right=of usr] (ply) {player-management\\\scriptsize :8084};
+  \node[svc, right=of ply] (trm) {training-match\\\scriptsize :8087};
+  \node[svc, below=4mm of usr] (med) {medical-fitness\\\scriptsize :8086};
+  \node[svc, right=of med] (rep) {reports-analytics\\\scriptsize :8083};
+  \node[svc, right=of rep] (ntf) {notification-mail\\\scriptsize :8085};
+  \begin{scope}[on background layer]
+    \node[draw=dLine, dashed, rounded corners=4pt, fill=dFill!40,
+          inner sep=6pt, fit=(usr)(ply)(trm)(med)(rep)(ntf),
+          label={[font=\small\bfseries,dBlue]above:Domain services (Spring Boot)}] (domain) {};
+  \end{scope}
+
+  % ---- ML group --------------------------------------------------------
+  \node[ext, right=24mm of trm, yshift=-9mm, inner sep=4pt] (ml) {Python / FastAPI\\\scriptsize ML services\\\scriptsize :9000 / :9001};
+  \begin{scope}[on background layer]
+    \node[draw=dRed!70, dashed, rounded corners=4pt, fill=dRed!4,
+          inner sep=6pt, fit=(ml),
+          label={[font=\small\bfseries,dRed]above:Machine learning}] (mlbox) {};
+  \end{scope}
+
+  % ---- Frontend group --------------------------------------------------
+  \node[comp, above=16mm of kf, yshift=6mm] (fe) {Next.js 16 frontend};
+  \begin{scope}[on background layer]
+    \node[draw=dLine, dashed, rounded corners=4pt, fill=dFill!40,
+          inner sep=6pt, fit=(fe),
+          label={[font=\small\bfseries,dBlue]above:Frontend}] (febox) {};
+  \end{scope}
+
+  % ---- Shared docker network bus ---------------------------------------
+  \coordinate (busL) at ([xshift=-12mm]control.west |- control.south);
+  \node[draw=dLine, fill=dLine!12, rounded corners=2pt, minimum height=5mm,
+        font=\scriptsize\bfseries, text=dBlue,
+        below=7mm of control] (bus)
+        {\hspace{1pt}Docker network\;\,(\texttt{mscms-net}) --- single bridge network\hspace{1pt}};
+  \node[draw=dLine, dashed, rounded corners=2pt, inner sep=8pt,
+        fit=(infra)(control)(domain)(mlbox)(febox)(bus),
+        label={[font=\small\bfseries,dBlue]below:Docker host --- Docker Compose}] (host) {};
+
+  % attach each group to the network bus
+  \draw[biflow] (control) -- (bus);
+  \draw[biflow] (infra.south) -- ($(infra.south)+(0,-2mm)$) -| (bus.north);
+  \draw[biflow] (domain.north) -- (bus.south);
+  \draw[biflow] (mlbox.south) |- (bus.east);
+  \draw[biflow] (febox.south) -- ($(febox.south)+(0,-2mm)$) -| (bus.north);
+
+\end{tikzpicture}%
+}
+
+\end{document}

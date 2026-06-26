@@ -1,0 +1,43 @@
+% auto-generated figure: seq-live (source: wf)
+\begin{figure}[H]
+\centering
+{\footnotesize
+\begin{sequencediagram}
+  \newthread{op}{:Operator}
+  \newinst[1]{fe}{:Frontend}
+  \newinst[1]{gw}{:Gateway}
+  \newinst[1]{svc}{:training-match}
+  \newinst[1]{db}{:DB}
+
+  \begin{call}{op}{startMatch()}{fe}{phase: FirstHalf}
+  \end{call}
+
+  \begin{sdblock}{Phase machine}{FirstHalf $\to$ HalfTime $\to$ SecondHalf $\to$ FullTime}
+    \begin{call}{op}{advancePhase()}{fe}{phase = next}
+    \end{call}
+  \end{sdblock}
+
+  \begin{sdblock}{Record goal}{POST /match-events \{type=GOAL, minute\}}
+    \begin{call}{op}{recordGoal(minute)}{fe}{updated state}
+      \begin{call}{fe}{POST /match-events}{gw}{200 OK}
+        \begin{call}{gw}{create(event)}{svc}{result}
+          \begin{sdblock}{alt}{minute out of phase range}
+            \begin{call}{svc}{reject: invalid minute}{svc}{422}
+            \end{call}
+          \end{sdblock}
+          \begin{sdblock}{else}{minute within phase}
+            \begin{call}{svc}{persist match\_event (minute, event\_type)}{db}{row}
+            \end{call}
+            \begin{call}{svc}{update home/away\_team\_score}{db}{ok}
+            \end{call}
+          \end{sdblock}
+        \end{call}
+      \end{call}
+    \end{call}
+  \end{sdblock}
+
+\end{sequencediagram}
+}
+\caption{Sequence diagram of live-match phase progression and goal recording, showing the broadcast phase machine (first half, half-time, second half, full-time) and the minute-bounding validation that rejects out-of-phase goals before persisting the event and updating the score.}
+\label{fig-seq-live}
+\end{figure}

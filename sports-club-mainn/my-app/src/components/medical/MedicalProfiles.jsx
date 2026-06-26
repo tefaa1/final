@@ -1,146 +1,256 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import PlayerAvatar from "@/src/components/shared/PlayerAvatar";
-import { isInjured, statusOf } from "@/src/lib/playerStatus";
-import { isFitnessPass } from "@/src/lib/injuryActions";
-import { FiX } from "react-icons/fi";
+import { isActiveInjury, normStatus, stageFromInjury } from "@/src/lib/injuryActions";
+import MedicalJourney from "./MedicalJourney";
 
-const OPEN_INJURY = ["REPORTED", "DIAGNOSED", "TREATING", "RECOVERING", "CHRONIC"];
+// Stage order used to render the mini progress bar on each card. The bar's filled
+// length is derived from stageFromInjury() — the SAME single source of truth the
+// journey stepper uses — so the card label and the journey can never disagree.
+const STAGE_ORDER = ["REPORTED", "DIAGNOSED", "TREATING", "RECOVERING", "RECOVERED"];
+const STAGE_LABEL = { REPORTED: "Reported", DIAGNOSED: "Diagnosed", TREATING: "Treatment", RECOVERING: "Recovery", RECOVERED: "Fit again" };
 
-// Consolidated medical profile per player: injuries, treatments, rehab, recovery,
-// fitness tests + diagnoses, plus the live "Injured (Restricted)" flag and where
-// the player sits in the recovery pipeline.
-export default function MedicalProfiles({ players, injuries, treatments, rehabilitations, recoveries, fitness, diagnoses, playerTeamMap }) {
-    const [active, setActive] = useState(null);
+const SEV = {
+  MINOR: { text: "text-emerald-300", ring: "ring-emerald-500/30", bg: "bg-emerald-500/10", bar: "from-emerald-500 to-teal-500", dot: "bg-emerald-400" },
+  MODERATE: { text: "text-amber-300", ring: "ring-amber-500/30", bg: "bg-amber-500/10", bar: "from-amber-500 to-orange-500", dot: "bg-amber-400" },
+  SEVERE: { text: "text-orange-300", ring: "ring-orange-500/30", bg: "bg-orange-500/10", bar: "from-orange-500 to-rose-500", dot: "bg-orange-400" },
+  CRITICAL: { text: "text-rose-300", ring: "ring-rose-500/40", bg: "bg-rose-500/10", bar: "from-rose-500 to-red-600", dot: "bg-rose-400" },
+};
+const sevTone = (s) => SEV[String(s || "").toUpperCase()] || SEV.MODERATE;
+const pretty = (v) => (v ? String(v).replace(/_/g, " ") : "—");
 
-    const byPlayer = useMemo(() => {
-        const idx = {};
-        const ensure = (id) => (idx[id] ||= { injuries: [], treatments: [], rehabilitations: [], recoveries: [], fitness: [], diagnoses: [] });
-        const kc = {}; players.forEach((p) => { if (p.keycloakId) kc[p.keycloakId] = p.id; });
-        (injuries || []).forEach((x) => x.playerId != null && ensure(x.playerId).injuries.push(x));
-        (treatments || []).forEach((x) => x.playerId != null && ensure(x.playerId).treatments.push(x));
-        (rehabilitations || []).forEach((x) => x.playerId != null && ensure(x.playerId).rehabilitations.push(x));
-        (recoveries || []).forEach((x) => x.playerId != null && ensure(x.playerId).recoveries.push(x));
-        (fitness || []).forEach((x) => { const id = kc[x.playerKeycloakId]; if (id != null) ensure(id).fitness.push(x); });
-        (diagnoses || []).forEach((x) => { const id = kc[x.playerKeycloakId]; if (id != null) ensure(id).diagnoses.push(x); });
-        return idx;
-    }, [players, injuries, treatments, rehabilitations, recoveries, fitness, diagnoses]);
+// Premium face: real photo with the shared initials avatar as a fallback.
+function Face({ player, size = 52, className = "" }) {
+  const [broken, setBroken] = useState(false);
+  const name = `${player?.firstName || ""} ${player?.lastName || ""}`.trim();
+  const usePhoto = player?.photoUrl && !broken;
+  return (
+    <div className={`relative overflow-hidden rounded-2xl shrink-0 ${className}`} style={{ width: size, height: size }}>
+      <PlayerAvatar name={name} sport="General" className="absolute inset-0 w-full h-full" />
+      {usePhoto && (
+        <img src={player.photoUrl} alt={name} loading="lazy" onError={() => setBroken(true)}
+          className="absolute inset-0 w-full h-full object-cover object-top" />
+      )}
+    </div>
+  );
+}
 
-    // Players to show: injured OR with any medical record.
-    const profiles = useMemo(() => {
-        const list = players.filter((p) => isInjured(p) || byPlayer[p.id]);
-        const score = (p) => (isInjured(p) ? 0 : 1);
-        return list.sort((a, b) => score(a) - score(b) || `${a.firstName}`.localeCompare(`${b.firstName}`));
-    }, [players, byPlayer]);
+// Pick the injury that should drive a player's card: the most recent ACTIVE one,
+// otherwise the most recent injury overall.
+function pickInjury(injuries) {
+  if (!injuries?.length) return null;
+  const byDate = [...injuries].sort((a, b) => String(b.injuryDate || "").localeCompare(String(a.injuryDate || "")));
+  return byDate.find((i) => isActiveInjury(i)) || byDate[0];
+}
 
-    const stageOf = (rec) => ({
-        injury: (rec?.injuries || []).some((i) => OPEN_INJURY.includes(String(i.status).toUpperCase())) || (rec?.injuries || []).length > 0,
-        treatment: (rec?.treatments || []).length > 0,
-        rehab: (rec?.rehabilitations || []).length > 0,
-        recovery: (rec?.recoveries || []).length > 0,
-        fitnessPassed: (rec?.fitness || []).some(isFitnessPass),
+export default function MedicalProfiles({ players, injuries, treatments, rehabilitations, recoveries, fitness, diagnoses, playerTeamMap, catalogVersion, onChanged, pushToast }) {
+  const [active, setActive] = useState(null); // { player, rec, injury }
+
+  // Group every medical record under its player id (resolving keycloak → id).
+  const byPlayer = useMemo(() => {
+    const idx = {};
+    const ensure = (id) => (idx[id] ||= { injuries: [], treatments: [], rehabilitations: [], recoveries: [], fitness: [], diagnoses: [] });
+    const kcToId = {};
+    players.forEach((p) => { if (p.keycloakId) kcToId[p.keycloakId] = p.id; });
+    (injuries || []).forEach((x) => x.playerId != null && ensure(x.playerId).injuries.push(x));
+    (treatments || []).forEach((x) => x.playerId != null && ensure(x.playerId).treatments.push(x));
+    (rehabilitations || []).forEach((x) => x.playerId != null && ensure(x.playerId).rehabilitations.push(x));
+    (recoveries || []).forEach((x) => x.playerId != null && ensure(x.playerId).recoveries.push(x));
+    (fitness || []).forEach((x) => { const id = kcToId[x.playerKeycloakId]; if (id != null) ensure(id).fitness.push(x); });
+    (diagnoses || []).forEach((x) => { const id = kcToId[x.playerKeycloakId]; if (id != null) ensure(id).diagnoses.push(x); });
+    return idx;
+  }, [players, injuries, treatments, rehabilitations, recoveries, fitness, diagnoses]);
+
+  const playerById = useMemo(() => Object.fromEntries(players.map((p) => [p.id, p])), [players]);
+
+  // Build the two groups straight from the injury records (the real workflow
+  // state) — this stays correct even if a player's status flag lags behind.
+  const { injuredList, recoveredList, stats } = useMemo(() => {
+    const injured = [];
+    const recovered = [];
+    let inRehab = 0;
+    Object.entries(byPlayer).forEach(([pid, rec]) => {
+      const player = playerById[pid];
+      if (!player || !rec.injuries.length) return;
+      const drive = pickInjury(rec.injuries);
+      const st = normStatus(drive);
+      const isActive = isActiveInjury(drive);
+      if (st === "RECOVERING") inRehab++;
+      const entry = { player, rec, injury: drive };
+      if (isActive) injured.push(entry); else recovered.push(entry);
     });
+    const sevRank = { CRITICAL: 0, SEVERE: 1, MODERATE: 2, MINOR: 3 };
+    injured.sort((a, b) => (sevRank[String(a.injury?.severity).toUpperCase()] ?? 9) - (sevRank[String(b.injury?.severity).toUpperCase()] ?? 9));
+    recovered.sort((a, b) => String(b.injury?.injuryDate || "").localeCompare(String(a.injury?.injuryDate || "")));
+    return {
+      injuredList: injured,
+      recoveredList: recovered,
+      stats: { injured: injured.length, inRehab, recovered: recovered.length, total: injured.length + recovered.length },
+    };
+  }, [byPlayer, playerById]);
 
-    const PIPE = [["injury", "Injury"], ["treatment", "Treatment"], ["rehab", "Rehab"], ["recovery", "Recovery"], ["fitnessPassed", "Fitness ✓"]];
+  // Card progress is derived from the SAME source of truth as the journey stepper:
+  // stageFromInjury() returns 1..6 completed lifecycle steps from injury.status.
+  // The 5-step card bar highlights up to (stagesDone-1), clamped to the last step.
+  const cardStageIndex = (injury) => {
+    const done = stageFromInjury(injury); // 1..6
+    return Math.min(Math.max(done - 1, 0), STAGE_ORDER.length - 1);
+  };
 
-    if (profiles.length === 0) {
-        return <div className="text-center py-20 text-slate-500"><div className="text-6xl mb-4 opacity-20">🩺</div><p className="font-bold text-slate-400">No medical profiles yet</p></div>;
-    }
+  const openJourney = (entry) => setActive(entry);
+  const closeJourney = () => setActive(null);
 
-    return (
-        <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {profiles.map((p) => {
-                    const rec = byPlayer[p.id] || {};
-                    const injured = isInjured(p);
-                    const st = stageOf(rec);
-                    const counts = [
-                        ["Injuries", (rec.injuries || []).length], ["Treatments", (rec.treatments || []).length],
-                        ["Rehab", (rec.rehabilitations || []).length], ["Recovery", (rec.recoveries || []).length],
-                        ["Fitness", (rec.fitness || []).length],
-                    ];
-                    return (
-                        <button key={p.id} onClick={() => setActive(p)} type="button"
-                            className={`text-left rounded-2xl border p-5 transition-all hover:-translate-y-0.5 ${injured ? "border-rose-500/40 bg-rose-500/[0.05] hover:border-rose-500/60" : "border-slate-800 bg-slate-900/40 hover:border-teal-500/40"}`}>
-                            <div className="flex items-center gap-3">
-                                <PlayerAvatar name={`${p.firstName} ${p.lastName}`} sport="General" size={48} />
-                                <div className="min-w-0 flex-1">
-                                    <h3 className="text-base font-black text-slate-100 truncate">{p.firstName} {p.lastName}</h3>
-                                    <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${injured ? "text-rose-300 bg-rose-500/15 border-rose-500/40" : "text-emerald-300 bg-emerald-500/10 border-emerald-500/30"}`}>
-                                        {injured ? "🩹 Injured · Restricted" : `✓ ${statusOf(p) === "AVAILABLE" ? "Available" : statusOf(p)}`}
-                                    </span>
-                                </div>
-                            </div>
+  // Re-fetch upstream, then refresh the open journey from the new data.
+  const handleChanged = async () => {
+    await onChanged?.();
+  };
 
-                            {/* recovery pipeline */}
-                            <div className="flex items-center gap-1 mt-4">
-                                {PIPE.map(([k, label], i) => {
-                                    const on = st[k];
-                                    const isFit = k === "fitnessPassed";
-                                    return (
-                                        <React.Fragment key={k}>
-                                            <span className={`flex-1 text-center text-[8px] font-black uppercase tracking-wider py-1 rounded ${on ? (isFit ? "bg-emerald-500/20 text-emerald-300" : "bg-teal-500/20 text-teal-300") : "bg-slate-800 text-slate-600"}`}>{label}</span>
-                                            {i < PIPE.length - 1 && <span className="text-slate-700 text-[8px]">›</span>}
-                                        </React.Fragment>
-                                    );
-                                })}
-                            </div>
+  // When data refreshes while a journey is open, re-derive its rec/injury so the
+  // stepper reflects the freshly persisted records.
+  const liveActive = useMemo(() => {
+    if (!active) return null;
+    const rec = byPlayer[active.player.id] || active.rec;
+    const injury = rec?.injuries?.length ? (rec.injuries.find((i) => String(i.id) === String(active.injury?.id)) || pickInjury(rec.injuries)) : active.injury;
+    return { player: playerById[active.player.id] || active.player, rec, injury };
+  }, [active, byPlayer, playerById]);
 
-                            <div className="flex flex-wrap gap-1.5 mt-3">
-                                {counts.filter(([, n]) => n > 0).map(([l, n]) => (
-                                    <span key={l} className="text-[9px] font-bold text-slate-400 bg-slate-950/40 border border-slate-800 rounded px-1.5 py-0.5">{n} {l}</span>
-                                ))}
-                            </div>
-                        </button>
-                    );
-                })}
+  return (
+    <div className="space-y-10">
+      {/* ── Stats strip ─────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Currently Injured", value: stats.injured, icon: "personal_injury", tone: "text-rose-300", ring: "border-rose-500/20", glow: "bg-rose-500/10" },
+          { label: "In Rehab / Recovery", value: stats.inRehab, icon: "healing", tone: "text-amber-300", ring: "border-amber-500/20", glow: "bg-amber-500/10" },
+          { label: "Recovered / Returned", value: stats.recovered, icon: "verified", tone: "text-emerald-300", ring: "border-emerald-500/20", glow: "bg-emerald-500/10" },
+          { label: "Total Cases", value: stats.total, icon: "monitor_heart", tone: "text-teal-300", ring: "border-teal-500/20", glow: "bg-teal-500/10" },
+        ].map((s) => (
+          <div key={s.label} className={`relative overflow-hidden rounded-3xl border ${s.ring} bg-slate-900/40 p-5`}>
+            <div className={`absolute -right-6 -top-8 w-28 h-28 rounded-full blur-2xl ${s.glow}`} />
+            <div className="relative">
+              <span className={`material-icons text-2xl ${s.tone}`}>{s.icon}</span>
+              <p className={`text-4xl font-black mt-2 ${s.tone}`}>{s.value}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500 mt-1">{s.label}</p>
             </div>
+          </div>
+        ))}
+      </div>
 
-            {active && (
-                <ProfileModal player={active} rec={byPlayer[active.id] || {}} onClose={() => setActive(null)} />
-            )}
-        </>
-    );
-}
-
-function Section({ title, items, render, tone = "teal" }) {
-    if (!items || items.length === 0) return null;
-    return (
-        <div>
-            <p className={`text-[10px] font-black uppercase tracking-[0.25em] mb-2 text-${tone}-400/80`}>{title} ({items.length})</p>
-            <div className="space-y-1.5">{items.map((it, i) => <div key={it.id || i} className="rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-[12px] text-slate-300">{render(it)}</div>)}</div>
+      {/* ── Currently Injured ───────────────────────────────────────────── */}
+      <section>
+        <div className="flex items-center gap-3 mb-5">
+          <span className="material-icons text-rose-400">personal_injury</span>
+          <h2 className="text-white text-xl font-black uppercase tracking-tight">Currently Injured</h2>
+          <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-[10px] font-black">{injuredList.length}</span>
         </div>
-    );
-}
-
-function ProfileModal({ player, rec, onClose }) {
-    const injured = isInjured(player);
-    const d = (v) => (v ? String(v).slice(0, 10) : "—");
-    return (
-        <div className="fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-2xl border border-slate-800 bg-slate-950 shadow-2xl">
-                <div className="sticky top-0 z-10 bg-slate-950/95 backdrop-blur px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <PlayerAvatar name={`${player.firstName} ${player.lastName}`} sport="General" size={42} />
-                        <div>
-                            <h3 className="font-black text-white text-lg leading-none">{player.firstName} {player.lastName}</h3>
-                            <span className={`text-[10px] font-black uppercase tracking-widest ${injured ? "text-rose-300" : "text-emerald-300"}`}>{injured ? "Injured · Restricted" : "Available"}</span>
-                        </div>
+        {injuredList.length === 0 ? (
+          <div className="rounded-3xl border border-slate-800 bg-slate-900/30 py-12 text-center">
+            <span className="material-icons text-5xl text-emerald-500/40">verified</span>
+            <p className="text-slate-400 font-bold mt-3">No active injuries — full squad available.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {injuredList.map(({ player, rec, injury }) => {
+              const tone = sevTone(injury.severity);
+              const idx = cardStageIndex(injury);
+              const pct = Math.round(((idx + 1) / STAGE_ORDER.length) * 100);
+              return (
+                <button key={player.id} type="button" onClick={() => openJourney({ player, rec, injury })}
+                  className={`group text-left rounded-3xl border border-slate-800 bg-[#0a0f1d] p-5 transition-all hover:-translate-y-1 hover:border-rose-500/40 hover:shadow-2xl hover:shadow-rose-950/30`}>
+                  <div className="flex items-start gap-3">
+                    <Face player={player} size={56} className={`ring-2 ${tone.ring}`} />
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-base font-black text-white truncate">{player.firstName} {player.lastName}</h3>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className={`w-1.5 h-1.5 rounded-full ${tone.dot}`} />
+                        <span className={`text-[11px] font-bold ${tone.text}`}>{pretty(injury.injuryType)}</span>
+                        <span className="text-slate-600 text-[11px]">·</span>
+                        <span className="text-[11px] text-slate-400">{injury.bodyPart}</span>
+                      </div>
                     </div>
-                    <button onClick={onClose} className="text-slate-500 hover:text-white p-1"><FiX /></button>
-                </div>
-                <div className="p-6 space-y-5">
-                    <Section title="Injuries" tone="rose" items={rec.injuries} render={(i) => <><b className="text-slate-100">{i.injuryType?.replace(/_/g, " ")}</b> · {i.severity} · {i.bodyPart} · <span className="text-rose-300">{i.status}</span> · {d(i.injuryDate)}<div className="text-slate-500">{i.description}</div></>} />
-                    <Section title="Diagnoses" tone="sky" items={rec.diagnoses} render={(x) => <><b className="text-slate-100">{x.diagnosis}</b><div className="text-slate-500">{x.recommendations}</div></>} />
-                    <Section title="Treatments" tone="teal" items={rec.treatments} render={(x) => <><b className="text-slate-100">{x.treatmentType}</b> · {x.status} · {x.medication || "—"}<div className="text-slate-500">{x.description}</div></>} />
-                    <Section title="Rehabilitation" tone="teal" items={rec.rehabilitations} render={(x) => <><b className="text-slate-100">{x.rehabPlan || "Rehab"}</b> · {x.status} · {x.durationWeeks || "?"}w<div className="text-slate-500">{x.exercises}</div></>} />
-                    <Section title="Recovery" tone="teal" items={rec.recoveries} render={(x) => <><b className="text-slate-100">{x.programName}</b> · {x.status}<div className="text-slate-500">{x.activities}</div></>} />
-                    <Section title="Fitness Tests" tone="emerald" items={rec.fitness} render={(x) => <><b className="text-slate-100">{x.testName || x.testType}</b> · {x.result ?? "—"} {x.unit} · <span className={isFitnessPass(x) ? "text-emerald-300" : "text-rose-300"}>{x.resultCategory}{isFitnessPass(x) ? " (PASS)" : ""}</span> · {d(x.testDate)}</>} />
-                    {!rec.injuries?.length && !rec.treatments?.length && !rec.rehabilitations?.length && !rec.recoveries?.length && !rec.fitness?.length && (
-                        <p className="text-[12px] text-slate-600 italic">This player is flagged {injured ? "injured" : "—"} but has no detailed medical logs yet.</p>
-                    )}
-                </div>
-            </div>
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ring-1 ${tone.ring} ${tone.bg} ${tone.text}`}>{pretty(injury.severity)}</span>
+                  </div>
+
+                  {/* current stage + progress */}
+                  <div className="mt-4">
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Stage</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-white">{STAGE_LABEL[String(injury.status).toUpperCase()] || pretty(injury.status)}</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                      <div className={`h-full rounded-full bg-gradient-to-r ${tone.bar} transition-all duration-500`} style={{ width: `${pct}%` }} />
+                    </div>
+                    <div className="flex justify-between mt-1.5">
+                      {STAGE_ORDER.slice(0, 5).map((s, i) => (
+                        <span key={s} className={`text-[8px] font-black uppercase tracking-tight ${i <= idx ? tone.text : "text-slate-700"}`}>{STAGE_LABEL[s].split(" ")[0]}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-[10px] text-slate-500 font-bold">{(rec.diagnoses.length + rec.treatments.length + rec.rehabilitations.length + rec.recoveries.length)} records</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-teal-400 group-hover:text-teal-300 flex items-center gap-1">Open journey <span className="material-icons text-sm">arrow_forward</span></span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* ── Recovered / Returned ────────────────────────────────────────── */}
+      <section>
+        <div className="flex items-center gap-3 mb-5">
+          <span className="material-icons text-emerald-400">verified</span>
+          <h2 className="text-white text-xl font-black uppercase tracking-tight">Recovered / Returned</h2>
+          <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[10px] font-black">{recoveredList.length}</span>
         </div>
-    );
+        {recoveredList.length === 0 ? (
+          <div className="rounded-3xl border border-slate-800 bg-slate-900/30 py-12 text-center">
+            <span className="material-icons text-5xl text-slate-700">history</span>
+            <p className="text-slate-500 font-bold mt-3">No returned players yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {recoveredList.map(({ player, rec, injury }) => (
+              <button key={player.id} type="button" onClick={() => openJourney({ player, rec, injury })}
+                className="group text-left rounded-3xl border border-emerald-500/15 bg-emerald-500/[0.03] p-5 transition-all hover:-translate-y-1 hover:border-emerald-500/40">
+                <div className="flex items-start gap-3">
+                  <Face player={player} size={52} className="ring-2 ring-emerald-500/30" />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-base font-black text-white truncate">{player.firstName} {player.lastName}</h3>
+                    <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-bold text-emerald-300">
+                      <span className="material-icons text-sm">check_circle</span> Returned to play
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/40 px-4 py-3">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Recovered from</p>
+                  <p className="text-sm font-bold text-slate-200 mt-0.5">{pretty(injury.injuryType)} · {injury.bodyPart}</p>
+                  <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden mt-3">
+                    <div className="h-full w-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400" />
+                  </div>
+                </div>
+                <div className="mt-3 text-right">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 group-hover:text-emerald-300 inline-flex items-center gap-1">View case history <span className="material-icons text-sm">arrow_forward</span></span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {liveActive && liveActive.injury && (
+        <MedicalJourney
+          player={liveActive.player}
+          rec={liveActive.rec}
+          injury={liveActive.injury}
+          templates={{ diagnoses, treatments, rehabilitations, recoveries, fitness }}
+          catalogVersion={catalogVersion}
+          onClose={closeJourney}
+          onChanged={handleChanged}
+          pushToast={pushToast}
+        />
+      )}
+    </div>
+  );
 }

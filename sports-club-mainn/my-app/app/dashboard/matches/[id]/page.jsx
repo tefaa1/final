@@ -9,12 +9,13 @@ import { PageHeader } from "@/src/components/shared/SharedComponents";
 import MatchDetailsBoard from "@/src/components/matches/MatchDetailsBoard";
 import MatchEventsTimeline from "@/src/components/matches/MatchEventsTimeline";
 import MatchReviewsPanel from "@/src/components/matches/MatchReviewsPanel";
+import AddPlayerReviewForm from "@/src/components/matches/AddPlayerReviewForm";
 import MatchReviewWall from "@/src/components/matches/MatchReviewWall";
 import MatchStatsPanel from "@/src/components/matches/MatchStatsPanel";
 import { sportMeta, parseStatsJson } from "@/src/components/matches/sportConfig";
 import {
   FiArrowLeft, FiCalendar, FiClock, FiMapPin, FiAward, FiUsers,
-  FiActivity, FiClipboard, FiBarChart2, FiPlayCircle, FiFlag,
+  FiActivity, FiBarChart2, FiPlayCircle, FiFlag,
 } from "react-icons/fi";
 
 // This is a fully client-driven, data-dependent page (it fetches the match by id
@@ -97,6 +98,13 @@ export default function MatchDetailsPage() {
     return s ? `${s.firstName} ${s.lastName}` : null;
   };
 
+  // The coach a NEW review is attributed to: prefer a head coach, else the first
+  // staff member, else a sensible default (Hansi Flick is staff id 4).
+  const reviewCoachId = useMemo(() => {
+    const head = staff.find((s) => String(s.role || s.staffRole) === "HEAD_COACH");
+    return head?.id || staff[0]?.id || 4;
+  }, [staff]);
+
   const meta = useMemo(() => sportMeta(match?.sportType), [match?.sportType]);
 
   if (loading) {
@@ -173,14 +181,10 @@ export default function MatchDetailsPage() {
                 <FiPlayCircle size={14} /> {isLive ? "Watch Live" : "Go Live"}
               </button>
             )}
-            {/* Editing the lineup is only offered while the match is not yet
-                finished — an ended match's lineup is a locked historical record. */}
-            {meta.hasLineup && canEdit && !isFinished && (
-              <button onClick={() => router.push(`/dashboard/matches/${matchId}/lineup`)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-emerald-500/40 text-emerald-300 hover:bg-emerald-600 hover:text-white font-black text-[10px] uppercase tracking-widest transition-all">
-                <FiClipboard size={14} /> Edit Lineup
-              </button>
-            )}
+            {/* The lineup/formation is LOCKED after creation — it's set once in
+                the draft flow at match creation and can never be edited again.
+                So there is NO "Edit Lineup" action here; the saved starting XI is
+                shown read-only in the Lineup tab below. */}
           </div>
         }
       />
@@ -304,8 +308,25 @@ export default function MatchDetailsPage() {
           <MatchReviewWall matchId={matchId} fixtureLabel={`${homeName} vs ${awayName}`} />
         </div>
 
-        {/* REVIEWS SIDE PANEL — always visible alongside the content */}
-        <MatchReviewsPanel reviews={reviews} players={players} coachName={coachName} sport={titleSport(match.sportType)} />
+        {/* REVIEWS SIDE PANEL — coach player-performance reviews. Admins/coaches
+            get the "Add player review" composer at the top (addSlot); newly
+            created reviews are prepended live. Kept SEPARATE from the community
+            MatchReviewWall above. */}
+        <MatchReviewsPanel
+          reviews={reviews}
+          players={players}
+          coachName={coachName}
+          sport={titleSport(match.sportType)}
+          addSlot={canEdit ? (
+            <AddPlayerReviewForm
+              match={match}
+              players={players}
+              coachId={reviewCoachId}
+              alreadyReviewed={reviews.map((r) => r.playerId)}
+              onCreated={(row) => setReviews((prev) => [row, ...prev])}
+            />
+          ) : null}
+        />
       </div>
     </div>
   );

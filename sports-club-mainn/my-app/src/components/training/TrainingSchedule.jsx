@@ -10,6 +10,7 @@ import { isInjured } from "@/src/lib/playerStatus";
 import { buildTeamIndex, buildPlayerTeamMap, SPORT_META, SPORT_BY_ID } from "@/src/lib/clubTeams";
 import { DRILL_CATALOG, DRILL_SPORT_ORDER, catalogForSport } from "@/src/data/drillCatalog";
 import useRole from "@/src/lib/useRole";
+import { canEditTraining } from "@/src/lib/permissions";
 import { AiFillEdit } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaClipboardCheck } from "react-icons/fa";
@@ -81,7 +82,15 @@ const TrainingSchedule = () => {
     const [matches, setMatches] = useState([]);
     const [allSessions, setAllSessions] = useState([]);
     const [allPlans, setAllPlans] = useState([]);
-    const { canEdit } = useRole();
+    const { role } = useRole();
+    // Training editing is a COACHING function. Only the coaching roles
+    // (admin, head_coach, assistant_coach, specific_coach, fitness_coach) may
+    // create/edit/complete/delete/take attendance/rate. Everyone else who can
+    // open this page (team_doctor, physiotherapist, team_manager, player) gets a
+    // clean READ-ONLY view. Mirrors the gateway (their writes return 403).
+    const canEdit = canEditTraining(role);
+    // Completing & scoring a session is the head coach's call only (admin too).
+    const canComplete = role === "admin" || role === "head_coach";
 
     // modal state
     const [planModal, setPlanModal] = useState(false);
@@ -191,8 +200,10 @@ const TrainingSchedule = () => {
                     {tab === "plans" && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-10">
                             {(data.plans || []).map((p) => {
-                                const slots = parseSlots(p.sessionSlots);
-                                const done = slots.filter(slotDone).length;
+                                const planSessions = (allSessions || [])
+                                    .filter((s) => Number(s.trainingPlanId) === Number(p.id))
+                                    .sort((a, b) => new Date(a.scheduledDateTime || 0) - new Date(b.scheduledDateTime || 0));
+                                const done = planSessions.filter((s) => String(s.status || "").toUpperCase() === "COMPLETED").length;
                                 return (
                                     <div key={p.id} className="bg-slate-900/50 rounded-2xl border border-slate-800 p-5">
                                         <div className="flex items-start justify-between gap-3">
@@ -209,26 +220,25 @@ const TrainingSchedule = () => {
                                             )}
                                         </div>
 
-                                        {/* Session slots — name + date + done flag only (no details) */}
+                                        {/* Sessions belonging to this plan, in date/time order */}
                                         <div className="mt-4">
                                             <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-2">
-                                                Sessions <span className="text-slate-400">{done}/{slots.length} done</span>
+                                                Sessions <span className="text-slate-400">{done}/{planSessions.length} done</span>
                                             </p>
-                                            {slots.length ? (
+                                            {planSessions.length ? (
                                                 <ul className="space-y-1.5">
-                                                    {slots.map((s, i) => {
-                                                        const ok = slotDone(s);
+                                                    {planSessions.map((s) => {
+                                                        const ok = String(s.status || "").toUpperCase() === "COMPLETED";
                                                         return (
-                                                            <li key={i} className={`flex items-center gap-2.5 rounded-xl border px-3 py-2 ${ok ? "border-emerald-500/30 bg-emerald-500/[0.05]" : s.sessionId != null ? "border-sky-500/20 bg-sky-500/[0.04]" : "border-slate-800 bg-slate-950/40"}`}>
+                                                            <li key={s.id} className={`flex items-center gap-2.5 rounded-xl border px-3 py-2 ${ok ? "border-emerald-500/30 bg-emerald-500/[0.05]" : "border-sky-500/20 bg-sky-500/[0.04]"}`}>
                                                                 {ok ? <FiCheckCircle className="text-emerald-400 shrink-0" /> : <FiCircle className="text-slate-600 shrink-0" />}
-                                                                <span className="text-sm font-bold text-slate-200 flex-1 truncate">{s.name}</span>
-                                                                {s.sessionId != null && !ok && <span className="text-[9px] font-black uppercase tracking-widest text-sky-300">scheduled</span>}
-                                                                <span className="text-[11px] font-mono text-slate-500">{s.date}</span>
+                                                                <span className="text-sm font-bold text-slate-200 flex-1 truncate">{s.objectives || "Session"}</span>
+                                                                <span className="text-[11px] font-mono text-slate-500">{ymd(s.scheduledDateTime)} {String(s.scheduledDateTime || "").slice(11, 16)}</span>
                                                             </li>
                                                         );
                                                     })}
                                                 </ul>
-                                            ) : <p className="text-[12px] text-slate-600 italic">No session slots.</p>}
+                                            ) : <p className="text-[12px] text-slate-600 italic">No sessions yet — add one within the plan's dates.</p>}
                                         </div>
                                     </div>
                                 );
@@ -247,8 +257,9 @@ const TrainingSchedule = () => {
                                 <StatCard label="Completed" value={data.sessions.filter((s) => s.status === "COMPLETED").length} color="text-emerald-400" />
                             </div>
                             {/* Sessions awaiting completion — Complete unlocks only AFTER the
-                                scheduled date+time has passed; View is always available. */}
-                            {data.sessions.some((s) => { const st = String(s.status).toUpperCase(); return st !== "COMPLETED" && st !== "CANCELLED"; }) && (
+                                scheduled date+time has passed; View is always available.
+                                Editor-only: read-only roles complete nothing, so hide it. */}
+                            {canComplete && data.sessions.some((s) => { const st = String(s.status).toUpperCase(); return st !== "COMPLETED" && st !== "CANCELLED"; }) && (
                                 <div className="mb-8 rounded-2xl border border-amber-500/25 bg-amber-500/[0.04] p-4">
                                     <p className="text-[10px] font-black uppercase tracking-[0.25em] text-amber-300/80 mb-3">⏳ To complete · rate drills + take attendance to score performance</p>
                                     <div className="space-y-2">
@@ -318,20 +329,24 @@ const TrainingSchedule = () => {
                     {/* ── ATTENDANCE ────────────────────────────────────────── */}
                     {tab === "attendance" && (
                         <div className="pb-10">
-                            <div className="mb-5 rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-                                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">Take attendance for a session (all players at once)</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {allSessions.filter((s) => parseIds(s.playerIds).length > 0).map((s) => (
-                                        <button key={s.id} onClick={() => setAttendanceSession(s)}
-                                            className="rounded-xl border border-slate-700 bg-slate-950/40 px-3.5 py-2 text-[11px] font-bold text-slate-300 hover:border-emerald-500/50 hover:text-emerald-300 transition-all">
-                                            {s.objectives || "Session"} · {ymd(s.scheduledDateTime)} <span className="text-slate-500">({parseIds(s.playerIds).length})</span>
-                                        </button>
-                                    ))}
-                                    {allSessions.filter((s) => parseIds(s.playerIds).length > 0).length === 0 && (
-                                        <span className="text-[12px] text-slate-600 italic">No sessions with assigned players yet.</span>
-                                    )}
+                            {/* Editor-only: taking attendance is a coaching action. Read-only
+                                roles still see the recorded attendance table below. */}
+                            {canEdit && (
+                                <div className="mb-5 rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">Take attendance for a session (all players at once)</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {allSessions.filter((s) => parseIds(s.playerIds).length > 0).map((s) => (
+                                            <button key={s.id} onClick={() => setAttendanceSession(s)}
+                                                className="rounded-xl border border-slate-700 bg-slate-950/40 px-3.5 py-2 text-[11px] font-bold text-slate-300 hover:border-emerald-500/50 hover:text-emerald-300 transition-all">
+                                                {s.objectives || "Session"} · {ymd(s.scheduledDateTime)} <span className="text-slate-500">({parseIds(s.playerIds).length})</span>
+                                            </button>
+                                        ))}
+                                        {allSessions.filter((s) => parseIds(s.playerIds).length > 0).length === 0 && (
+                                            <span className="text-[12px] text-slate-600 italic">No sessions with assigned players yet.</span>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* existing records */}
                             <div className="bg-slate-900/50 rounded-2xl border border-slate-800 overflow-hidden">
@@ -361,7 +376,9 @@ const TrainingSchedule = () => {
                 </div>
             )}
 
-            {planModal && (
+            {/* Action modals are editor-only (their triggers are gated by canEdit;
+                gated here too as defense-in-depth so they never render read-only). */}
+            {canEdit && planModal && (
                 <PlanModal
                     teamIndex={teamIndex} matches={matches}
                     onClose={() => setPlanModal(false)}
@@ -369,7 +386,7 @@ const TrainingSchedule = () => {
                     onError={(m) => showToast(m, "error")}
                 />
             )}
-            {sessionModal && (
+            {canEdit && sessionModal && (
                 <SessionModal
                     plans={allPlans} sessions={allSessions} matches={matches}
                     players={players} playerTeamMap={playerTeamMap} teamIndex={teamIndex}
@@ -378,7 +395,7 @@ const TrainingSchedule = () => {
                     onError={(m) => showToast(m, "error")}
                 />
             )}
-            {attendanceSession && (
+            {canEdit && attendanceSession && (
                 <AttendanceModal
                     session={attendanceSession} players={players}
                     onClose={() => setAttendanceSession(null)}
@@ -386,7 +403,7 @@ const TrainingSchedule = () => {
                     onError={(m) => showToast(m, "error")}
                 />
             )}
-            {completeSession && (
+            {canComplete && completeSession && (
                 <CompleteSessionModal
                     session={completeSession} players={players}
                     onClose={() => setCompleteSession(null)}
@@ -415,38 +432,20 @@ function PlanModal({ teamIndex, matches, onClose, onSaved, onError }) {
     const [saving, setSaving] = useState(false);
     const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
 
-    // live capacity hint
-    const cap = useMemo(() => {
-        if (!f.startDate || !f.endDate) return null;
-        const total = daysInclusive(f.startDate, f.endDate);
-        if (total <= 0) return { total: 0, matchCount: 0, max: 0 };
-        const md = matchDatesForTeam(matches, f.teamId, f.startDate, f.endDate);
-        return { total, matchCount: md.size, max: Math.max(0, total - md.size) };
-    }, [f.startDate, f.endDate, f.teamId, matches]);
-
     const submit = async () => {
         if (!f.title.trim()) return onError("Plan title is required.");
         if (!f.startDate || !f.endDate) return onError("Start and end dates are required.");
         if (new Date(f.endDate) < new Date(f.startDate)) return onError("End date must be after the start date.");
-        const count = Number(f.sessionCount);
-        if (!count || count < 1) return onError("Enter at least 1 session.");
-        const md = matchDatesForTeam(matches, f.teamId, f.startDate, f.endDate);
-        const total = daysInclusive(f.startDate, f.endDate);
-        const max = total - md.size;
-        if (count > max) return onError(`Too many sessions: at most ${max} fit (${total} days − ${md.size} match day${md.size === 1 ? "" : "s"}). No session can fall on a match day or share a day with another.`);
-        const dates = pickSlotDates(f.startDate, f.endDate, count, md);
-        if (!dates) return onError(`Can't place ${count} sessions on separate non-match days in this range.`);
-        const slots = dates.map((d, i) => ({ name: `Session ${i + 1}`, date: d, sessionId: null }));
         setSaving(true);
         try {
             await api.createTrainingPlan({
                 title: f.title.trim(), description: f.description.trim() || f.title.trim(),
                 teamId: Number(f.teamId), createdByCoachId: HEAD_COACH_ID,
                 startDate: f.startDate, endDate: f.endDate, status: f.status,
-                trainingType: f.trainingType, sessionSlots: JSON.stringify(slots),
+                trainingType: f.trainingType, sessionSlots: "[]",
                 goals: f.goals.trim() || "General development", focus: f.focus.trim() || titleCase(f.trainingType),
             });
-            onSaved(`Plan created with ${slots.length} session slots`);
+            onSaved("Plan created — add sessions to it from the Sessions tab");
         } catch (e) { onError(e.message || "Failed to create plan"); setSaving(false); }
     };
 
@@ -458,17 +457,14 @@ function PlanModal({ teamIndex, matches, onClose, onSaved, onError }) {
                 <Field label="Team *"><select className={IN} value={f.teamId} onChange={(e) => set("teamId", e.target.value)}>{teamOpts.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}</select></Field>
                 <Field label="Start Date *"><input type="date" className={IN} value={f.startDate} onChange={(e) => set("startDate", e.target.value)} /></Field>
                 <Field label="End Date *"><input type="date" className={IN} value={f.endDate} onChange={(e) => set("endDate", e.target.value)} /></Field>
-                <Field label="Number of Sessions *"><input type="number" min={1} className={IN} value={f.sessionCount} onChange={(e) => set("sessionCount", e.target.value)} /></Field>
                 <Field label="Status"><select className={IN} value={f.status} onChange={(e) => set("status", e.target.value)}>{["DRAFT", "ACTIVE", "COMPLETED"].map((s) => <option key={s} value={s}>{s}</option>)}</select></Field>
                 <Field label="Goals" full><input className={IN} value={f.goals} onChange={(e) => set("goals", e.target.value)} /></Field>
                 <Field label="Description" full><input className={IN} value={f.description} onChange={(e) => set("description", e.target.value)} /></Field>
             </div>
-            {cap && (
-                <div className={`mt-4 rounded-xl border px-3 py-2.5 text-[12px] ${Number(f.sessionCount) > cap.max ? "border-rose-500/40 bg-rose-500/[0.06] text-rose-300" : "border-sky-500/30 bg-sky-500/[0.06] text-slate-300"}`}>
-                    Range has <b>{cap.total}</b> days − <b>{cap.matchCount}</b> match day{cap.matchCount === 1 ? "" : "s"} ⇒ up to <b>{cap.max}</b> sessions. Slots are auto-placed on separate non-match days.
-                </div>
-            )}
-            <ModalActions saving={saving} onClose={onClose} onSubmit={submit} label="Create Plan & Slots" />
+            <div className="mt-4 rounded-xl border border-sky-500/30 bg-sky-500/[0.06] px-3 py-2.5 text-[12px] text-slate-300">
+                This plan is for <b>{teamOpts.find((t) => String(t.id) === String(f.teamId))?.name || `Team ${f.teamId}`}</b>. Add sessions to it afterwards — each session is placed by its own date &amp; time within the plan's range.
+            </div>
+            <ModalActions saving={saving} onClose={onClose} onSubmit={submit} label="Create Plan" />
         </ModalShell>
     );
 }
@@ -478,7 +474,6 @@ function PlanModal({ teamIndex, matches, onClose, onSaved, onError }) {
 // ─────────────────────────────────────────────────────────────────────────────
 function SessionModal({ plans, sessions, matches, players, playerTeamMap, teamIndex, onClose, onSaved, onError }) {
     const [planId, setPlanId] = useState("");
-    const [slotIdx, setSlotIdx] = useState("");
     const [f, setF] = useState({ objectives: "", description: "", notes: "", durationMinutes: DEFAULT_DURATION_MINUTES, location: "Ciutat Esportiva Joan Gamper", date: "", time: "10:00", status: "SCHEDULED" });
     const [picked, setPicked] = useState([]); // drill objects
     const [selPlayers, setSelPlayers] = useState([]); // player ids
@@ -487,17 +482,15 @@ function SessionModal({ plans, sessions, matches, players, playerTeamMap, teamIn
     const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
 
     const plan = plans.find((p) => String(p.id) === String(planId)) || null;
-    const slots = plan ? parseSlots(plan.sessionSlots) : [];
-    const openSlots = slots.map((s, i) => ({ ...s, i })).filter((s) => s.sessionId == null);
     const teamId = plan ? plan.teamId : null;
     const sportType = teamId != null ? (teamIndex.byId[Number(teamId)]?.sportType || "FOOTBALL") : "FOOTBALL";
     const trainingType = plan?.trainingType || "TACTICAL";
 
-    // when a slot is chosen, prefill the date to its planned date
-    const chooseSlot = (i) => {
-        setSlotIdx(i);
-        const s = slots[Number(i)];
-        if (s) set("date", s.date);
+    // when a plan is chosen, reset selections and prefill the date to the plan's start
+    const choosePlan = (id) => {
+        setPlanId(id); setPicked([]); setSelPlayers([]);
+        const pp = plans.find((p) => String(p.id) === String(id));
+        if (pp) set("date", ymd(pp.startDate));
     };
 
     // players eligible: on the plan's team, matching sport, not injured
@@ -520,7 +513,6 @@ function SessionModal({ plans, sessions, matches, players, playerTeamMap, teamIn
 
     const submit = async () => {
         if (!plan) return onError("Pick a plan to assign this session to.");
-        if (slotIdx === "") return onError("Pick an open session slot in the plan.");
         if (!f.objectives.trim()) return onError("Session title / objectives required.");
         if (!f.date) return onError("Pick a date.");
         const dur = Number(f.durationMinutes);
@@ -536,6 +528,8 @@ function SessionModal({ plans, sessions, matches, players, playerTeamMap, teamIn
         // type is taken from the plan, so it always matches.
         if (picked.length && drillSum >= dur) return onError(`Drills total ${drillSum} min — must be LESS than the ${dur}-min session.`);
         if (selPlayers.length === 0) return onError("Select at least one player for this session.");
+        // only fit (non-injured) players from this team can be called up
+        if (selPlayers.some((pid) => isInjured(players.find((x) => x.id === pid)))) return onError("Injured players cannot be added to a session.");
 
         setSaving(true);
         try {
@@ -583,33 +577,17 @@ function SessionModal({ plans, sessions, matches, players, playerTeamMap, teamIn
                 } catch (e) { console.error("alert failed", e); }
             }
 
-            // mark the chosen slot as fulfilled (link the session)
-            const updatedSlots = slots.map((s, i) => (i === Number(slotIdx) ? { ...s, sessionId } : s));
-            try {
-                await api.updateTrainingPlan(plan.id, {
-                    title: plan.title, description: plan.description, teamId: plan.teamId, createdByCoachId: plan.createdByCoachId,
-                    startDate: plan.startDate, endDate: plan.endDate, status: plan.status, trainingType: plan.trainingType,
-                    goals: plan.goals, focus: plan.focus, sessionSlots: JSON.stringify(updatedSlots),
-                });
-            } catch (e) { console.error("plan slot link failed", e); }
-
             onSaved(`Session created · ${selPlayers.length} players notified by mail + alert`);
         } catch (e) { onError(e.message || "Failed to create session"); setSaving(false); }
     };
 
     return (
         <ModalShell title="New Session" onClose={onClose} wide>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Assign to Plan *">
-                    <select className={IN} value={planId} onChange={(e) => { setPlanId(e.target.value); setSlotIdx(""); setPicked([]); setSelPlayers([]); }}>
+            <div className="grid grid-cols-1 gap-4">
+                <Field label="Assign to Plan * (team & sport come from the plan)">
+                    <select className={IN} value={planId} onChange={(e) => choosePlan(e.target.value)}>
                         <option value="">— pick a plan —</option>
-                        {plans.map((p) => <option key={p.id} value={p.id}>{p.title} · {titleCase(p.trainingType || "")}</option>)}
-                    </select>
-                </Field>
-                <Field label="Plan Slot *">
-                    <select className={IN} value={slotIdx} onChange={(e) => chooseSlot(e.target.value)} disabled={!plan}>
-                        <option value="">{plan ? "— pick an open slot —" : "pick a plan first"}</option>
-                        {openSlots.map((s) => <option key={s.i} value={s.i}>{s.name} · {s.date}</option>)}
+                        {plans.map((p) => <option key={p.id} value={p.id}>{p.title} · {titleCase(p.trainingType || "")} · {lookupTeam(p.teamId)?.name || `Team ${p.teamId}`}</option>)}
                     </select>
                 </Field>
             </div>

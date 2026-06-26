@@ -106,6 +106,38 @@ export function minKickoffLocal(now = Date.now()) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+// Serialize a datetime-local value ("YYYY-MM-DDTHH:mm") into the NAIVE LOCAL
+// wall-clock string the backend stores ("YYYY-MM-DDTHH:mm:ss") — WITHOUT any
+// timezone conversion. The backend keeps kickoff as a naive LocalDateTime, so we
+// must NOT pass it through Date#toISOString()/Date.UTC() (those shift the wall
+// time by the local UTC offset, which made matches display ~3h early and appear
+// LIVE immediately). We just normalise the format and append seconds.
+export function toNaiveLocalDateTime(localInputValue) {
+  if (!localInputValue) return null;
+  const s = String(localInputValue).trim();
+  // Already "YYYY-MM-DDTHH:mm[:ss]" — keep the wall time exactly, ensure seconds.
+  const m = s.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/);
+  if (m) {
+    const [, date, hh, mm, ss] = m;
+    return `${date}T${hh}:${mm}:${ss || "00"}`;
+  }
+  // Fallback: format whatever Date we can parse using LOCAL parts (no UTC shift).
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return null;
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+// Build a datetime-local input value ("YYYY-MM-DDTHH:mm") from a stored kickoff
+// using LOCAL parts (NOT toISOString, which would print UTC and shift the wall
+// time). Used to pre-fill the picker when editing / deep-linking.
+export function toLocalInputValue(kickoffTime) {
+  const k = parseKickoff(kickoffTime);
+  if (!k) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${k.getFullYear()}-${pad(k.getMonth() + 1)}-${pad(k.getDate())}T${pad(k.getHours())}:${pad(k.getMinutes())}`;
+}
+
 // Format a kickoff for display WITH the time (date everywhere = date + time).
 export function formatKickoff(kickoffTime) {
   const k = parseKickoff(kickoffTime);
@@ -161,15 +193,26 @@ export function autoPhaseForMinute(min) {
 // Display the clock for a PLAYING phase: counts within the phase and shows
 // stoppage as "45+2'". `phaseMin` is the live minute inside the phase (0-based),
 // `stoppage` is the admin-set added minutes for the phase.
+//
+// IMPORTANT (the "45+132" bug): the regulation minute is HARD-CAPPED at the phase
+// length (45 for a half, 15 for an ET period) and the displayed added time is the
+// ADMIN-SET stoppage only — never the raw computed overflow. So a half left
+// running for hours freezes at "45+<stoppage>" (e.g. "45+3'", or just "45'" when
+// no stoppage was set). It is the admin who advances the phase; the clock never
+// runs away into nonsense like "45+132".
 export function phaseClockLabel(phaseId, phaseMin, stoppage = 0) {
   const def = phaseDef(phaseId);
   if (!def.playing) return def.label;
-  const regEnd = def.len;                       // 45 or 15
+  const regEnd = def.len;                          // 45 or 15
   const live = Math.max(0, Math.floor(phaseMin));
+  const added = Math.max(0, Math.floor(stoppage)); // admin-set stoppage, bounded ≥ 0
+  // Still inside regulation → plain "47'", but never past the phase length.
   if (live <= regEnd) return `${def.base + live}'`;
-  // Into stoppage: cap the base number at the regulation end, then show +extra.
-  const over = Math.min(live - regEnd, Math.max(stoppage, live - regEnd));
-  return `${def.base + regEnd}+${over}'`;
+  // Past regulation: base freezes at the regulation end and we show ONLY the
+  // admin-set stoppage. The live minute can never push it higher than +stoppage,
+  // and with no stoppage set we show the clean "45'" rather than "45+0'".
+  const over = Math.min(live - regEnd, added);
+  return over > 0 ? `${def.base + regEnd}+${over}'` : `${def.base + regEnd}'`;
 }
 
 // Whole minutes elapsed INSIDE the current playing phase, derived from the
@@ -181,6 +224,31 @@ export function phaseElapsed(phaseStartedAt, now = Date.now()) {
   const diff = now - start;
   if (diff <= 0) return 0;
   return Math.floor(diff / 60000);
+}
+
+// Valid recordable-minute range for a PLAYING phase, used to clamp & validate
+// the event-minute input so you can't (e.g.) score "minute 400", or log a
+// first-half goal at minute 80. Regulation halves extend their upper bound by
+// the admin-set stoppage time (so "45+x" / "90+x" are allowed). Extra-time
+// periods are fixed 15' windows. Non-playing phases (HALF_TIME, FULL_TIME,
+// ET-HT) carry no recordable minute; PENALTIES is a shootout (no minute).
+//
+//   FIRST_HALF  : 1–45 (+stoppage)
+//   SECOND_HALF : 46–90 (+stoppage)
+//   EXTRA_FIRST : 91–105
+//   EXTRA_SECOND: 106–120
+//
+// Returns { min, max } (inclusive), or null when the phase has no minute.
+export function phaseMinuteRange(phaseId, stoppage = 0) {
+  const add = Math.max(0, Math.floor(Number(stoppage) || 0));
+  switch (phaseId) {
+    case "FIRST_HALF":   return { min: 1,   max: 45 + add };
+    case "SECOND_HALF":  return { min: 46,  max: 90 + add };
+    case "EXTRA_FIRST":  return { min: 91,  max: 105 + add };
+    case "EXTRA_SECOND": return { min: 106, max: 120 + add };
+    // HALF_TIME / FULL_TIME / EXTRA_HALFTIME / PENALTIES → no recordable minute.
+    default:             return null;
+  }
 }
 
 // Map a stored MatchEvent minute back to a phase (for reconstructing state on

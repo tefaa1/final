@@ -279,6 +279,23 @@ services:
     networks:
       - mscms-network
 
+  # --- Barça chatbot (FastAPI + Anthropic Claude) ---
+  barca-bot:
+    build:
+      context: ./barca-bot
+    container_name: barca-bot
+    environment:
+      # Free-first: set GEMINI_API_KEY (or GROQ_API_KEY) — both have free tiers.
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - BOT_MODEL=${BOT_MODEL:-}
+    ports:
+      - "9100:8000"
+    restart: unless-stopped
+    networks:
+      - mscms-network
+
 networks:
   mscms-network:
     driver: bridge

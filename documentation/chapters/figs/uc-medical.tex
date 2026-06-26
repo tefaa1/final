@@ -1,0 +1,42 @@
+% auto-generated figure: uc-medical (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+  % --- actors (left column) ---
+  \UCactor{0}{4.4}{Doctor}
+  \UCactor{0}{0}{Physiotherapist}
+  \UCactor{0}{-4.4}{Fitness Coach}
+
+  % --- use cases (right column) ---
+  \node[usecase] (u1) at (6,6.0){Log injury};
+  \node[usecase] (u2) at (6,4.4){Diagnose injury};
+  \node[usecase] (u3) at (6,2.8){Prescribe treatment};
+  \node[usecase] (u4) at (6,1.0){Manage rehabilitation};
+  \node[usecase] (u5) at (6,-0.6){Manage recovery programme};
+  \node[usecase] (u6) at (6,-3.4){Run fitness test};
+  \node[usecase] (u7) at (6,-5.0){View Treatment Room};
+  \node[usecase] (u8) at (10.4,0.4){Maintain medical\\ catalogues};
+
+  % --- Doctor -> log / diagnose / treat ---
+  \draw[dLine] (0.5,4.0) -- (u1);
+  \draw[dLine] (0.5,4.0) -- (u2);
+  \draw[dLine] (0.5,4.0) -- (u3);
+
+  % --- Physiotherapist -> rehabilitation / recovery ---
+  \draw[dLine] (0.5,-0.4) -- (u4);
+  \draw[dLine] (0.5,-0.4) -- (u5);
+
+  % --- Fitness Coach -> fitness test + treatment room ---
+  \draw[dLine] (0.5,-4.8) -- (u6);
+  \draw[dLine] (0.5,-4.8) -- (u7);
+
+  % --- shared catalogue maintenance ---
+  \draw[dLine] (u3) -- (u8);
+  \draw[dLine] (u5) -- (u8);
+  \draw[dLine] (u6) -- (u8);
+\end{tikzpicture}%
+}
+\caption{Use-case diagram for the medical and fitness module, mapping the Doctor, Physiotherapist and Fitness Coach to the staged injury-to-recovery workflow and the shared medical catalogues.}
+\label{fig-uc-medical}
+\end{figure}

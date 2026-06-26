@@ -1,0 +1,28 @@
+% auto-generated figure: seq-schedule (source: wf)
+\begin{figure}[H]
+\centering
+{\footnotesize
+\begin{sequencediagram}
+  \newthread{u}{:Coach}
+  \newinst[1]{fe}{:Frontend}
+  \newinst[1]{gw}{:Gateway}
+  \newinst[1]{svc}{:training-match}
+  \newinst[1]{db}{:DB}
+
+  \begin{call}{u}{pick fixture, build formation + starting XI}{fe}{scheduled match shown}
+    \begin{call}{fe}{POST /matches (+formation, lineup)}{gw}{201 Created}
+      \begin{call}{gw}{route createMatch()}{svc}{Match}
+        \begin{sdblock}{validate}{kickoff $\geq$ 5\,min ahead, lineup present}
+          \begin{messcall}{svc}{[invalid] 400 Bad Request}{svc}{}
+          \end{messcall}
+          \begin{call}{svc}{[ok] persist atomically (one tx)}{db}{Match + MatchFormation + MatchLineup}
+          \end{call}
+        \end{sdblock}
+      \end{call}
+    \end{call}
+  \end{call}
+\end{sequencediagram}
+}
+\caption{Sequence diagram for scheduling an official match: the coach builds the formation and starting eleven from a competition fixture, the training-match service validates the kick-off time and line-up, and on success persists the Match, MatchFormation and MatchLineup atomically in a single transaction so a match can never exist without a starting eleven.}
+\label{fig-seq-schedule}
+\end{figure}

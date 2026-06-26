@@ -1,0 +1,29 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{sequencediagram}
+  \newthread{u}{:Coach}
+  \newinst[1]{fe}{:Frontend}
+  \newinst[1]{gw}{:Gateway}
+  \newinst[1]{svc}{:training-match}
+  \newinst[1]{db}{:DB}
+
+  \begin{call}{u}{pick fixture, build formation + starting XI}{fe}{scheduled match shown}
+    \begin{call}{fe}{POST /matches (+formation, lineup)}{gw}{201 Created}
+      \begin{call}{gw}{route createMatch()}{svc}{Match}
+        \begin{sdblock}{validate}{kickoff $\geq$ 5\,min ahead, lineup present}
+          \begin{messcall}{svc}{[invalid] 400 Bad Request}{svc}{}
+          \end{messcall}
+          \begin{call}{svc}{[ok] persist atomically (one tx)}{db}{Match + MatchFormation + MatchLineup}
+          \end{call}
+        \end{sdblock}
+      \end{call}
+    \end{call}
+  \end{call}
+\end{sequencediagram}%
+}
+
+\end{document}

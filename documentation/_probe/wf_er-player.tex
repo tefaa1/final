@@ -1,0 +1,42 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=10mm]
+  % --- core club hierarchy (left column) ---
+  \Entity{sp}{SPORTS}{%
+    \underline{PK} id\\ name\\ sportType\\ sportManagerId}
+  \Entity[below=12mm of sp]{tm}{TEAMS}{%
+    \underline{PK} id\\ name\\ country\\ \underline{FK} sportId}
+  \Entity[below=12mm of tm]{ro}{ROSTERS}{%
+    \underline{PK} id\\ \underline{FK} teamId\\ playerKeycloakId\\ season}
+
+  % --- contracts & transfers (middle column) ---
+  \Entity[right=24mm of sp]{ct}{PLAYER\_CONTRACTS}{%
+    \underline{PK} id\\ playerKeycloakId\\ \underline{FK} teamId\\ startDate / endDate\\ salary\\ releaseClause}
+  \Entity[below=10mm of ct]{ti}{PLAYER\_TRANSFER\_INCOMING}{%
+    \underline{PK} id\\ playerKeycloakId\\ fromTeam\\ transferFee\\ status}
+  \Entity[below=10mm of ti]{to}{PLAYER\_TRANSFER\_OUTGOING}{%
+    \underline{PK} id\\ playerKeycloakId\\ toTeam\\ transferFee\\ status}
+  \Entity[below=10mm of to]{cu}{PLAYER\_CALL\_UP\_REQUESTS}{%
+    \underline{PK} id\\ playerKeycloakId\\ nationalTeamKeycloakId\\ callUpDate\\ status}
+
+  % --- external scouting (right column) ---
+  \Entity[right=26mm of ct]{ot}{OUTER\_TEAMS}{%
+    \underline{PK} id\\ name\\ country}
+  \Entity[below=14mm of ot]{op}{OUTER\_PLAYERS}{%
+    \underline{PK} id\\ name\\ position\\ nationality\\ \underline{FK} outerTeamId}
+
+  % --- relationships ---
+  \Rel{sp}{tm}{1}{*}{has}
+  \Rel{tm}{ro}{1}{*}{lists}
+  \Rel{tm}{ct}{1}{*}{signs}
+  \Rel{tm}{ti}{1}{*}{receives}
+  \Rel{tm}{to}{1}{*}{releases}
+  \Rel{ot}{op}{1}{*}{fields}
+\end{tikzpicture}%
+}
+
+\end{document}

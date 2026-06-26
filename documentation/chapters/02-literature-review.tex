@@ -1,0 +1,318 @@
+\chapter{Literature Review}
+\label{ch:literature}
+
+\section{Overview}
+\label{sec:lit-overview}
+
+The software landscape surrounding professional sport is broad but fragmented. Existing
+products tend to specialise narrowly: some excel at delivering live scores and statistics to a
+mass audience, others at capturing biometric performance data for elite teams, and others
+again at the logistical chores of amateur club administration. No single category addresses
+the full operational breadth of a multi-sport club, and almost none combine consumer-grade
+real-time data with the internal, role-aware workflows that staff require. This chapter
+surveys the principal categories of relevant systems, examines their strengths and the gaps
+they leave open, and concludes by positioning MSCMS (Sportify) against representative
+platforms.
+
+The review is organised into two complementary parts. The first part is a functional survey
+of existing commercial systems, grouped into three families: large-audience sports-data
+platforms, elite performance and analysis suites, and generic club- and team-administration
+tools. For each family the survey identifies what the products do well, what they omit, and
+why those omissions matter to a multi-sport club. The second part steps back from individual
+products to review the technical literature on the architectural principles that MSCMS
+relies upon---microservices decomposition, role-based access control, event-driven
+integration and real-time web communication---so that the design decisions taken later in
+this report can be traced to established practice rather than presented as ad hoc choices.
+The chapter then synthesises both parts into an explicit statement of the research gap and
+the positioning of the proposed system, supported by a multi-dimensional comparison.
+
+\section{Sports-Data and Live-Score Platforms}
+\label{sec:lit-data}
+
+Consumer-facing sports-data platforms such as SofaScore and ESPN have defined modern
+expectations for how sporting information is presented. Their strengths are considerable.
+They aggregate fixtures, results, league standings and rich in-match event timelines across a
+vast range of competitions, and they deliver this information in real time, updating scores
+and statistics live as matches unfold. They cover dozens of sports and hundreds of
+competitions, normalising heterogeneous data into a consistent presentation, and they have
+invested heavily in responsive, mobile-first interfaces that render comfortably on any device.
+The underlying data is sourced from professional feeds, and a comparable feed---exemplified
+by the football-data.org API~\cite{footballdata}---exposes competitions, fixtures, results and
+standings through a clean RESTful interface~\cite{restapi}, allowing third parties to build on
+authoritative match data rather than re-keying it by hand. These platforms have
+demonstrated, at very large scale, that supporters value immediacy, breadth of coverage and
+a polished presentation of live events, and they have established the architectural pattern of
+ingesting authoritative third-party data and re-serving it to clients through a fast read path.
+
+Their weaknesses, from the standpoint of a club operator, are equally clear. They are
+fundamentally read-only, outward-facing products: they tell a global audience what is
+happening on the pitch, but they hold no notion of an individual club's internal operations.
+They model neither rosters and contracts nor training, medical or scouting workflows; they
+have no concept of staff roles or fine-grained access control beyond a generic consumer
+account; and they offer no mechanism for a club to record its own line-ups, run its own
+competitions, or coordinate its own staff. A club cannot enter the result of a youth-team
+friendly into ESPN, nor restrict a salary figure to its commercial department within
+SofaScore, because these systems were never designed to be systems of record for a single
+organisation. In short, they are excellent sources of match data and exemplary models of
+real-time presentation, but they are consumption platforms rather than management
+platforms. MSCMS deliberately adopts their real-time presentation philosophy and ingests
+the same class of authoritative data~\cite{footballdata}---storing it internally so that the
+backend, not the external feed, is the single source of truth---while extending far beyond
+consumption into the internal management workflows these platforms omit entirely.
+
+\section{Elite Performance and Analysis Suites}
+\label{sec:lit-performance}
+
+A second family of products targets the performance department of professional teams.
+Video-analysis and performance platforms such as Hudl provide tools for tagging match
+footage, sharing clips with players and building analytical reports, and have become a
+fixture of professional coaching workflows from elite academies to senior squads.
+Athlete-monitoring vendors such as Catapult specialise in capturing biometric and load data
+from wearable devices---accelerometers, gyroscopes and positioning sensors---supporting
+fitness staff in managing training load and reducing injury risk through quantified
+workload metrics. Enterprise offerings, of which SAP Sports One is representative, integrate
+squad management, training planning and some medical record-keeping into a single
+commercial suite aimed at well-resourced clubs, and demonstrate that several domains can be
+brought under one commercial roof when sufficient engineering investment is made.
+
+These suites are powerful within their chosen niche. Hudl's video tooling and Catapult's
+load monitoring are genuinely best-in-class, and the enterprise suites prove that domain
+integration is achievable. However, each leaves significant gaps relative to the needs of a
+multi-sport club. Their multi-sport modelling is typically limited: they assume a single
+discipline, or treat additional sports as loosely coupled add-ons rather than first-class
+entities with their own positions, formats and rules. Their role models are coarse, oriented
+towards a handful of coaching and performance roles rather than the full spectrum of
+leadership, medical, scouting, commercial and supporter roles that a club actually contains;
+they have no place for a sponsor negotiating an offer or a supporter following the club. They
+are predominantly closed, proprietary and cloud-hosted by the vendor, which means a club
+cannot self-host them, inspect their internals, audit their handling of sensitive medical data,
+or adapt them to local needs. They rarely expose a coherent fan-facing surface or an
+embedded predictive-analytics capability that non-technical staff can consume directly, and
+where they do offer analytics, it is confined to the performance domain and does not span
+medical, commercial and competition data within a single store. The result is depth without
+breadth: a club that adopts such a suite still finds its competition records, its commercial
+pipeline and its supporter engagement living elsewhere.
+
+\section{Generic Club and Team Administration Tools}
+\label{sec:lit-admin}
+
+A third family addresses the administrative and logistical needs of clubs and teams,
+particularly at the amateur and semi-professional levels. Tools such as TeamSnap focus on
+scheduling, attendance, team communication and payment collection, and they are widely
+adopted because they are inexpensive, easy to use and effective at the chores they target.
+Their strength is accessibility: a volunteer organiser can have a team running on such a tool
+within minutes, with no technical expertise and no infrastructure to maintain. For their
+intended audience this low barrier to entry is precisely the point.
+
+Their limitations, however, make them unsuitable as the operational backbone of a
+professional multi-sport club. They model a single team rather than a multi-discipline
+governing body; their notion of roles seldom extends beyond organiser, player and parent;
+and they provide no structured medical workflow, no scouting or transfer pipeline, no
+sponsorship management and no embedded analytics or machine learning. They are not
+designed to ingest authoritative competition data, to run a live-match engine that drives a
+fixture through its phases as it is played, or to enforce the layered, fine-grained access
+control~\cite{rbac} that a professional organisation requires to protect sensitive medical and
+financial information. As with the performance suites, they are closed and vendor-hosted,
+offering no path to self-hosting or architectural extension. They are, in effect, the inverse of
+the enterprise suites: broad in their accessibility but shallow in every domain a professional
+club depends upon.
+
+\section{Technical Foundations in the Literature}
+\label{sec:lit-technical}
+
+Beyond surveying competing products, it is necessary to ground the architecture of MSCMS
+in the established software-engineering literature, since the value of the system lies as much
+in how it is built as in what it does. Four bodies of work are particularly relevant.
+
+\subsection{Microservices Architecture}
+\label{subsec:lit-micro}
+
+The microservices style, articulated influentially by Lewis and Fowler~\cite{microservices},
+advocates building an application as a suite of small, independently deployable services, each
+running in its own process, organised around business capabilities, and communicating
+through lightweight network mechanisms. The literature identifies several benefits directly
+relevant to a multi-sport club: independent deployability allows each domain to evolve and
+release on its own cadence; fault isolation contains a failure within one service rather than
+propagating it across the whole system; and the freedom to choose technology and scaling
+strategy per service allows a bursty real-time workload to be treated differently from a
+steady transactional one. The same literature is candid about the costs---distributed-system
+complexity, the need for service discovery and centralised configuration, and the discipline
+required to keep service boundaries aligned with data ownership. MSCMS adopts the
+database-per-service pattern that the literature recommends as the means of preserving loose
+coupling, and it employs a discovery server, a configuration server and an API gateway from
+the Spring Cloud~\cite{springcloud} ecosystem to manage exactly the operational concerns
+the literature warns of, building on the Spring Boot~\cite{springboot} platform.
+
+\subsection{Role-Based Access Control}
+\label{subsec:lit-rbac}
+
+Role-based access control, formalised by Ferraiolo, Kuhn and Chandramouli~\cite{rbac},
+mediates a user's permissions through the roles they hold rather than through permissions
+assigned to individuals directly. This indirection is well suited to an organisation with many
+job functions and a high turnover of personnel: permissions are defined once per role, and
+onboarding or off-boarding a member becomes a matter of assigning or revoking a role
+rather than reconfiguring dozens of individual rights. The literature emphasises that access
+control is only as strong as its weakest enforcement point; a control that exists solely in a
+user interface is no control at all, because the interface can be bypassed. MSCMS therefore
+implements RBAC at three layers---the identity provider, the API gateway and the front-end
+route guards---over a catalogue of fourteen roles, so that a request for an unauthorised
+resource is denied regardless of the path by which it arrives. Identity itself is delegated to a
+mature, standards-based provider~\cite{keycloak} that issues signed JSON Web
+Tokens~\cite{jwt}, following the well-understood OAuth~2.0 and OpenID~Connect patterns
+rather than a bespoke scheme.
+
+\subsection{Event-Driven Architecture and Messaging}
+\label{subsec:lit-eda}
+
+Event-driven architecture decouples the producer of an event from its consumers: a service
+publishes a fact about something that has happened, and any number of other services may
+react to it without the publisher knowing or caring who they are. In a distributed system this
+decoupling is the natural complement to microservices, because it lets domains integrate
+without the tight, synchronous coupling that would otherwise re-create a monolith over the
+network. The literature on durable, partitioned log-based brokers, of which Apache
+Kafka~\cite{kafka} is the canonical example, describes how events can be published reliably
+and consumed by independent subscribers at their own pace. MSCMS uses this pattern
+directly: a goal recorded by the live-match engine, an injury logged by the medical service or
+a transfer concluded by the commercial workflow is published as an event, and the
+notification service consumes those events to raise alerts---so that the alerting logic lives
+entirely outside the domains that generate the events. The outbox pattern is employed to
+ensure that an event is published if and only if the corresponding database change commits,
+avoiding the classic inconsistency between a service's state and the events it has emitted.
+
+\subsection{Real-Time Web Communication}
+\label{subsec:lit-rt}
+
+Finally, real-time features such as live match updates and team chat require a communication
+mechanism richer than the request--response model of classical HTTP. The WebSocket
+protocol~\cite{websocket} provides a full-duplex, persistent connection over a single TCP
+socket, allowing a server to push data to a client the instant it becomes available rather
+than waiting to be polled. MSCMS uses a WebSocket channel for its real-time team chat,
+with a polling fallback for environments in which a persistent connection cannot be
+established, reflecting the established engineering practice of degrading gracefully rather
+than failing outright when the optimal transport is unavailable.
+
+\section{Architectural Perspective on Existing Products}
+\label{sec:lit-arch}
+
+Returning to the surveyed products with these foundations in mind, the existing commercial
+systems share an architectural characteristic worth noting: they are, almost without
+exception, closed monolithic services hosted exclusively by their vendors. This delivery model
+has concrete consequences for clubs. It prevents self-hosting and on-premises data residency,
+which matters acutely for sensitive medical and financial records subject to data-protection
+obligations; it couples every functional area to a single vendor release cadence, so that a
+club cannot evolve one capability without waiting on the vendor's roadmap; and it offers no
+opportunity to extend the platform or integrate it deeply with a club's own systems. The
+software-engineering literature on microservices~\cite{microservices} argues persuasively that
+decomposing a large system into independently deployable services improves fault isolation,
+scalability and the ability to evolve individual domains without destabilising the whole, and
+the literature on RBAC~\cite{rbac} and event-driven integration~\cite{kafka} supplies the
+remaining pillars. MSCMS adopts this architectural stance explicitly: by building on a
+microservices backend with a self-hosted identity provider~\cite{keycloak} and a
+self-hostable, containerised~\cite{docker} deployment, it offers a degree of openness,
+extensibility and data ownership that the surveyed commercial products do not.
+
+\section{Comparative Positioning}
+\label{sec:lit-comparison}
+
+Table~\ref{tab:platform-comparison} positions MSCMS (Sportify) against representative
+platforms drawn from the three families surveyed above: SofaScore and ESPN as
+large-audience data platforms, Hudl and Catapult as performance suites, SAP Sports One as
+an enterprise suite, and TeamSnap as a generic administration tool. The comparison is
+deliberately multi-dimensional, spanning functional capabilities (live-match engine, data
+ingestion, medical and commercial workflows, messaging and analytics), architectural
+properties (microservices, self-hosted identity, self-hostable deployment) and audience
+reach (fan-facing surface). For brevity the consumer data platforms are grouped into a single
+column, since their capabilities with respect to internal club management are uniformly
+absent, as are the enterprise suite and the administration tool grouped where their profiles
+coincide. The comparison highlights that each existing product is strong within its niche but
+leaves substantial gaps elsewhere, whereas MSCMS is designed specifically to span all of the
+surveyed dimensions in one coherent system.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Multi-dimensional comparison of MSCMS (Sportify) against representative sports
+    platforms across functional, architectural and audience dimensions.
+    \emph{Yes} denotes first-class support, \emph{Part.} partial or domain-limited support,
+    and \emph{No} the absence of the capability.}
+  \label{tab:platform-comparison}
+  \small
+  \begin{tabular}{@{}lccccc@{}}
+    \toprule
+    \textbf{Capability} & \textbf{SofaScore/} & \textbf{Hudl} & \textbf{Catapult} &
+      \textbf{SAP/} & \textbf{MSCMS} \\
+    & \textbf{ESPN} & & & \textbf{TeamSnap} & \textbf{(Sportify)} \\
+    \midrule
+    \multicolumn{6}{@{}l}{\emph{Functional capabilities}}\\
+    Real-time live-match engine      & Part. & No   & No   & No    & Yes \\
+    Real competition-data ingestion  & Yes   & No   & No   & Part. & Yes \\
+    Competition standings \& brackets& Yes   & No   & No   & Part. & Yes \\
+    Multi-sport modelling            & Part. & Part.& Part.& Part. & Yes \\
+    Squad, contracts \& transfers    & No    & Part.& No   & Part. & Yes \\
+    Structured medical workflow      & No    & No   & Part.& Part. & Yes \\
+    Scouting pipeline                & No    & Part.& No   & Part. & Yes \\
+    Sponsorship workflow             & No    & No   & No   & Part. & Yes \\
+    Real-time team messaging         & No    & Part.& No   & Yes   & Yes \\
+    Event-driven notifications       & Part. & Part.& Part.& Part. & Yes \\
+    Embedded ML predictions          & No    & No   & No   & Part. & Yes \\
+    \midrule
+    \multicolumn{6}{@{}l}{\emph{Architectural properties}}\\
+    Fine-grained role-based access   & No    & Part.& Part.& Part. & Yes \\
+    Microservices architecture       & No    & No   & No   & Part. & Yes \\
+    Self-hosted identity provider    & No    & No   & No   & No    & Yes \\
+    Self-hostable deployment         & No    & No   & No   & No    & Yes \\
+    \midrule
+    \multicolumn{6}{@{}l}{\emph{Audience reach}}\\
+    Internal staff workflows         & No    & Yes  & Yes  & Yes   & Yes \\
+    Fan-facing surface               & Yes   & No   & No   & No    & Yes \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The table makes the pattern visible at a glance. The consumer data platforms occupy the top
+of the audience-reach dimension---they are unmatched at fan-facing presentation and data
+ingestion---but are essentially blank across the internal-workflow and architectural rows.
+The performance and enterprise suites are the mirror image: strong on internal staff
+workflows but weak or absent on fan reach, real competition data and self-hostable, open
+architecture. The generic administration tool is accessible but shallow across nearly every
+functional dimension. MSCMS is the only column that registers first-class support across all
+three dimensions, which is precisely the claim the system sets out to substantiate: not that it
+beats any specialist product within that specialist's own niche, but that it is the only
+platform that unifies the niches into a single, coherent, self-hostable whole.
+
+\section{Research Gap and Positioning}
+\label{sec:lit-gap}
+
+The survey reveals a consistent pattern that constitutes the research gap this project
+addresses. Large-audience data platforms have mastered real-time presentation and
+authoritative match data but hold no notion of a club's internal operations. Performance and
+enterprise suites are deep within a single domain but narrow in role coverage, weak in
+multi-sport modelling, and closed to self-hosting and extension. Generic administration tools
+are accessible but shallow, modelling a single team without medical, scouting, sponsorship or
+analytical capability. Across all three families, fine-grained role-based access
+control~\cite{rbac}, an open microservices architecture~\cite{microservices}, a self-hosted
+identity provider~\cite{keycloak}, a structured medical workflow and an embedded predictive
+capability are conspicuously rare or entirely absent, and---most tellingly---no single product
+unifies real-time, authoritative match data~\cite{footballdata} with the full internal
+management of a multi-discipline club.
+
+The gap, stated precisely, is the absence of a system that is simultaneously (i)
+\emph{comprehensive}, spanning identity, squad, competitions, live matches, medical,
+commercial, communication and analytics; (ii) \emph{real-time and event-driven}, driving
+live matches and propagating cross-domain events~\cite{kafka} rather than recording facts
+after the event; (iii) \emph{role-aware} through layered, enforced access control across
+fourteen distinct professional roles; (iv) \emph{open and self-hostable}, built on a
+microservices backend~\cite{springboot,springcloud} that a club can run and extend itself;
+and (v) \emph{dual-audience}, serving internal staff and external supporters from the same
+authoritative data store. Each surveyed product satisfies a subset of these properties; none
+satisfies all of them together, and it is the act of satisfying them together---reconciling
+consistent identity, consistent access control and consistent data semantics across
+heterogeneous domains---that constitutes the substantive contribution.
+
+This gap is precisely the opportunity that MSCMS (Sportify) addresses. By combining the
+real-time, data-rich presentation philosophy of the large-audience platforms with the
+internal-management depth of the performance and administration tools, and by delivering
+the whole as an open, self-hostable microservices system with layered access control over a
+self-hosted identity provider, MSCMS offers a class of platform that the existing market does
+not provide. The chapters that follow describe the methodology by which this system was
+designed and built, grounding each architectural decision in the principles reviewed above,
+and the results that demonstrate it in operation.

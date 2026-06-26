@@ -1,0 +1,41 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=10mm]
+  % --- core squad chain : Sport -> Team -> Roster --------------------------
+  \UmlClass{sport}{Sport}{- id : Long\\ - name\\ - sportType\\ - sportManagerId}{}
+  \UmlClass[below=14mm of sport]{team}{Team}{- id : Long\\ - name\\ - country\\ - sportId}{}
+  \UmlClass[below=14mm of team]{roster}{Roster}{- id : Long\\ - teamId\\ - playerKeycloakId\\ - season}{}
+
+  % --- contract (per player) ----------------------------------------------
+  \UmlClass[right=20mm of team]{contract}{PlayerContract}{- playerKeycloakId\\ - startDate\\ - endDate\\ - salary\\ - releaseClause\\ - contractStatus}{}
+
+  % --- external world : OuterTeam -> OuterPlayer --------------------------
+  \UmlClass[right=24mm of contract]{outerteam}{OuterTeam}{- id : Long\\ - name\\ - country}{}
+  \UmlClass[below=14mm of outerteam]{outerplayer}{OuterPlayer}{- id : Long\\ - name\\ - position\\ - nationality}{}
+
+  % --- transfer market : two directed status-bearing classes --------------
+  \UmlClass[below=16mm of roster]{tin}{PlayerTransferIncoming}{- playerKeycloakId\\ - fromTeam\\ - transferFee\\ - status : RequestStatus}{}
+  \UmlClass[right=16mm of tin]{tout}{PlayerTransferOutgoing}{- playerKeycloakId\\ - toTeam\\ - transferFee\\ - status : RequestStatus}{}
+
+  % --- national-team call-up ----------------------------------------------
+  \UmlClass[right=20mm of outerplayer]{callup}{PlayerCallUpRequest}{- playerKeycloakId\\ - nationalTeamKeycloakId\\ - callUpDate\\ - status : RequestStatus}{}
+  \UmlClass[above=14mm of callup]{nat}{NationalTeam}{- id : Long\\ - name\\ - country\\ - sportType}{}
+
+  % --- compositions (filled diamond at the whole) -------------------------
+  \draw[{Diamond[length=2.4mm,fill=dLine]}-, draw=dLine] (sport) -- node[lbl,pos=0.6]{1..*} (team);
+  \draw[{Diamond[length=2.4mm,fill=dLine]}-, draw=dLine] (team) -- node[lbl,pos=0.6]{1..*} (roster);
+  \draw[{Diamond[length=2.4mm,fill=dLine]}-, draw=dLine] (outerteam) -- node[lbl,pos=0.6]{1..*} (outerplayer);
+
+  % --- directed status-bearing associations -------------------------------
+  \draw[flow] (tin) -- node[lbl,pos=0.5]{\itshape to team} (roster);
+  \draw[flow] (tin.east) to[bend right=12] node[lbl,pos=0.5]{\itshape from} (outerplayer.south west);
+  \draw[flow] (tout) |- node[lbl,pos=0.25]{\itshape to} (outerteam.west);
+  \draw[flow] (callup) -- node[lbl,pos=0.5]{\itshape for} (nat);
+\end{tikzpicture}%
+}
+
+\end{document}

@@ -1,0 +1,54 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\begin{tikzpicture}[node distance=8mm]
+  \Entity{ma}{MATCH\_ANALYSIS}{%
+    \underline{PK} id\\
+    matchId\\
+    teamId\\
+    sportType\\
+    sportSpecificStats\\
+    tacticalAnalysis\\
+    playerRatings}
+  \Entity[right=10mm of ma]{pa}{PLAYER\_ANALYTICS}{%
+    \underline{PK} id\\
+    playerKeycloakId\\
+    teamId\\
+    sportType\\
+    primaryScore\\
+    secondaryScore\\
+    averageRating}
+  \Entity[right=10mm of pa]{ta}{TEAM\_ANALYTICS}{%
+    \underline{PK} id\\
+    teamId\\
+    sportType\\
+    wins / draws / losses\\
+    pointsFor\\
+    pointsAgainst}
+  \Entity[below=8mm of ma]{tr}{TRAINING\_ANALYTICS}{%
+    \underline{PK} id\\
+    teamId\\
+    aggregate training\\ \quad metrics}
+  \Entity[below=8mm of pa]{sr}{SCOUT\_REPORTS}{%
+    \underline{PK} id\\
+    scoutKeycloakId\\
+    outerPlayerId\\
+    ratings\\
+    recommendation}
+  \Entity[below=8mm of ta]{sc}{SPONSOR\_CONTRACT\_OFFERS}{%
+    \underline{PK} id\\
+    sponsorKeycloakId\\
+    offerTitle\\
+    contractValue\\
+    sponsorshipType\\
+    status}
+  \node[lbl, draw=dLine, fill=dFill, text width=46mm, align=center,
+        below=11mm of sr] (note)
+    {\itshape Entities are independent; cross-domain links
+     (matchId, teamId, player\slash scout\slash sponsor Keycloak ids)
+     are stored as opaque references, not FK constraints.};
+\end{tikzpicture}
+
+\end{document}

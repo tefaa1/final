@@ -1,0 +1,26 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{sequencediagram}
+  \newthread{u}{:User}
+  \newinst[1]{fe}{:Frontend}
+  \newinst[1]{gw}{:Gateway}
+  \newinst[1]{um}{:user-management}
+  \newinst[1]{kc}{:Keycloak}
+  \begin{call}{u}{submit username/password}{fe}{token + role stored}
+    \begin{call}{fe}{POST /auth/login}{gw}{access token, role}
+      \begin{call}{gw}{forward login}{um}{access token, role}
+        \begin{call}{um}{OAuth2 password-grant\\(token endpoint)}{kc}{access + refresh tokens}
+        \end{call}
+      \end{call}
+    \end{call}
+  \end{call}
+  \postlevel
+  \mess{fe}{decode JWT: sub=keycloakId, realm roles}{fe}
+\end{sequencediagram}%
+}
+
+\end{document}

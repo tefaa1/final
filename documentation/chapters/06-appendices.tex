@@ -1,0 +1,630 @@
+%==============================================================================
+%  APPENDICES
+%  The \appendix command switches chapter numbering to A, B, C, ...
+%  This file is \input after 05-conclusion and BEFORE the References, so the
+%  References still come last.
+%  pdflatex-safe: booktabs + longtable only; cite keys from the fixed set.
+%==============================================================================
+\appendix
+
+\chapter{Functional and Non-Functional Requirements Catalogue}
+\label{app:requirements}
+
+This appendix reproduces, in consolidated tabular form, the complete catalogue of
+functional and non-functional requirements that governed the design and construction of the
+Multi-Sport Club Management System (MSCMS). The functional requirements (Table~\ref{tab:app-fr})
+are grouped by module and identified by a stable \texttt{FR-$n$} label; the non-functional
+requirements (Table~\ref{tab:app-nfr}) are grouped by quality attribute and identified by an
+\texttt{NFR-$n$} label. These labels are the same as those used in the body of the report
+(Chapter~\ref{ch:methodology}); the tables below extend that summary with the priority and
+the principal architectural mechanism that realises each requirement, so that the appendix
+serves as a single, self-contained traceability reference.
+
+\section{Functional Requirements}
+\label{app:fr}
+
+\renewcommand{\arraystretch}{1.25}
+\begin{longtable}{p{0.06\textwidth} p{0.17\textwidth} p{0.52\textwidth} p{0.09\textwidth}}
+\caption{Complete functional requirements catalogue, grouped by module.}
+\label{tab:app-fr}\\
+\toprule
+\textbf{ID} & \textbf{Module} & \textbf{Requirement} & \textbf{Prio.} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{l}{\small\itshape Table~\ref{tab:app-fr} continued from previous page}\\
+\toprule
+\textbf{ID} & \textbf{Module} & \textbf{Requirement} & \textbf{Prio.} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r}{\small\itshape continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+
+FR-1  & Authentication & Authenticate users against Keycloak using the OAuth~2.0 password grant and issue a JWT access token consumed by the front-end. & High \\
+FR-2  & Authentication & Redirect each user on login to a single dashboard route whose content is computed from the user's role. & High \\
+FR-3  & User management & Allow the administrator to create, edit, deactivate and delete user accounts across all roles, provisioned through the Keycloak Admin API. & High \\
+FR-4  & User management & Onboard staff (sport managers, team managers, coaching staff, doctors, physiotherapists, fitness coaches, analysts, scouts and sponsors) with role assignment. & High \\
+FR-5  & Club hub & Present a club overview comprising identity, coaching staff, stadium, trophy cabinet, squad and results grouped by competition with a last-five form strip. & Medium \\
+FR-6  & Players \& teams & Let authorised staff manage sports, teams, rosters, contracts and transfers (incoming, outgoing and national-team call-ups). & High \\
+FR-7  & Scouting & Let scouts browse external prospects and author structured scout reports, forwarding recommendations to the sport manager. & Medium \\
+FR-8  & Training & Let coaching staff create training plans, drills and sessions, record attendance, and capture post-session player assessments. & High \\
+FR-9  & Sponsors & Let sponsors submit offers and let the sport manager negotiate, accept or reject them, returning the decision to the sponsor. & Medium \\
+FR-10 & Reports \& analytics & Let analysts author match and player analyses and consume the machine-learning match-outcome and player-rating predictions. & Medium \\
+FR-11 & Competitions & Maintain database-backed competitions---La~Liga and the new-format UEFA Champions League---each with its participating teams and fixtures. & High \\
+FR-12 & Competitions & Present the Champions League as a single league phase followed by a knockout bracket, with the knockout stage locked until the league phase is complete. & High \\
+FR-13 & Competitions & Make a completed competition (every fixture played) read-only with a ``Completed'' badge; keep an ongoing competition editable until its final result, then lock it automatically. & Medium \\
+FR-14 & Matches & Require a starting line-up before a match is persisted, and validate that the scheduled kick-off is at least five minutes in the future. & High \\
+FR-15 & Live match & Drive a live match through a broadcast-style phase machine (first half, half-time, second half, full-time), with extra time and a penalty shoot-out for unresolved knockout ties only. & High \\
+FR-16 & Live match & Allow staff to record in-game events (goals, cards, substitutions, injuries) during a live match, with substitutions limited per sport and the line-up locked at creation. & High \\
+FR-17 & Live match & Treat an in-match injury event as both a match event and a real injury record, flipping the affected player to an injured state in the medical service. & Medium \\
+FR-18 & Medical & Provide a Treatment Room separating currently-injured from recovered players and advancing each injured player through the staged journey injury$\rightarrow$diagnosis$\rightarrow$treatment$\rightarrow$rehabilitation$\rightarrow$recovery$\rightarrow$fitness test$\rightarrow$recovered. & High \\
+FR-19 & Medical & Use the injury's status as the single source of truth for the current journey stage, and return a player to availability only on a passing fitness test. & High \\
+FR-20 & Medical & Maintain general medical catalogues (injuries, diagnoses, treatments, rehabilitation, recovery programmes, fitness tests) referenced by the per-player journey. & Medium \\
+FR-21 & Messaging & Provide real-time team group chat with a seeded general group for all users, user-created groups with invitations (invited/member states), threaded replies and emoji reactions. & Medium \\
+FR-22 & Messaging & Deliver chat over a WebSocket channel with a polling fallback when the socket is unavailable. & Medium \\
+FR-23 & Notifications & Generate event-driven alerts (match scheduled/completed, goal scored, result available, injury, transfer, cancelled training) surfaced through a top-bar bell and a notification centre. & High \\
+FR-24 & RBAC & Enforce per-role page access so each role sees only the navigation and operations permitted to it, with players and fans receiving a read-only surface. & High \\
+FR-25 & Settings & Let each user manage profile, preference and notification settings with real persistence. & Medium \\
+FR-26 & Settings & Change the account password only after verifying the current password against Keycloak via a password-grant exchange. & High \\
+FR-27 & Data ingestion & Ingest real fixtures, results and standings from football-data.org on a schedule and on demand, with the back-end as the single source of truth. & Medium \\
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+\section{Non-Functional Requirements}
+\label{app:nfr}
+
+\renewcommand{\arraystretch}{1.25}
+\begin{longtable}{p{0.07\textwidth} p{0.18\textwidth} p{0.50\textwidth} p{0.10\textwidth}}
+\caption{Complete non-functional requirements catalogue, grouped by quality attribute.}
+\label{tab:app-nfr}\\
+\toprule
+\textbf{ID} & \textbf{Attribute} & \textbf{Requirement} & \textbf{Prio.} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{l}{\small\itshape Table~\ref{tab:app-nfr} continued from previous page}\\
+\toprule
+\textbf{ID} & \textbf{Attribute} & \textbf{Requirement} & \textbf{Prio.} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r}{\small\itshape continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+
+NFR-1  & Security & Authentication shall be stateless and JWT-based, with tokens issued by Keycloak and verified at the gateway against the JWKS endpoint before any request reaches a domain service. & High \\
+NFR-2  & Security & Role-based access control shall be enforced in depth at Keycloak (identity), the API gateway (route authorisation) and the Next.js middleware (navigation guard). & High \\
+NFR-3  & Scalability & Each domain service shall be independently and horizontally scalable, discoverable through Eureka, with no shared database to create cross-domain contention. & High \\
+NFR-4  & Scalability & High-volume, cross-domain event fan-out (notifications, alerts) shall be decoupled through asynchronous Kafka messaging rather than synchronous calls. & High \\
+NFR-5  & Availability & Every service shall expose health endpoints consumable by the orchestrator, and idempotent seeders shall guarantee a consistent baseline state across redeployments. & Medium \\
+NFR-6  & Performance & Hot lookups (such as a user profile resolved by Keycloak identifier) shall be cacheable in Redis, and real-time delivery shall favour a WebSocket push over repeated polling. & Medium \\
+NFR-7  & Maintainability & Each microservice shall be an independently buildable and releasable module with its own database, Dockerfile and configuration sourced from the Config Server. & High \\
+NFR-8  & Maintainability & Cross-cutting concerns shall be governed by single sources of truth (the front-end permission map and the back-end seed identifiers) to avoid duplicated, drifting logic. & High \\
+NFR-9  & Usability & Errors shall be surfaced as friendly, non-technical notifications without exposing stack traces, and the interface shall present a coherent Sportify brand identity. & Medium \\
+NFR-10 & Portability & The entire platform shall be reproducible from a single container-orchestration definition so it can be brought up identically on any Docker host. & High \\
+NFR-11 & Consistency & A player's availability status shall propagate automatically across the match, line-up and training surfaces so no manual reconciliation is required. & Medium \\
+NFR-12 & Data integrity & Competition standings shall be recomputed from recorded fixture results rather than stored, and a match shall never be persisted without a starting line-up. & Medium \\
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+%==============================================================================
+\chapter{REST API Reference}
+\label{app:api}
+
+This appendix lists representative REST endpoints for each microservice. All external
+traffic is addressed to the single API gateway origin (\texttt{http://localhost:8080}),
+which validates the JWT and routes by URI prefix to the owning service; the tables below
+therefore give the gateway-relative path. Every listed endpoint requires a valid
+\texttt{Authorization: Bearer} token except where noted, and each is additionally guarded by
+a per-role authorisation rule~\cite{rbac,jwt,restapi}. The standard collection verbs follow
+a uniform convention---\texttt{POST} to create, \texttt{GET} to read one or many,
+\texttt{PUT} to update and \texttt{DELETE} to remove---so the tables emphasise the
+distinctive, behaviour-bearing endpoints of each service.
+
+\section{Gateway and Authentication}
+\label{app:api-auth}
+
+\begin{longtable}{p{0.09\textwidth} p{0.34\textwidth} p{0.49\textwidth}}
+\caption{Gateway authentication endpoints (\texttt{/auth}).}
+\label{tab:api-auth}\\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+POST & \texttt{/auth/login} & Exchange username and password for a JWT; returns \texttt{access\_token} in the body and a refresh token as an HTTP-only cookie. \\
+POST & \texttt{/auth/signup} & Register a new account with the default \texttt{FAN} role. \\
+POST & \texttt{/auth/refresh} & Issue a new access token from the refresh-token cookie. \\
+POST & \texttt{/auth/logout} & Invalidate the session and clear the refresh-token cookie. \\
+POST & \texttt{/auth/admin/create-user} & Administrator creation of a user with a specified role. \\
+\end{longtable}
+
+\section{User Management Service}
+\label{app:api-user}
+
+\begin{longtable}{p{0.09\textwidth} p{0.40\textwidth} p{0.43\textwidth}}
+\caption{Representative user-management endpoints (port 8081).}
+\label{tab:api-user}\\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+GET    & \texttt{/users} & List all users (administrator). \\
+POST   & \texttt{/users} & Create a user account provisioned through Keycloak. \\
+PUT    & \texttt{/users/\{id\}} & Update a user's profile. \\
+PUT    & \texttt{/users/\{id\}/password} & Change a password after Keycloak-verified current credential. \\
+GET    & \texttt{/users/keycloak/\{keycloakId\}} & Resolve a user by Keycloak UUID (all authenticated). \\
+GET    & \texttt{/users/search} & Search users by name, e-mail, gender, role or age range. \\
+GET\,/\,POST & \texttt{/staff} & List or create staff (coaches, doctors, physiotherapists, analysts). \\
+GET\,/\,POST & \texttt{/players} & List or create player profiles. \\
+GET\,/\,POST & \texttt{/team-managers} & List or create team managers. \\
+GET\,/\,POST & \texttt{/sport-managers} & List or create sport managers. \\
+GET\,/\,POST & \texttt{/scouts} & List or create scouts. \\
+GET\,/\,POST & \texttt{/sponsors} & List or create sponsors. \\
+GET\,/\,POST & \texttt{/fans} & List fans; \texttt{POST} is public (fan self-registration). \\
+GET\,/\,POST & \texttt{/national-teams} & List or create national-team records. \\
+\end{longtable}
+
+\section{Player Management Service}
+\label{app:api-player}
+
+\begin{longtable}{p{0.09\textwidth} p{0.40\textwidth} p{0.43\textwidth}}
+\caption{Representative player-management endpoints (port 8084).}
+\label{tab:api-player}\\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+GET\,/\,POST & \texttt{/teams} & List or create club teams. \\
+GET\,/\,POST & \texttt{/sports} & List or create sports; \texttt{GET /sports/by-type} filters by sport. \\
+GET\,/\,POST & \texttt{/rosters} & List or create team rosters. \\
+GET\,/\,POST & \texttt{/player-contracts} & List or create player contracts. \\
+GET\,/\,POST & \texttt{/player-transfers-incoming} & List or create incoming transfers. \\
+GET\,/\,POST & \texttt{/player-transfers-outgoing} & List or create outgoing transfers. \\
+GET\,/\,POST & \texttt{/player-callups} & List or create national-team call-up requests. \\
+GET\,/\,POST & \texttt{/outer-players} & List or create scouted external players. \\
+GET\,/\,POST & \texttt{/outer-teams} & List or create external (opponent) clubs. \\
+\end{longtable}
+
+\section{Training and Match Service}
+\label{app:api-training}
+
+\begin{longtable}{p{0.09\textwidth} p{0.40\textwidth} p{0.43\textwidth}}
+\caption{Representative training-and-match endpoints (port 8087).}
+\label{tab:api-training}\\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+GET\,/\,POST & \texttt{/matches} & List or schedule matches; \texttt{GET /matches/by-sport} filters by sport. \\
+GET    & \texttt{/matches/standings/\{code\}} & Read-through league standings from the external provider. \\
+POST   & \texttt{/matches/sync-external} & Trigger on-demand ingestion of real fixtures. \\
+GET\,/\,POST & \texttt{/matches/leagues} & List or create database-backed competitions. \\
+GET    & \texttt{/matches/leagues/\{id\}} & Competition detail: teams and fixtures. \\
+POST   & \texttt{/matches/leagues/import} & Import a real competition season from football-data.org. \\
+POST   & \texttt{/matches/leagues/\{id\}/fixtures/bulk} & Add many fixtures (knockout bracket / league phase). \\
+PUT    & \texttt{/matches/leagues/\{id\}/fixtures/\{fid\}} & Record a fixture result. \\
+GET\,/\,POST & \texttt{/match-events} & List or record live match events (goals, cards, substitutions, injuries). \\
+GET\,/\,POST & \texttt{/match-lineups} & List or create match line-ups. \\
+GET\,/\,POST & \texttt{/match-formations} & List or create match formations. \\
+GET\,/\,POST & \texttt{/player-match-statistics} & List or record per-player match statistics (sport-aware). \\
+GET\,/\,POST & \texttt{/match-performance-reviews} & List or create post-match player reviews. \\
+GET\,/\,POST & \texttt{/training-sessions} & List or create training sessions. \\
+GET\,/\,POST & \texttt{/training-plans} & List or create training plans. \\
+GET\,/\,POST & \texttt{/training-drills} & List or create training drills. \\
+GET\,/\,POST & \texttt{/training-attendance} & List or record training attendance. \\
+GET\,/\,POST & \texttt{/player-training-assessments} & List or create post-session assessments. \\
+\end{longtable}
+
+\section{Medical and Fitness Service}
+\label{app:api-medical}
+
+\begin{longtable}{p{0.09\textwidth} p{0.40\textwidth} p{0.43\textwidth}}
+\caption{Representative medical-and-fitness endpoints (port 8086).}
+\label{tab:api-medical}\\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+GET\,/\,POST & \texttt{/injuries} & List or report injuries; status drives the recovery journey. \\
+GET\,/\,POST & \texttt{/diagnoses} & List or create diagnoses. \\
+GET\,/\,POST & \texttt{/treatments} & List or create treatment plans. \\
+GET\,/\,POST & \texttt{/rehabilitations} & List or create rehabilitation programmes. \\
+GET\,/\,POST & \texttt{/recovery-programs} & List or create recovery programmes. \\
+GET\,/\,POST & \texttt{/fitness-tests} & List or record fitness tests; \texttt{GET /fitness-tests/by-sport} filters by sport. \\
+GET\,/\,POST & \texttt{/training-loads} & List or record training-load measurements. \\
+\end{longtable}
+
+\section{Reports and Analytics Service}
+\label{app:api-reports}
+
+\begin{longtable}{p{0.09\textwidth} p{0.40\textwidth} p{0.43\textwidth}}
+\caption{Representative reports-and-analytics endpoints (port 8083).}
+\label{tab:api-reports}\\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+GET\,/\,POST & \texttt{/match-analyses} & List or create match analyses; \texttt{by-sport} filter available. \\
+GET\,/\,POST & \texttt{/player-analytics} & List or create player analytics; \texttt{by-sport} filter available. \\
+GET\,/\,POST & \texttt{/team-analytics} & List or create team analytics; \texttt{by-sport} filter available. \\
+GET\,/\,POST & \texttt{/training-analytics} & List or create training analytics. \\
+GET\,/\,POST & \texttt{/scout-reports} & List or create scout reports. \\
+GET\,/\,POST & \texttt{/sponsor-offers} & List or create sponsor contract offers. \\
+\end{longtable}
+
+\section{Notification and Mail Service}
+\label{app:api-notification}
+
+\begin{longtable}{p{0.09\textwidth} p{0.40\textwidth} p{0.43\textwidth}}
+\caption{Representative notification, alert and messaging endpoints (port 8085).}
+\label{tab:api-notification}\\
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Method} & \textbf{Path} & \textbf{Purpose} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+GET    & \texttt{/notifications/recipient/\{keycloakId\}} & Get a user's notifications. \\
+GET    & \texttt{/notifications/recipient/\{keycloakId\}/unread} & Get a user's unread notifications. \\
+PATCH  & \texttt{/notifications/\{id\}/read} & Mark a notification as read. \\
+GET    & \texttt{/alerts/target/\{keycloakId\}} & Get alerts targeted at a user. \\
+GET    & \texttt{/alerts/unacknowledged} & List unacknowledged alerts. \\
+PATCH  & \texttt{/alerts/\{id\}/acknowledge} & Acknowledge an alert. \\
+GET\,/\,POST & \texttt{/messages} & List or send messages; \texttt{/messages/recipient/\{id\}} fetches received. \\
+GET    & \texttt{/messages/groups?user=\{id\}} & List the groups a user belongs to (general + member groups). \\
+POST   & \texttt{/messages/groups} & Create a group (creator is a member; invitees are invited). \\
+GET    & \texttt{/messages/groups/invitations?user=\{id\}} & List a user's pending group invitations. \\
+POST   & \texttt{/messages/groups/\{id\}/accept} & Accept a group invitation. \\
+POST   & \texttt{/messages/groups/\{id\}/invite} & Invite users to a group. \\
+WS     & \texttt{ws://localhost:8085/ws/chat} & Native WebSocket channel for live chat and presence (outside the gateway).~\cite{websocket} \\
+\end{longtable}
+
+%==============================================================================
+\chapter{Database Schema Reference}
+\label{app:schema}
+
+The platform follows a strict database-per-service strategy on PostgreSQL~14~\cite{postgres};
+each of the six domain services owns exactly one database and no physical foreign key crosses
+a database boundary. Cross-service relationships are expressed instead as opaque references:
+the Keycloak UUID (\texttt{keycloakId}) for people, and stable JPA-generated numeric keys for
+domain objects such as teams and matches. This appendix lists the principal table of each
+database together with its key columns; it complements the per-service table summary in
+Chapter~\ref{ch:methodology}.
+
+\section{\texttt{mscms\_user} --- User Management}
+\label{app:schema-user}
+
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{p{0.26\textwidth} p{0.66\textwidth}}
+\caption{Principal tables and key columns in \texttt{mscms\_user}.}
+\label{tab:schema-user}\\
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\texttt{users} & \texttt{id}, \texttt{keycloak\_id}, \texttt{first\_name}, \texttt{last\_name}, \texttt{email}, \texttt{date\_of\_birth}, \texttt{gender}, \texttt{phone\_number}, \texttt{role}. \\
+\texttt{players} & \texttt{id}, \texttt{user\_keycloak\_id}, \texttt{nationality}, \texttt{preferred\_position}, \texttt{market\_value}, \texttt{kit\_number}, \texttt{player\_status}, \texttt{photo\_url}. \\
+\texttt{staff} & \texttt{id}, \texttt{user\_keycloak\_id}, \texttt{team\_id}, \texttt{staff\_role}, \texttt{specialization}, \texttt{contract\_start}, \texttt{contract\_end}. \\
+\texttt{sport\_managers} / \texttt{team\_managers} & \texttt{id}, \texttt{user\_keycloak\_id} and role-specific attributes. \\
+\texttt{scouts} & \texttt{id}, \texttt{user\_keycloak\_id}, \texttt{region}, \texttt{organization\_name}. \\
+\texttt{sponsors} / \texttt{fans} & \texttt{id}, \texttt{user\_keycloak\_id}, display and contact attributes. \\
+\texttt{national\_teams} & \texttt{id}, \texttt{name}, \texttt{country}, \texttt{sport\_type}. \\
+\end{longtable}
+
+\section{\texttt{mscms\_player} --- Player Management}
+\label{app:schema-player}
+
+\begin{longtable}{p{0.26\textwidth} p{0.66\textwidth}}
+\caption{Principal tables and key columns in \texttt{mscms\_player}.}
+\label{tab:schema-player}\\
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\texttt{sports} & \texttt{id}, \texttt{name}, \texttt{sport\_type}, \texttt{sport\_manager\_id}. \\
+\texttt{teams} & \texttt{id}, \texttt{name}, \texttt{country}, \texttt{sport\_id}. \\
+\texttt{rosters} & \texttt{id}, \texttt{team\_id}, \texttt{player\_keycloak\_id}, season membership. \\
+\texttt{player\_contracts} & \texttt{id}, \texttt{player\_keycloak\_id}, \texttt{team\_id}, \texttt{start\_date}, \texttt{end\_date}, \texttt{salary}, \texttt{release\_clause}, \texttt{contract\_status}. \\
+\texttt{player\_transfers\_incoming} & \texttt{id}, \texttt{player\_keycloak\_id}, \texttt{from\_team}, \texttt{transfer\_fee}, \texttt{transfer\_date}, \texttt{status}. \\
+\texttt{player\_transfers\_outgoing} & \texttt{id}, \texttt{player\_keycloak\_id}, \texttt{to\_team}, \texttt{transfer\_fee}, \texttt{transfer\_date}, \texttt{status}. \\
+\texttt{player\_callups} & \texttt{id}, \texttt{player\_keycloak\_id}, \texttt{national\_team\_keycloak\_id}, \texttt{call\_up\_date}, \texttt{return\_date}, \texttt{status}. \\
+\texttt{outer\_players} & \texttt{id}, \texttt{name}, \texttt{position}, \texttt{nationality}, scouting attributes. \\
+\texttt{outer\_teams} & \texttt{id}, \texttt{name}, \texttt{country}, external-club attributes. \\
+\end{longtable}
+
+\section{\texttt{mscms\_training} --- Training and Match}
+\label{app:schema-training}
+
+\begin{longtable}{p{0.26\textwidth} p{0.66\textwidth}}
+\caption{Principal tables and key columns in \texttt{mscms\_training}.}
+\label{tab:schema-training}\\
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\texttt{matches} & \texttt{id}, \texttt{home\_team\_id}, \texttt{outer\_team\_id}, \texttt{match\_type}, \texttt{status}, \texttt{sport\_type}, \texttt{kickoff\_time}, \texttt{home\_team\_score}, \texttt{away\_team\_score}, \texttt{external\_id}, \texttt{opponent\_name}, \texttt{opponent\_crest}, \texttt{match\_formation\_id}. \\
+\texttt{match\_formations} & \texttt{id}, \texttt{team\_id}, \texttt{set\_by\_coach\_keycloak\_id}, \texttt{formation}, \texttt{tactical\_approach}, \texttt{formation\_details}. \\
+\texttt{match\_lineups} & \texttt{id}, \texttt{match\_id}, \texttt{player\_keycloak\_id}, \texttt{position}, starter/bench flag. \\
+\texttt{match\_events} & \texttt{id}, \texttt{match\_id}, \texttt{player\_keycloak\_id}, \texttt{team\_id}, \texttt{event\_type}, \texttt{minute}, \texttt{extra\_time}, \texttt{description}. \\
+\texttt{player\_match\_statistics} & \texttt{id}, \texttt{match\_id}, \texttt{player\_keycloak\_id}, \texttt{sport\_type}, and the flat sport-specific statistics columns. \\
+\texttt{training\_sessions} & \texttt{id}, \texttt{team\_id}, \texttt{head\_coach\_keycloak\_id}, \texttt{session\_type}, \texttt{status}, \texttt{scheduled\_date}, \texttt{duration\_minutes}. \\
+\texttt{training\_plans} / \texttt{training\_drills} & \texttt{id}, \texttt{training\_session\_id}, drill name, category, intensity, duration. \\
+\texttt{training\_attendance} & \texttt{id}, \texttt{training\_session\_id}, \texttt{player\_keycloak\_id}, \texttt{attended}, \texttt{performance\_score}. \\
+\texttt{competition} & \texttt{id}, \texttt{name}, \texttt{season}, \texttt{type}, \texttt{rounds}. \\
+\texttt{competition\_team} & \texttt{id}, \texttt{competition\_id}, \texttt{name}, \texttt{short\_name}, \texttt{crest\_url}, \texttt{sport}. \\
+\texttt{competition\_fixture} & \texttt{id}, \texttt{competition\_id}, \texttt{home\_team\_id}, \texttt{away\_team\_id}, \texttt{home\_score}, \texttt{away\_score}, \texttt{played}, \texttt{round}, \texttt{group\_name}, \texttt{matchday}, \texttt{played\_at}. \\
+\end{longtable}
+
+\section{\texttt{mscms\_medical} --- Medical and Fitness}
+\label{app:schema-medical}
+
+\begin{longtable}{p{0.26\textwidth} p{0.66\textwidth}}
+\caption{Principal tables and key columns in \texttt{mscms\_medical}.}
+\label{tab:schema-medical}\\
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\texttt{injuries} & \texttt{id}, \texttt{player\_keycloak\_id}, \texttt{team\_id}, \texttt{reported\_by\_doctor\_keycloak\_id}, \texttt{injury\_type}, \texttt{severity}, \texttt{injured\_body\_part}, \texttt{injury\_date}, \texttt{expected\_recovery\_date}, \texttt{status}. \\
+\texttt{diagnoses} & \texttt{id}, \texttt{injury\_id}, \texttt{player\_keycloak\_id}, \texttt{doctor\_keycloak\_id}, \texttt{diagnosis}, \texttt{test\_results}, \texttt{recommendations}. \\
+\texttt{treatments} & \texttt{id}, \texttt{injury\_id}, \texttt{player\_keycloak\_id}, \texttt{treatment\_type}, \texttt{status}, \texttt{start\_date}, \texttt{end\_date}. \\
+\texttt{rehabilitations} & \texttt{id}, \texttt{injury\_id}, \texttt{player\_keycloak\_id}, programme detail, \texttt{status}. \\
+\texttt{recovery\_programs} & \texttt{id}, \texttt{injury\_id}, \texttt{player\_keycloak\_id}, programme detail. \\
+\texttt{fitness\_tests} & \texttt{id}, \texttt{player\_keycloak\_id}, \texttt{team\_id}, \texttt{test\_type}, \texttt{sport\_type}, \texttt{test\_date}, \texttt{result}, \texttt{unit}, \texttt{result\_category}. \\
+\texttt{training\_loads} & \texttt{id}, \texttt{player\_keycloak\_id}, load measurements. \\
+\end{longtable}
+
+\section{\texttt{mscms\_reports} and \texttt{mscms\_notification}}
+\label{app:schema-reports-notif}
+
+\begin{longtable}{p{0.26\textwidth} p{0.66\textwidth}}
+\caption{Principal tables and key columns in \texttt{mscms\_reports} and \texttt{mscms\_notification}.}
+\label{tab:schema-reports-notif}\\
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Table} & \textbf{Key columns} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\multicolumn{2}{l}{\textit{\texttt{mscms\_reports}}} \\
+\texttt{match\_analysis} & \texttt{id}, \texttt{match\_id}, \texttt{team\_id}, \texttt{sport\_type}, \texttt{sport\_specific\_stats}, \texttt{tactical\_analysis}, \texttt{player\_ratings}. \\
+\texttt{player\_analytics} & \texttt{id}, \texttt{player\_keycloak\_id}, \texttt{team\_id}, \texttt{sport\_type}, \texttt{primary\_score}, \texttt{secondary\_score}, \texttt{average\_rating}. \\
+\texttt{team\_analytics} & \texttt{id}, \texttt{team\_id}, \texttt{sport\_type}, \texttt{wins}, \texttt{draws}, \texttt{losses}, \texttt{points\_for}, \texttt{points\_against}. \\
+\texttt{training\_analytics} & \texttt{id}, \texttt{team\_id}, aggregate training metrics. \\
+\texttt{scout\_reports} & \texttt{id}, \texttt{scout\_keycloak\_id}, \texttt{outer\_player\_id}, ratings, \texttt{recommendation}. \\
+\texttt{sponsor\_contract\_offers} & \texttt{id}, \texttt{sponsor\_keycloak\_id}, \texttt{offer\_title}, \texttt{contract\_value}, \texttt{sponsorship\_type}, \texttt{status}. \\
+\midrule
+\multicolumn{2}{l}{\textit{\texttt{mscms\_notification}}} \\
+\texttt{notifications} & \texttt{id}, \texttt{recipient\_user\_keycloak\_id}, \texttt{category}, \texttt{status}, \texttt{title}, \texttt{message}, \texttt{related\_entity\_id}. \\
+\texttt{alerts} & \texttt{id}, \texttt{alert\_type}, \texttt{priority}, \texttt{target\_user\_keycloak\_id}, \texttt{target\_role}, \texttt{action\_required}. \\
+\texttt{messages} & \texttt{id}, \texttt{sender\_user\_keycloak\_id}, \texttt{recipient\_user\_keycloak\_id}, \texttt{group\_id}, \texttt{content}, \texttt{parent\_message\_id}. \\
+\texttt{chat\_group} & \texttt{id}, \texttt{name}, \texttt{description}, \texttt{photo\_url}, \texttt{is\_general}, \texttt{created\_by\_keycloak\_id}, \texttt{created\_at}. \\
+\texttt{chat\_group\_member} & \texttt{id}, \texttt{group\_id}, \texttt{user\_keycloak\_id}, \texttt{status} (INVITED/MEMBER), \texttt{invited\_by\_keycloak\_id}. \\
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+%==============================================================================
+\chapter{Technology Stack and Versions}
+\label{app:stack}
+
+This appendix consolidates the concrete technologies and versions used to build, run and
+deploy the platform. The choices reflect the non-functional priorities set out in
+Chapter~\ref{ch:methodology}: a battle-tested back-end framework with first-class cloud
+support, a modern reactive front-end, and standard infrastructure that runs identically
+inside containers.
+
+\renewcommand{\arraystretch}{1.2}
+\begin{longtable}{p{0.20\textwidth} p{0.34\textwidth} p{0.38\textwidth}}
+\caption{Technology stack and versions.}
+\label{tab:app-stack}\\
+\toprule
+\textbf{Tier} & \textbf{Technology / Version} & \textbf{Role in MSCMS} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Tier} & \textbf{Technology / Version} & \textbf{Role in MSCMS} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Language & Java 21 (LTS) & Implementation language of all back-end services~\cite{springboot}. \\
+Back-end & Spring Boot 3.5.6 & Domain microservices and embedded application servers~\cite{springboot}. \\
+Back-end & Spring Cloud 2025.0.0 & Gateway, Eureka discovery and Config Server~\cite{springcloud}. \\
+Back-end & Spring Data JPA / Hibernate & Object-relational mapping over PostgreSQL. \\
+Back-end & Spring Security (resource server) & JWT verification at the gateway~\cite{jwt}. \\
+Identity & Keycloak 26 & OIDC/OAuth~2.0 identity provider, realm \texttt{mscms}~\cite{keycloak}. \\
+Front-end & Next.js 16 (App Router) & Server- and client-rendered UI and route middleware~\cite{nextjs}. \\
+Front-end & React 19 & Component model for the dashboard and interactive views~\cite{react}. \\
+Front-end & Tailwind CSS v4 & Utility-first styling and the Sportify visual identity. \\
+Real-time & Native WebSocket (RFC 6455) & Team group chat with a polling fallback~\cite{websocket}. \\
+Data & PostgreSQL 14 & One isolated relational database per domain service~\cite{postgres}. \\
+Messaging & Apache Kafka (cp-kafka 7.5.0) & Asynchronous domain-event backbone~\cite{kafka}. \\
+Cache / queue & Redis, RabbitMQ 3 & Hot-lookup caching and transactional messaging. \\
+External data & football-data.org REST API & Real competition fixtures, results and standings~\cite{footballdata,restapi}. \\
+Machine learning & Python 3, FastAPI, Uvicorn & Decoupled match-outcome and player-rating prediction services. \\
+Platform & Docker \& Docker Compose & Reproducible container orchestration of the full stack~\cite{docker}. \\
+Build & Apache Maven 3.9 & Back-end build and dependency management. \\
+\end{longtable}
+\renewcommand{\arraystretch}{1.0}
+
+\begin{longtable}{p{0.34\textwidth} p{0.20\textwidth} p{0.38\textwidth}}
+\caption{Service ports and gateway routing prefixes.}
+\label{tab:app-ports}\\
+\toprule
+\textbf{Service} & \textbf{Port} & \textbf{Gateway path prefixes} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Service} & \textbf{Port} & \textbf{Gateway path prefixes} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+API Gateway & 8080 & single public entry point \\
+Eureka service registry & 8761 & --- \\
+Config Server & 8082 & --- \\
+Keycloak & 8443 (host) & realm \texttt{mscms} \\
+user-management & 8081 & \texttt{/users}, \texttt{/staff}, \texttt{/players}, \texttt{/team-managers}, \texttt{/sport-managers}, \texttt{/scouts}, \texttt{/sponsors}, \texttt{/fans}, \texttt{/national-teams} \\
+player-management & 8084 & \texttt{/teams}, \texttt{/sports}, \texttt{/rosters}, \texttt{/player-contracts}, \texttt{/player-transfers-*}, \texttt{/player-callups}, \texttt{/outer-players}, \texttt{/outer-teams} \\
+training-match & 8087 & \texttt{/matches}, \texttt{/match-events}, \texttt{/match-formations}, \texttt{/match-lineups}, \texttt{/match-performance-reviews}, \texttt{/player-match-statistics}, \texttt{/training-*} \\
+medical-fitness & 8086 & \texttt{/injuries}, \texttt{/diagnoses}, \texttt{/treatments}, \texttt{/rehabilitations}, \texttt{/recovery-programs}, \texttt{/fitness-tests}, \texttt{/training-loads} \\
+reports-analytics & 8083 & \texttt{/match-analyses}, \texttt{/player-analytics}, \texttt{/team-analytics}, \texttt{/training-analytics}, \texttt{/scout-reports}, \texttt{/sponsor-offers} \\
+notification-mail & 8085 & \texttt{/notifications}, \texttt{/alerts}, \texttt{/messages} (and \texttt{ws://\dots/ws/chat}) \\
+ML match-predictor & 9000 & \texttt{/ml/match-prediction} \\
+ML player-rating & 9001 & \texttt{/ml/player-rating} \\
+\end{longtable}
+
+%==============================================================================
+\chapter{Deployment and Run Guide}
+\label{app:deploy}
+
+This appendix describes how to bring the full platform up on a single Docker host. The
+procedure reflects the build workflow the team used on a development machine where the
+in-container Maven build cannot reach Maven Central because of network TLS interception; on
+such a host the service jars are built on the host and copied into minimal runtime images
+through a prebuilt-image override.
+
+\section{Prerequisites}
+\label{app:deploy-prereq}
+
+\begin{itemize}
+  \item Docker and Docker~Compose installed and the Docker engine running~\cite{docker}.
+  \item For a host-side jar build: a Java~21 JDK and Apache~Maven~3.9 on the \texttt{PATH},
+        with a populated local repository (\texttt{\textasciitilde/.m2}).
+  \item Optional: a free football-data.org API key, placed in \texttt{MSCMS-main/.env} as
+        \texttt{FOOTBALL\_DATA\_API\_KEY}, to enable real-fixture ingestion~\cite{footballdata}.
+\end{itemize}
+
+\section{Build and Run}
+\label{app:deploy-run}
+
+The stack is composed from two files: \texttt{docker-compose.full.yml}, which defines the
+complete set of services (infrastructure, the six domain services, the control plane and the
+two machine-learning services), and \texttt{docker-compose.local.yml}, which overrides the
+locally changed services to build from a \texttt{Dockerfile.prebuilt} rather than running
+Maven inside the container. The following commands are run from the \texttt{MSCMS-main}
+directory.
+
+\begin{lstlisting}[language=bashx,caption={Building service jars on the host (offline).},label={lst:hostbuild}]
+# Build each changed service's fat jar on the host (offline; ~/.m2 is populated).
+cd user-management-service && mvn -o -DskipTests package && cd ..
+cd notification-mail-service && mvn -o -DskipTests package && cd ..
+# (repeat for any other service that changed)
+\end{lstlisting}
+
+\begin{lstlisting}[language=bashx,caption={Bringing the full stack up.},label={lst:composeup}]
+# From MSCMS-main. The -v on down wipes the databases so the idempotent
+# seeders re-run and recreate a consistent baseline.
+docker compose -f docker-compose.full.yml -f docker-compose.local.yml down -v
+docker compose -f docker-compose.full.yml -f docker-compose.local.yml build
+docker compose -f docker-compose.full.yml -f docker-compose.local.yml up -d
+\end{lstlisting}
+
+Keycloak takes roughly ninety seconds to become healthy on a cold start, and the gateway and
+user-management service wait on it; if the first \texttt{up} reports Keycloak as unhealthy,
+re-running \texttt{up -d} once it is ready completes the start-up. Once the stack is running,
+the front-end (a Next.js application) is started separately and points at the gateway on
+\texttt{http://localhost:8080}.
+
+\section{Ports and Access}
+\label{app:deploy-ports}
+
+The externally relevant ports are summarised in Table~\ref{tab:app-ports} of
+Appendix~D. In brief: the API gateway is the single public Spring entry point on
+\texttt{8080}; Keycloak is published on host port \texttt{8443}; the Eureka dashboard is on
+\texttt{8761}; the team-chat WebSocket is reached directly on the notification service's port
+\texttt{8085} at \texttt{/ws/chat}; and the two machine-learning services are published on
+\texttt{9000} and \texttt{9001}.
+
+\section{Demonstration Login}
+\label{app:deploy-login}
+
+A default administrator account is seeded on first boot, with username \texttt{admin} and
+password \texttt{admin123}; the same credentials are the Keycloak administrative login. The
+remaining seeded demonstration users share the password \texttt{password123}. Signing in as
+\texttt{admin} yields the all-access dashboard from which every module described in
+Chapter~\ref{ch:results} can be exercised; signing in as a role-specific demonstration user
+shows the corresponding, permission-appropriate surface and confirms the three-layer
+role-based access control~\cite{rbac} in action.
+
+\section{Real-Fixture Ingestion}
+\label{app:deploy-ingest}
+
+When a football-data.org key is configured, the training-match service synchronises real
+fixtures, results and standings on a thirty-minute schedule and on demand through
+\texttt{POST /matches/sync-external}~\cite{footballdata}. Because the free tier forbids
+team-scoped endpoints, the service reads competition-scoped endpoints and filters the
+modelled club's fixtures; standings are served as a read-through pass and are not persisted.
+At the project's reference date the freely available data is post-season, so ingested matches
+are finished; the live-match engine is best demonstrated on club-created fixtures, as
+discussed in Chapter~\ref{ch:results}.

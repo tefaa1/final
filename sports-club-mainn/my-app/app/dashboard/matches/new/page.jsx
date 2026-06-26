@@ -7,7 +7,7 @@ import { resolveSportUpper } from "@/src/lib/playerSport";
 import { resolveCompetitionKind, COMPETITION_KIND } from "@/src/components/matches/competitionTypes";
 import { FIXTURE_SOURCE_TAG } from "@/src/components/matches/fixtureSource";
 import { FORMATION_NAMES } from "@/src/components/matches/formationLayouts";
-import { validateKickoff, minKickoffLocal } from "@/src/components/matches/liveClock";
+import { validateKickoff, minKickoffLocal, toNaiveLocalDateTime, toLocalInputValue } from "@/src/components/matches/liveClock";
 import { saveDraftMatch } from "@/src/components/matches/draftMatch";
 import PlayerFace from "@/src/components/matches/PlayerFace";
 import Combobox, { buildVenueOptions } from "@/src/components/matches/Combobox";
@@ -86,15 +86,29 @@ export default function NewMatchPage() {
 
   // ── Friendly path state ──────────────────────────────────────────────
   const [friendlyOpp, setFriendlyOpp] = useState({ name: "", crest: "" });
+  // The chosen HOME team for a friendly. Defaults to the Barça football team but
+  // the user can pick ANY club team (basketball, handball, tennis…). The match
+  // sport follows the chosen team. Empty until teams have loaded + a default set.
+  const [homeTeamId, setHomeTeamId] = useState("");
 
   // Load DB-derived dropdown sources.
   useEffect(() => {
     (async () => {
       try {
         const res = await api.getTeams();
+        // FULL club-team list for the friendly home-team picker. FC Barcelona
+        // (football) IS included again — it's the default home team — alongside
+        // the other club teams (basketball, handball, tennis…). Volleyball is the
+        // only sport not modelled here. Sort so the Barça football side leads.
         setTeams(unwrapArr(res)
           .filter(t => SPORT_BY_ID[t.sportId] !== "VOLLEYBALL")
-          .map(t => ({ id: t.id, name: t.name, sportType: SPORT_BY_ID[t.sportId] || "FOOTBALL" })));
+          .map(t => ({ id: t.id, name: t.name, sportType: SPORT_BY_ID[t.sportId] || "FOOTBALL" }))
+          .sort((a, b) => {
+            const aBarca = a.sportType === "FOOTBALL" && isBarca(a.name);
+            const bBarca = b.sportType === "FOOTBALL" && isBarca(b.name);
+            if (aBarca !== bBarca) return aBarca ? -1 : 1;
+            return a.name.localeCompare(b.name);
+          }));
       } catch { /* ignore */ }
       try {
         const lists = await Promise.all(["AVAILABLE", "INJURED", "SUSPENDED", "ABSENT"].map(s => api.getPlayers(s).catch(() => [])));
@@ -125,13 +139,10 @@ export default function NewMatchPage() {
     if (!deepLink) return;
     setMode("deeplink");
     if (deepLink.kickoff) {
-      // Convert the ISO kickoff into a value the datetime-local input accepts
-      // (YYYY-MM-DDTHH:mm in LOCAL time).
-      const d = new Date(deepLink.kickoff);
-      if (!Number.isNaN(d.getTime())) {
-        const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-        setKickoffTime(local.toISOString().slice(0, 16));
-      }
+      // Pre-fill the datetime-local input from the kickoff using LOCAL parts
+      // (NOT toISOString, which prints UTC and would shift the wall time).
+      const local = toLocalInputValue(deepLink.kickoff);
+      if (local) setKickoffTime(local);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deepLink]);
@@ -141,17 +152,39 @@ export default function NewMatchPage() {
   // A few faces for the chooser cards (premium touch with PLAYER PHOTOS).
   const heroFaces = squad.slice(0, 5);
 
+  // ── HOME TEAM (friendly path) ────────────────────────────────────────
+  // Default the friendly HOME team to the FC Barcelona FOOTBALL side (id 1)
+  // once teams load — falling back to the first available club team if the
+  // Barça football team isn't present. The match sport follows the chosen team.
+  useEffect(() => {
+    if (homeTeamId || !teams.length) return;
+    const barca = teams.find((t) => t.sportType === "FOOTBALL" && isBarca(t.name));
+    setHomeTeamId(String(barca?.id ?? teams[0].id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teams]);
+
+  // The currently-selected home team object (drives the sport + matchup labels).
+  const homeTeam = useMemo(
+    () => teams.find((t) => String(t.id) === String(homeTeamId)) || null,
+    [teams, homeTeamId]
+  );
+  const homeSport = homeTeam?.sportType || "FOOTBALL";
+  const homeCrestUrl = isBarca(homeTeam?.name) ? BARCA_CREST : "";
+
   // Opponent options for the combobox: merge clubs we've actually faced (real
   // crests from past matches) with the seeded rival directory (football clubs
   // with real crest URLs). De-duped by name, sorted A→Z. NOT mock data.
   const opponentOptions = useMemo(() => {
     const byName = new Map();
     opponents.forEach(o => { if (o.name) byName.set(o.name, { value: o.name, label: o.name, crest: o.crest || "" }); });
+    // Seed rival clubs for the CHOSEN home team's sport (football, basketball…).
+    // The combobox still lets the user type any opponent name freely.
+    const sportTitle = homeSport.charAt(0) + homeSport.slice(1).toLowerCase(); // FOOTBALL → Football
     Object.values(KNOWN_OUTER_TEAMS)
-      .filter(t => t.sport === "Football")
+      .filter(t => t.sport === sportTitle)
       .forEach(t => { if (!byName.has(t.name)) byName.set(t.name, { value: t.name, label: t.name, crest: t.crestUrl || "" }); });
     return [...byName.values()].sort((a, b) => a.label.localeCompare(b.label));
-  }, [opponents]);
+  }, [opponents, homeSport]);
 
   // Venue options: a generous list of real European stadiums (each with a
   // DISTINCT crest where we know the resident club) + any venues already on
@@ -165,8 +198,11 @@ export default function NewMatchPage() {
   };
 
   // When the user opens the Official path, load every competition's detail and
-  // keep ONLY the ones that are STILL RUNNING (have at least one unplayed
-  // fixture). Finished competitions are hidden entirely.
+  // keep ONLY the ones that are STILL RUNNING **for FC Barcelona** — i.e. that
+  // have at least one unplayed fixture INVOLVING BARÇA. Competitions Barça isn't
+  // in (or has finished its fixtures in) are hidden, and the "X to play" badge
+  // counts only Barça's remaining fixtures (matching the Barça-only list shown
+  // after selecting the competition).
   const loadRunningComps = async () => {
     if (runningComps.length || !customComps.length) { setCompsLoading(customComps.length === 0 ? false : compsLoading); }
     setCompsLoading(true);
@@ -176,8 +212,11 @@ export default function NewMatchPage() {
           const d = await api.competitions.get(c.id);
           const detail = d?.competition ? d : (d?.data || d);
           const fixtures = detail?.fixtures || [];
-          const unplayed = fixtures.filter(isUnplayed);
-          return { comp: c, detail: { competition: detail.competition || detail, teams: detail.teams || [], fixtures }, unplayedCount: unplayed.length };
+          const cTeams = detail.teams || [];
+          const teamName = (id, fallback) => cTeams.find((x) => x.id === id)?.name || fallback;
+          const involvesBarca = (f) => isBarca(teamName(f.homeTeamId, f.homeName)) || isBarca(teamName(f.awayTeamId, f.awayName));
+          const barcaUnplayed = fixtures.filter((f) => isUnplayed(f) && involvesBarca(f));
+          return { comp: c, detail: { competition: detail.competition || detail, teams: cTeams, fixtures }, unplayedCount: barcaUnplayed.length };
         } catch { return null; }
       }));
       const running = details
@@ -213,15 +252,17 @@ export default function NewMatchPage() {
     return { name: t?.name || fallbackName || "Team", crestUrl: t?.crestUrl || "" };
   };
 
-  // Unplayed fixtures, Barça-involving first, then by matchday.
+  // ONLY FC Barcelona's unplayed fixtures (the Match Hub is Barça-centric — the
+  // user only schedules + sets lineups for Barça's own matches). A fixture
+  // qualifies when Barça is the home OR away side; the rest of the league's
+  // fixtures are hidden here. Sorted by matchday. The Competitions module still
+  // shows the full fixture list — this filter is local to the scheduler.
   const unplayedFixtures = useMemo(() => {
-    const fx = (compDetail?.fixtures || []).filter(isUnplayed);
     const involvesBarca = (f) => isBarca(fixtureTeam(f.homeTeamId, f.homeName).name) || isBarca(fixtureTeam(f.awayTeamId, f.awayName).name);
-    return [...fx].sort((a, b) => {
-      const ab = involvesBarca(a) ? 0 : 1, bb = involvesBarca(b) ? 0 : 1;
-      if (ab !== bb) return ab - bb;
-      return (a.matchday ?? 999) - (b.matchday ?? 999);
-    });
+    return (compDetail?.fixtures || [])
+      .filter(isUnplayed)
+      .filter(involvesBarca)
+      .sort((a, b) => (a.matchday ?? 999) - (b.matchday ?? 999));
   }, [compDetail]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const compKindReal = compDetail ? resolveCompetitionKind(compDetail.competition, compDetail.competition?.name) : null;
@@ -259,28 +300,31 @@ export default function NewMatchPage() {
   const createFriendly = async () => {
     setErrMsg("");
     if (!friendlyOpp.name.trim()) { setErrMsg("Enter an opponent name."); return; }
+    if (!homeTeam) { setErrMsg("Pick a home team."); return; }
     const ke = validateKickoff(kickoffTime);
     if (ke) { setDateErr(ke); return; }
     setDateErr("");
     if (!venue.trim()) { setErrMsg("Enter a venue."); return; }
-    const homeTeamId = barcaTeamId();
+    // Home team + sport follow the user's pick (any club team across sports).
+    const chosenHomeId = Number(homeTeam.id) || barcaTeamId();
+    const sportType = homeTeam.sportType || "FOOTBALL";
     goToDraftLineup({
-      homeTeamId,
+      homeTeamId: chosenHomeId,
       outerTeamId: null,
       opponentName: friendlyOpp.name.trim(),
       opponentCrest: friendlyOpp.crest || null,
       matchType: "FRIENDLY",
       status: "SCHEDULED",
-      sportType: "FOOTBALL",
+      sportType,
       venue: venue.trim() || "TBD",
       competition: "Friendly Match",
       competitionType: "LEAGUE",
       season: "2025/2026",
       referee: "TBD",
-      matchSummary: `FC Barcelona vs ${friendlyOpp.name.trim()} — Friendly`,
+      matchSummary: `${homeTeam.name} vs ${friendlyOpp.name.trim()} — Friendly`,
       notes: "N/A",
       attendance: null,
-      kickoffTime: new Date(kickoffTime).toISOString().slice(0, 19),
+      kickoffTime: toNaiveLocalDateTime(kickoffTime),
       finishTime: null,
     });
   };
@@ -310,7 +354,7 @@ export default function NewMatchPage() {
       matchSummary: `${fixturePreview.homeLabel} vs ${fixturePreview.oppName} — ${compName}`,
       notes: `${FIXTURE_SOURCE_TAG} comp=${compId} fix=${pickedFixture.id}]`,
       attendance: null,
-      kickoffTime: new Date(kickoffTime).toISOString().slice(0, 19),
+      kickoffTime: toNaiveLocalDateTime(kickoffTime),
       finishTime: null,
     });
   };
@@ -348,7 +392,7 @@ export default function NewMatchPage() {
       matchSummary: `FC Barcelona vs ${oppName} — ${compName}`,
       notes: `${FIXTURE_SOURCE_TAG} comp=${deepLink.fromComp} fix=${deepLink.fixId}]`,
       attendance: null,
-      kickoffTime: new Date(kickoffTime).toISOString().slice(0, 19),
+      kickoffTime: toNaiveLocalDateTime(kickoffTime),
       finishTime: null,
     });
   };
@@ -470,11 +514,12 @@ export default function NewMatchPage() {
           {errMsg && <div className="mb-6 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-bold text-red-300">{errMsg}</div>}
 
           {/* VS preview with crests (both logos render reliably with a graceful
-              shield fallback if a crest URL ever fails to load). */}
+              shield fallback if a crest URL ever fails to load). The HOME side
+              follows the chosen club team. */}
           <div className="mb-7 flex items-center justify-center gap-10 rounded-3xl border border-slate-800 bg-slate-900/40 py-7">
             <div className="flex flex-col items-center gap-2 w-40">
-              <Crest url={BARCA_CREST} size={56} />
-              <span className="text-sm font-black text-slate-200">FC Barcelona</span>
+              <Crest url={homeCrestUrl} size={56} />
+              <span className="text-sm font-black text-slate-200 text-center truncate w-full">{homeTeam?.name || "FC Barcelona"}</span>
             </div>
             <span className="text-slate-600 font-black">VS</span>
             <div className="flex flex-col items-center gap-2 w-40">
@@ -486,7 +531,16 @@ export default function NewMatchPage() {
           <section className="rounded-3xl border border-slate-800 bg-slate-900/30 p-6 md:p-8 shadow-xl">
             <h2 className="text-[11px] font-black text-sky-400 uppercase tracking-[0.25em] mb-6">Friendly Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <Field label="Opponent *" full>
+              <Field label="Home Team *">
+                <select className={inputCls} value={homeTeamId} onChange={(e) => { setHomeTeamId(e.target.value); setFriendlyOpp({ name: "", crest: "" }); }}>
+                  {teams.length === 0 && <option value="" className="bg-slate-950">Loading teams…</option>}
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id} className="bg-slate-950">{t.name} · {t.sportType.charAt(0) + t.sportType.slice(1).toLowerCase()}</option>
+                  ))}
+                </select>
+                <span className="text-[9px] text-slate-600">Any club team — football, basketball, handball, tennis… The match sport follows your pick.</span>
+              </Field>
+              <Field label="Opponent *">
                 <Combobox
                   value={friendlyOpp.name}
                   options={opponentOptions}
@@ -522,11 +576,11 @@ export default function NewMatchPage() {
 
           <ActionBar
             saving={saving}
-            disabled={saving || !friendlyOpp.name.trim() || !kickoffTime || !venue.trim()}
+            disabled={saving || !homeTeamId || !friendlyOpp.name.trim() || !kickoffTime || !venue.trim()}
             onCancel={() => router.push("/dashboard/matches")}
             onContinue={createFriendly}
             label="Continue to Lineup"
-            hint={friendlyOpp.name ? `FC Barcelona vs ${friendlyOpp.name}` : "Fill in the opponent, date & venue"}
+            hint={friendlyOpp.name ? `${homeTeam?.name || "FC Barcelona"} vs ${friendlyOpp.name}` : "Pick the home team, opponent, date & venue"}
           />
         </div>
       ) : mode === "deeplink" ? (

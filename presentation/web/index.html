@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sportify · MSCMS — Project Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#004D98; --garnet:#A50044; --gold:#EDBB00; --navy:#0B2545; --deep:#061838;
+    --ink:#162033; --mute:#5b6679; --card:#f3f6fb; --line:#e0e6f0; --ice:#eaf1fb;
+    --head:'Poppins',system-ui,Segoe UI,sans-serif; --body:'Inter',system-ui,Segoe UI,sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%; overflow:hidden; background:#000; font-family:var(--body); -webkit-font-smoothing:antialiased;}
+  .deck{position:fixed; inset:0;}
+
+  /* ---------- slides ---------- */
+  .slide{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center;
+    padding:5.5vh 7vw; opacity:0; visibility:hidden; transform:scale(1.02);
+    transition:opacity .55s ease, transform .55s ease; overflow:hidden;}
+  .slide.active{opacity:1; visibility:visible; transform:scale(1); z-index:2;}
+  .slide.light{background:#fff; color:var(--ink);}
+  /* animated vibrant gradient */
+  .grad{background:linear-gradient(125deg,#003a73,#004D98,#7a1559,#A50044,#d4570e,#EDBB00);
+    background-size:360% 360%; animation:flow 19s ease infinite; color:#fff;}
+  .grad.g2{background:linear-gradient(125deg,#061838,#004D98,#0a6e8c,#15909a);}
+  .grad.g3{background:linear-gradient(125deg,#A50044,#c4276a,#d4570e,#EDBB00);}
+  .grad.g4{background:linear-gradient(125deg,#0B2545,#123a6b,#004D98,#0a6e8c);}
+  @keyframes flow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  /* ---------- entrance animations ---------- */
+  .slide .r{opacity:0; transform:translateY(26px);}
+  .slide.active .r{animation:rise .65s cubic-bezier(.2,.75,.25,1) forwards; animation-delay:calc(var(--i,0)*90ms);}
+  @keyframes rise{to{opacity:1; transform:none;}}
+  .slide .pop{opacity:0; transform:scale(.8);}
+  .slide.active .pop{animation:pop .6s cubic-bezier(.2,1.3,.4,1) forwards; animation-delay:calc(var(--i,0)*70ms);}
+  @keyframes pop{to{opacity:1; transform:scale(1);}}
+
+  /* ---------- floating sport motif ---------- */
+  .float{position:absolute; opacity:.13; pointer-events:none; color:#fff;}
+  .float.f1{top:12%; right:8%; width:90px; animation:bob 7s ease-in-out infinite;}
+  .float.f2{bottom:14%; left:6%; width:60px; animation:bob 9s ease-in-out infinite reverse;}
+  .float.f3{top:62%; right:16%; width:46px; animation:bob 6s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-22px) rotate(18deg)}}
+
+  /* ---------- typography ---------- */
+  h1,h2,h3,.kick{font-family:var(--head); line-height:1.08;}
+  .kick{font-weight:700; letter-spacing:.28em; font-size:.92rem; text-transform:uppercase;}
+  .badge{background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);}
+  .chip{background:#fff; border-radius:14px; box-shadow:0 8px 22px rgba(0,0,0,.10);}
+
+  /* ---------- HERO ---------- */
+  .hero{align-items:center; text-align:center;}
+  .uni-bar{display:flex; align-items:center; gap:22px; background:#fff; border-radius:18px; padding:14px 26px;
+    box-shadow:0 14px 40px rgba(0,0,0,.25);}
+  .uni-bar img{height:62px;}
+  .uni-bar .ut{font-family:var(--head); color:var(--navy); text-align:center;}
+  .uni-bar .ut b{display:block; font-size:1.15rem;} .uni-bar .ut span{font-size:.85rem; color:var(--blue);}
+  .hero .logo-badge{width:140px; height:140px; margin:3.2vh auto 0;}
+  .hero .logo-badge img{width:104px;}
+  .hero h1{font-size:clamp(2rem,4.6vw,3.6rem); font-weight:800; text-shadow:0 4px 18px rgba(0,0,0,.3);}
+  .hero .mscms{letter-spacing:.45em; font-size:1.1rem; margin:.5rem 0 .2rem; opacity:.92;}
+  .hero .brand{font-family:var(--head); font-weight:900; font-size:clamp(3.4rem,9vw,6.4rem);
+    text-shadow:0 6px 26px rgba(0,0,0,.32); line-height:.95;}
+  .hero .sub{font-style:italic; font-size:1.15rem; opacity:.95; margin-top:.4rem; text-shadow:0 2px 10px rgba(0,0,0,.3);}
+  .hero .meta{margin-top:2.4vh; font-size:1rem; opacity:.95;} .hero .meta b{font-weight:700;}
+  .dot{width:12px;height:12px;border-radius:50%;background:var(--gold); display:inline-block; margin:1.4vh auto;}
+  .hint{position:absolute; bottom:3.5vh; left:0; right:0; text-align:center; font-size:.9rem; opacity:.8; animation:pulse 2.2s ease infinite;}
+  @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+
+  /* ---------- DIVIDER ---------- */
+  .divider{justify-content:center;}
+  .divider .big{font-family:var(--head); font-weight:900; font-size:26vh; line-height:.8; opacity:.18;
+    position:absolute; left:5vw; top:50%; transform:translateY(-50%); text-shadow:0 8px 30px rgba(0,0,0,.3);}
+  .divider .dc{margin-left:30vw;}
+  .divider .kick{color:var(--gold);}
+  .divider h2{font-size:clamp(2.4rem,6vw,4.4rem); font-weight:800; margin-top:.5rem; text-shadow:0 4px 20px rgba(0,0,0,.3);}
+  .divider .ds{font-style:italic; opacity:.9; margin-top:1rem; font-size:1.2rem;}
+
+  /* ---------- content headers ---------- */
+  .head-row{display:flex; align-items:center; gap:16px; margin-bottom:3.2vh;}
+  .head-row .num{width:54px; height:54px; border-radius:50%; background:var(--garnet); color:#fff;
+    font-family:var(--head); font-weight:800; font-size:1.3rem; display:flex; align-items:center; justify-content:center; flex:0 0 auto;}
+  .head-row h2{color:var(--blue); font-size:clamp(1.6rem,3.4vw,2.5rem); font-weight:800;}
+  .lead{color:var(--ink); font-size:1.12rem; margin-bottom:3vh; max-width:60ch;}
+  .lead.it{font-style:italic; color:var(--mute);}
+
+  /* ---------- grids/cards ---------- */
+  .grid{display:grid; gap:20px;}
+  .g3{grid-template-columns:repeat(3,1fr);} .g2{grid-template-columns:repeat(2,1fr);} .g4{grid-template-columns:repeat(4,1fr);}
+  .fcard{background:var(--card); border-radius:16px; padding:20px 22px; box-shadow:0 8px 22px rgba(0,0,0,.07);}
+  .fcard .ic{width:40px;height:40px;border-radius:50%; background:var(--garnet); display:flex;align-items:center;justify-content:center;
+    color:#fff; font-weight:800; margin-bottom:12px;}
+  .fcard h3{color:var(--blue); font-size:1.12rem; font-weight:700; margin-bottom:6px;}
+  .fcard p{color:var(--mute); font-size:.96rem; line-height:1.4;}
+  .pill{background:var(--card); border-radius:14px; padding:16px; text-align:center; font-family:var(--head); font-weight:600;
+    color:var(--ink); box-shadow:0 6px 16px rgba(0,0,0,.07);}
+  .pill.dark{background:var(--blue); color:#fff;}
+
+  /* goals list */
+  .glist{display:flex; flex-direction:column; gap:14px; max-width:62ch;}
+  .grow{display:flex; align-items:center; gap:18px;}
+  .grow .n{width:46px;height:46px;border-radius:50%; background:var(--blue); color:#fff; font-family:var(--head);
+    font-weight:700; display:flex;align-items:center;justify-content:center; flex:0 0 auto;}
+  .grow p{font-size:1.12rem; color:var(--ink);}
+
+  /* two-column compare */
+  .cols{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+  .col{border-radius:18px; padding:26px 28px;}
+  .col.trad{background:var(--card);} .col.trad h3{color:var(--mute);}
+  .col.sport{background:var(--deep); color:#fff;} .col.sport h3{color:var(--gold);}
+  .col h3{font-size:1.25rem; margin-bottom:14px; font-weight:700;}
+  .col li{margin:10px 0; font-size:1.02rem; line-height:1.4; list-style:none; padding-left:22px; position:relative;}
+  .col li:before{content:"›"; position:absolute; left:0; font-weight:800; color:var(--garnet);}
+  .col.sport li:before{color:var(--gold);}
+
+  /* frames */
+  .frame{background:#fff; border:1px solid var(--line); border-radius:14px; padding:8px; box-shadow:0 12px 30px rgba(0,0,0,.12);}
+  .frame img{width:100%; display:block; border-radius:8px;}
+  .cap{ text-align:center; color:var(--mute); font-size:.86rem; margin-top:8px;}
+  .arch-wrap{display:grid; grid-template-columns:1fr 320px; gap:22px; align-items:start;}
+  .panel{background:var(--deep); color:#fff; border-radius:16px; padding:22px;}
+  .panel h3{color:var(--gold); margin-bottom:12px;}
+  .panel li{list-style:none; font-size:.96rem; margin:9px 0; padding-left:18px; position:relative;}
+  .panel li:before{content:"•"; color:var(--gold); position:absolute; left:0;}
+
+  /* tech */
+  .tcard{background:var(--card); border-radius:16px; padding:22px; box-shadow:0 8px 22px rgba(0,0,0,.07);}
+  .tcard .th{display:flex; align-items:center; gap:14px; margin-bottom:12px;}
+  .tcard .tdot{width:46px;height:46px;border-radius:12px; display:flex;align-items:center;justify-content:center; color:#fff; font-weight:800; font-family:var(--head);}
+  .tcard h3{font-size:1.15rem; color:var(--ink);}
+  .tcard .tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .tag{background:#fff; border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:.9rem; color:var(--ink); font-weight:600;}
+
+  /* index */
+  .idx-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  .idx{display:flex; align-items:center; gap:16px; background:#fff; border-radius:14px; padding:16px 20px; cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,.18); transition:transform .18s ease, box-shadow .18s ease;}
+  .idx:hover{transform:translateY(-4px) scale(1.02); box-shadow:0 16px 34px rgba(0,0,0,.28);}
+  .idx .in{font-family:var(--head); font-weight:800; color:var(--garnet); font-size:1.5rem;}
+  .idx .it{font-family:var(--head); font-weight:600; color:var(--ink); font-size:1.05rem;}
+
+  /* demo */
+  .demo-stage{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; height:100%;}
+  .play{width:128px;height:128px;border-radius:50%; background:var(--gold); display:flex;align-items:center;justify-content:center;
+    box-shadow:0 16px 40px rgba(0,0,0,.35); cursor:pointer; animation:beat 2.4s ease infinite;}
+  .play:after{content:""; border-left:42px solid var(--navy); border-top:26px solid transparent; border-bottom:26px solid transparent; margin-left:10px;}
+  @keyframes beat{0%,100%{transform:scale(1); box-shadow:0 16px 40px rgba(0,0,0,.35)}50%{transform:scale(1.07); box-shadow:0 22px 60px rgba(237,187,0,.5)}}
+  .demo-note{background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3); border-radius:14px; padding:16px 26px; font-weight:600;}
+
+  /* team */
+  .team-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; max-width:1000px; margin:0 auto;}
+  .tmember{background:#fff; color:var(--navy); border-radius:14px; padding:16px; text-align:center; font-weight:700; box-shadow:0 8px 20px rgba(0,0,0,.18);}
+  .sup{background:var(--garnet); color:#fff; border-radius:14px; padding:16px 30px; font-family:var(--head); font-weight:700; margin:26px auto 0; max-width:560px; text-align:center;}
+
+  /* ---------- chrome / UI ---------- */
+  .progress{position:fixed; top:0; left:0; height:5px; background:linear-gradient(90deg,var(--blue),var(--garnet),var(--gold)); width:0; z-index:50; transition:width .4s ease;}
+  .ui{position:fixed; bottom:18px; right:22px; display:flex; gap:10px; z-index:50;}
+  .ui button{width:44px;height:44px;border-radius:50%; border:none; background:rgba(255,255,255,.92); color:var(--navy);
+    font-size:1.1rem; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,.25); transition:transform .15s;}
+  .ui button:hover{transform:translateY(-3px);}
+  .counter{position:fixed; bottom:24px; left:24px; z-index:50; font-family:var(--head); font-weight:600; font-size:.95rem;
+    background:rgba(255,255,255,.92); color:var(--navy); padding:7px 16px; border-radius:999px; box-shadow:0 6px 16px rgba(0,0,0,.2);}
+  .brandmark{position:fixed; top:16px; left:20px; z-index:50; display:flex; align-items:center; gap:10px; opacity:.92;}
+  .brandmark .b{width:34px;height:34px;border-radius:50%; background:#fff; display:flex;align-items:center;justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,.2);}
+  .brandmark .b img{width:24px;} .brandmark span{font-family:var(--head); font-weight:700; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4);}
+  .slide.light ~ .brandmark span{color:var(--navy);}
+  /* menu overlay */
+  .menu{position:fixed; inset:0; background:rgba(6,24,56,.97); z-index:80; display:none; flex-direction:column;
+    align-items:center; justify-content:center; padding:6vh;}
+  .menu.open{display:flex;}
+  .menu h3{color:var(--gold); font-family:var(--head); margin-bottom:24px; font-size:1.6rem;}
+  .menu .mgrid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; max-width:1100px;}
+  .menu .mi{background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.18); color:#fff; border-radius:12px; padding:16px 18px; cursor:pointer;
+    font-family:var(--head); font-weight:600; transition:background .15s;}
+  .menu .mi:hover{background:var(--garnet);}
+  .menu .mi b{color:var(--gold); margin-right:8px;}
+  .menu .close{position:absolute; top:24px; right:30px; color:#fff; font-size:2rem; cursor:pointer; background:none; border:none;}
+  .ball{fill:none; stroke:currentColor; stroke-width:6;}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<div class="brandmark"><span class="b"><img src="assets/logo22.png" alt=""></span><span>Sportify</span></div>
+<div class="counter" id="counter">01 / 27</div>
+<div class="ui">
+  <button id="menuBtn" title="Menu (M)">☰</button>
+  <button id="prevBtn" title="Previous (←)">‹</button>
+  <button id="nextBtn" title="Next (→)">›</button>
+  <button id="fsBtn" title="Fullscreen (F)">⛶</button>
+</div>
+
+<div class="menu" id="menu">
+  <button class="close" id="menuClose">✕</button>
+  <h3>Jump to a section</h3>
+  <div class="mgrid" id="menuGrid"></div>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 HERO -->
+  <section class="slide grad hero" data-name="Title">
+    <svg class="float f1" viewBox="0 0 100 100"><circle class="ball" cx="50" cy="50" r="40"/><path class="ball" d="M50 14 L72 32 L64 60 L36 60 L28 32 Z"/></svg>
+    <svg class="float f2" viewBox="0 0 100 100"><circle class="ball" cx="50" cy="50" r="40"/></svg>
+    <svg class="float f3" viewBox="0 0 100 100"><circle class="ball" cx="50" cy="50" r="40"/><path class="ball" d="M50 14 L72 32 L64 60 L36 60 L28 32 Z"/></svg>
+    <div class="uni-bar r" style="--i:0">
+      <img src="assets/fci-logo.png" alt="FCI">
+      <div class="ut"><b>Menoufia University</b><span>Faculty of Computers and Information</span></div>
+      <img src="assets/menoufia-logo.png" alt="Menoufia">
+    </div>
+    <div class="badge logo-badge pop" style="--i:1"><img src="assets/logo22.png" alt="Sportify"></div>
+    <h1 class="r" style="--i:3; margin-top:2.4vh">Multi-Sport Club Management System</h1>
+    <div class="mscms r" style="--i:4">M S C M S</div>
+    <div class="brand r" style="--i:5">Sportify</div>
+    <div class="dot pop" style="--i:6"></div>
+    <div class="sub r" style="--i:7">A cloud-native microservices platform for modern sports-club operations</div>
+    <div class="meta r" style="--i:8"><b>Supervised by&nbsp; Dr. Shaimaa Saber</b> &nbsp;·&nbsp; Graduation Project · 2025–2026</div>
+    <div class="hint">Press → or Space to begin · F for fullscreen · M for menu</div>
+  </section>
+
+  <!-- 2 INDEX -->
+  <section class="slide grad g4" data-name="Index">
+    <div class="r" style="--i:0"><div class="kick" style="color:var(--gold)">Overview</div>
+      <h2 style="font-family:var(--head); font-size:2.4rem; font-weight:800; margin:.3rem 0 .2rem;">Index</h2>
+      <p style="opacity:.9; font-style:italic; margin-bottom:3vh;">Click any section to jump straight to it</p></div>
+    <div class="idx-grid" id="idxGrid"></div>
+  </section>
+
+  <!-- sections injected: dividers + content built in JS for brevity where repetitive -->
+</div>
+
+<script>
+/* ---------------- content data ---------------- */
+const SECTIONS = [
+  {n:"01", t:"Key Features"}, {n:"02", t:"Problem Definition"}, {n:"03", t:"Goals"},
+  {n:"04", t:"Proposed Solution"}, {n:"05", t:"Roles & Access"}, {n:"06", t:"System Architecture"},
+  {n:"07", t:"Technology Stack"}, {n:"08", t:"Inside the Platform"}, {n:"09", t:"Key Workflows"},
+  {n:"10", t:"Live Demo"}, {n:"11", t:"Future Work"}, {n:"12", t:"Conclusion"}
+];
+const deck = document.getElementById('deck');
+const G = ["grad","grad g3","grad g2","grad g4","grad","grad g3","grad g4","grad g2","grad g3","grad","grad g4","grad g2"];
+
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstChild; }
+function reveals(arr){ return arr.map((h,i)=>`<div class="r" style="--i:${i}">${h}</div>`).join(''); }
+
+function divider(idx){ const s=SECTIONS[idx];
+  return `<section class="slide ${G[idx%G.length]} divider" data-section="${idx}" data-name="${s.t}">
+    <div class="big r" style="--i:0">${s.n}</div>
+    <div class="dc"><div class="kick r" style="--i:1">Section ${s.n}</div>
+      <h2 class="r" style="--i:2">${s.t}</h2>
+      <div class="ds r" style="--i:3">${SECTIONS_SUB[idx]}</div></div>
+  </section>`;
+}
+const SECTIONS_SUB = ["What Sportify delivers, end to end.","Why clubs need a unified platform.","What the project sets out to achieve.",
+  "One platform replaces the patchwork.","A tailored, secure surface per role.","Cloud-native microservices behind one gateway.",
+  "The proven stack under the hood.","The delivered interface, in real screens.","How the platform behaves at run time.",
+  "See Sportify in action.","Where Sportify goes next.","The takeaways."];
+
+function head(n,t){ return `<div class="head-row"><div class="num">${n}</div><h2>${t}</h2></div>`; }
+
+/* content slides as HTML strings */
+const C = {};
+C.features = `<section class="slide light" data-name="Key Features">${head("01","Key Features")}
+  <div class="grid g3">${[
+    ["Role-aware dashboards","One adaptive surface per role, from admin to fan."],
+    ["Multi-sport &amp; multi-team","Sports, teams, rosters, contracts and transfers."],
+    ["Real competitions","La Liga &amp; the new-format UEFA Champions League."],
+    ["Live-match engine","Broadcast-style phases, events, subs and injuries."],
+    ["Injury lifecycle","A staged medical journey to a passing fitness test."],
+    ["Plan-driven training","Drills, attendance, ratings and assessments."],
+    ["Scouting &amp; sponsorship","Scout reports and sponsor-offer negotiation."],
+    ["Real-time messaging","Team group chat over WebSocket with fallback."],
+    ["Analytics &amp; ML","Match-outcome and player-rating predictions."],
+  ].map((f,i)=>`<div class="fcard r" style="--i:${i}"><div class="ic">★</div><h3>${f[0]}</h3><p>${f[1]}</p></div>`).join('')}</div></section>`;
+
+C.problem = `<section class="slide light" data-name="Problem Definition">${head("02","Problem Definition")}
+  <p class="lead it r" style="--i:0">Club operations are scattered across spreadsheets, chats and disconnected tools — slow, error-prone and impossible to see as a whole.</p>
+  <div class="grid g2">${[
+    ["Fragmented tooling","Squad, matches, medical and analytics live in separate, unconnected apps."],
+    ["Manual match operations","No real-time way to run a live match or keep an accurate event timeline."],
+    ["Untracked injuries","Recovery is followed on paper, with no link to availability for selection."],
+    ["No single source of truth","Standings, results and squads drift out of sync across tools."],
+    ["Weak access control","Everyone sees everything; no role-appropriate, secure surfaces."],
+    ["No analytics or prediction","Decisions rely on memory, not on data or models."],
+  ].map((f,i)=>`<div class="fcard r" style="--i:${i}; background:#fbedf1"><div class="ic">!</div><h3 style="color:var(--ink)">${f[0]}</h3><p>${f[1]}</p></div>`).join('')}</div></section>`;
+
+C.goals = `<section class="slide light" data-name="Goals">${head("03","Goals")}
+  <div class="glist">${[
+    "Unify every club operation into one role-aware platform.",
+    "Run matches live, with an accurate, broadcast-style event timeline.",
+    "Drive the injury journey from diagnosis to a passing fitness test.",
+    "Make the back-end the single source of truth for real fixtures and standings.",
+    "Enforce secure, role-based access across every feature.",
+    "Surface analytics and machine-learning predictions to support decisions.",
+  ].map((g,i)=>`<div class="grow r" style="--i:${i}"><div class="n">${i+1}</div><p>${g}</p></div>`).join('')}</div></section>`;
+
+C.solution = `<section class="slide light" data-name="Proposed Solution">${head("04","Proposed Solution")}
+  <p class="lead r" style="--i:0"><b style="color:var(--garnet)">Sportify</b> consolidates user, squad, match, medical, training, scouting, sponsorship and analytics into one cloud-native platform — the back-end is authoritative, the front-end is role-aware.</p>
+  <div class="cols">
+    <div class="col trad r" style="--i:1"><h3>Traditional approach</h3><ul>
+      <li>Spreadsheets &amp; email threads</li><li>Disconnected, single-purpose tools</li>
+      <li>Manual, paper-based medical tracking</li><li>No live match operations</li>
+      <li>No unified access control or analytics</li></ul></div>
+    <div class="col sport r" style="--i:2"><h3>The Sportify platform</h3><ul>
+      <li>One role-aware web application</li><li>Seven Spring Boot microservices behind a gateway</li>
+      <li>Live-match engine &amp; staged injury workflow</li><li>Real fixtures/standings — back-end as source of truth</li>
+      <li>Keycloak RBAC + analytics &amp; ML predictions</li></ul></div>
+  </div></section>`;
+
+C.roles = `<section class="slide light" data-name="Roles & Access">${head("05","Roles & Access")}
+  <p class="lead it r" style="--i:0">Each role lands on a tailored dashboard; players and fans get a read-only surface. Access is enforced by Keycloak at the gateway and again in the UI.</p>
+  <div class="grid g4">${["Administrator","Sport Manager","Team Manager","Coaching Staff","Doctor","Physiotherapist","Fitness Coach","Analyst","Scout","Sponsor","Player","Fan"]
+    .map((r,i)=>`<div class="pill ${i%2?'':'dark'} r" style="--i:${i}">${r}</div>`).join('')}</div></section>`;
+
+C.arch = `<section class="slide light" data-name="System Architecture">${head("06","System Architecture")}
+  <div class="arch-wrap">
+    <div class="frame r" style="--i:0"><img src="assets/diag-arch-overview.png" alt="architecture"></div>
+    <div class="panel r" style="--i:1"><h3>At a glance</h3><ul>
+      <li>Single Next.js front-end</li><li>Spring Cloud API gateway (JWT verify + routing)</li>
+      <li>6 domain services, a private DB each</li><li>Eureka + Config control plane</li>
+      <li>Keycloak identity (realm mscms)</li><li>Kafka async event backbone</li>
+      <li>Python/FastAPI ML service</li><li>External feed: football-data.org</li></ul></div>
+  </div></section>`;
+
+C.tech = `<section class="slide light" data-name="Technology Stack">${head("07","Technology Stack")}
+  <div class="grid g2">${[
+    ["Back-end","var(--blue)",["Spring Boot 3.5 / Java 21","Spring Cloud Gateway","Eureka · Config","Spring Data JPA"]],
+    ["Identity &amp; Data","var(--garnet)",["Keycloak 26 (OAuth2/JWT)","PostgreSQL 14","Redis","RabbitMQ"]],
+    ["Front-end","#0E7C4F",["Next.js 16","React 19","Tailwind CSS v4"]],
+    ["Eventing · ML · Ops","#7A4FB0",["Apache Kafka","Python / FastAPI","Docker Compose"]],
+  ].map((g,i)=>`<div class="tcard r" style="--i:${i}"><div class="th"><div class="tdot" style="background:${g[1]}">${g[0][0]}</div><h3>${g[0]}</h3></div>
+     <div class="tags">${g[2].map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>`).join('')}</div></section>`;
+
+function gallery(name, shots){
+  return `<section class="slide light" data-name="${name}">${head("08","Inside the Platform")}
+    <div class="grid g2">${shots.map((s,i)=>`<div class="r" style="--i:${i}"><div class="frame"><img src="assets/fig-${s[0]}.png" alt="${s[1]}"></div><div class="cap">${s[1]}</div></div>`).join('')}</div></section>`;
+}
+C.shotsA = gallery("Inside the Platform", [["dashboard","Role-aware dashboard"],["club-hub","Club Hub — squad, trophies, form"],["laliga","La Liga — live standings & fixtures"],["cl-bracket","UEFA Champions League bracket"]]);
+C.shotsB = gallery("Inside the Platform", [["live-match","Live-match engine"],["lineup","Formation-first line-up builder"],["medical-room","Medical Treatment Room"],["messages","Real-time team messaging"]]);
+
+C.wfMatch = `<section class="slide light" data-name="Workflow · Live Match">${head("09","Workflow · Live Match")}
+  <div class="arch-wrap">
+    <div class="frame r" style="--i:0"><img src="assets/diag-state-match.png" alt="match state"></div>
+    <div class="r" style="--i:1"><h3 style="color:var(--blue); font-family:var(--head); margin-bottom:14px;">Broadcast-style phase machine</h3>
+      <ul style="list-style:none;">
+        <li style="margin:12px 0; position:relative; padding-left:20px;"><span style="position:absolute;left:0;color:var(--garnet);font-weight:800">›</span>A match advances through regulation halves to full time.</li>
+        <li style="margin:12px 0; position:relative; padding-left:20px;"><span style="position:absolute;left:0;color:var(--garnet);font-weight:800">›</span>Events (goals, cards, subs, injuries) are bounded to the current phase.</li>
+        <li style="margin:12px 0; position:relative; padding-left:20px;"><span style="position:absolute;left:0;color:var(--garnet);font-weight:800">›</span>Extra time &amp; penalties apply only to an unresolved knockout tie.</li>
+        <li style="margin:12px 0; position:relative; padding-left:20px;"><span style="position:absolute;left:0;color:var(--garnet);font-weight:800">›</span>Every action is persisted in real time.</li>
+      </ul></div>
+  </div></section>`;
+
+C.wfInjury = `<section class="slide light" data-name="Workflow · Injury to Recovery">${head("09","Workflow · Injury to Recovery")}
+  <p class="lead r" style="--i:0" style2><b style="color:var(--blue)">A staged medical journey</b> — the injury's status is the single source of truth.</p>
+  <div class="frame r" style="--i:1; max-width:100%"><img src="assets/diag-state-injury.png" alt="injury state"></div>
+  <ul class="r" style="--i:2; list-style:none; margin-top:2.4vh; font-size:1.05rem;">
+    <li style="margin:10px 0; position:relative; padding-left:22px;"><span style="position:absolute;left:0;color:var(--garnet);font-weight:800">›</span>Logging an injury withdraws the player from matches, line-ups and training.</li>
+    <li style="margin:10px 0; position:relative; padding-left:22px;"><span style="position:absolute;left:0;color:var(--garnet);font-weight:800">›</span>The player advances through diagnosis, treatment, rehabilitation and recovery.</li>
+    <li style="margin:10px 0; position:relative; padding-left:22px;"><span style="position:absolute;left:0;color:var(--garnet);font-weight:800">›</span>Only a passing fitness test moves the status to recovered and restores availability.</li>
+  </ul></section>`;
+
+C.demo = `<section class="slide grad g4" data-name="Live Demo">
+  <div class="demo-stage">
+    <h2 class="r" style="--i:0; font-family:var(--head); font-size:2.6rem; font-weight:800;">Live Demo</h2>
+    <div class="play pop" style="--i:1" id="playBtn"></div>
+    <p class="r" style="--i:2; font-size:1.2rem; max-width:60ch; text-align:center; opacity:.95;">A short walkthrough — login, dashboard, a live match, the medical room and team messaging.</p>
+    <div class="demo-note r" style="--i:3">Click the play button to open your recording, or present the live app here</div>
+  </div></section>`;
+
+C.future = `<section class="slide light" data-name="Future Work">${head("11","Future Work")}
+  <div class="grid g3">${[
+    ["Native mobile apps","iOS/Android companions for staff and fans."],
+    ["Deeper ML models","Richer outcome &amp; form prediction with live features."],
+    ["More sports &amp; federations","Generalise beyond football to other disciplines."],
+    ["Live video &amp; streaming","Attach broadcast clips to the match timeline."],
+    ["Wearables &amp; load data","Ingest training-load and biometric signals."],
+    ["Public club portal","A fan-facing, read-only public site."],
+  ].map((f,i)=>`<div class="fcard r" style="--i:${i}"><div class="ic" style="background:var(--gold); color:var(--navy)">+</div><h3>${f[0]}</h3><p>${f[1]}</p></div>`).join('')}</div></section>`;
+
+C.conclusion = `<section class="slide grad g4" data-name="Conclusion">
+  <div class="kick r" style="--i:0; color:var(--gold)">Conclusion</div>
+  <h2 class="r" style="--i:1; font-family:var(--head); font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; margin:.6rem 0 3vh; max-width:24ch;">Sportify turns scattered, manual club operations into one secure, real-time, data-driven platform.</h2>
+  <ul style="list-style:none; font-size:1.15rem;">
+    <li class="r" style="--i:2; margin:12px 0; padding-left:22px; position:relative;"><span style="position:absolute;left:0;color:var(--gold)">✦</span>A production-grade microservices architecture, deployed with Docker.</li>
+    <li class="r" style="--i:3; margin:12px 0; padding-left:22px; position:relative;"><span style="position:absolute;left:0;color:var(--gold)">✦</span>Real competitions, a live-match engine and a complete medical workflow.</li>
+    <li class="r" style="--i:4; margin:12px 0; padding-left:22px; position:relative;"><span style="position:absolute;left:0;color:var(--gold)">✦</span>Role-based security end to end, with analytics and ML on top.</li>
+    <li class="r" style="--i:5; margin:12px 0; padding-left:22px; position:relative;"><span style="position:absolute;left:0;color:var(--gold)">✦</span>An extensible foundation ready for mobile, more sports and richer models.</li>
+  </ul></section>`;
+
+C.team = `<section class="slide grad" data-name="Thank You">
+  <div style="text-align:center;">
+    <h2 class="r" style="--i:0; font-family:var(--head); font-size:clamp(2.6rem,6vw,4.4rem); font-weight:900; text-shadow:0 6px 24px rgba(0,0,0,.3)">Thank You</h2>
+    <p class="r" style="--i:1; font-style:italic; opacity:.95; margin:.4rem 0 4vh;">Questions &amp; discussion welcome</p>
+    <div class="team-grid">${["Mariam Mohamed Ahmed","Mohamed Abdellatief","Eman Ahmed Elboghdady","Khaled Mohamed","Shahd Abdelaziz","Mohamed Salem"]
+      .map((t,i)=>`<div class="tmember pop" style="--i:${i+2}">${t}</div>`).join('')}</div>
+    <div class="sup r" style="--i:8">Supervised by&nbsp; Dr. Shaimaa Saber</div>
+    <p class="r" style="--i:9; margin-top:2.4vh; opacity:.9; font-size:.95rem;">Menoufia University · Faculty of Computers and Information · 2025–2026</p>
+  </div></section>`;
+
+/* ---------------- assemble deck order ---------------- */
+const ORDER = [
+  divider(0), C.features, divider(1), C.problem, divider(2), C.goals, divider(3), C.solution,
+  divider(4), C.roles, divider(5), C.arch, C.tech, divider(7), C.shotsA, C.shotsB,
+  divider(8), C.wfMatch, C.wfInjury, divider(9), C.demo, divider(10), C.future, C.conclusion, C.team
+];
+ORDER.forEach(html => deck.appendChild(el(html)));
+
+/* index targets (slide indices, 0-based): map each section to its divider/slide */
+const slides = [...document.querySelectorAll('.slide')];
+// build index grid (slide 2) — find the divider/first slide for each section
+const sectionSlide = {}; // sectionIndex -> slide index
+slides.forEach((s,i)=>{ if(s.dataset.section!==undefined) sectionSlide[+s.dataset.section]=i; });
+// content sections without dividers map to their slide:
+const idxTargets = {0:sectionSlide[0],1:sectionSlide[1],2:sectionSlide[2],3:sectionSlide[3],4:sectionSlide[4],
+  5:sectionSlide[5],6:slides.findIndex(s=>s.dataset.name==="Technology Stack"),7:sectionSlide[7],8:sectionSlide[8],
+  9:sectionSlide[9],10:sectionSlide[10],11:slides.findIndex(s=>s.dataset.name==="Conclusion")};
+const idxGrid=document.getElementById('idxGrid');
+SECTIONS.forEach((s,i)=>{ const d=el(`<div class="idx" data-go="${idxTargets[i]}"><span class="in">${s.n}</span><span class="it">${s.t}</span></div>`); idxGrid.appendChild(d); });
+const menuGrid=document.getElementById('menuGrid');
+SECTIONS.forEach((s,i)=>{ const d=el(`<div class="mi" data-go="${idxTargets[i]}"><b>${s.n}</b>${s.t}</div>`); menuGrid.appendChild(d); });
+
+/* ---------------- navigation ---------------- */
+let cur=0; const total=slides.length;
+const prog=document.getElementById('prog'), counter=document.getElementById('counter');
+function show(i){
+  i=Math.max(0,Math.min(total-1,i));
+  slides.forEach(s=>s.classList.remove('active'));
+  void slides[i].offsetWidth;           // restart entrance animations
+  slides[i].classList.add('active');
+  cur=i;
+  prog.style.width=((i)/(total-1)*100)+'%';
+  counter.textContent=String(i+1).padStart(2,'0')+' / '+total;
+}
+const next=()=>show(cur+1), prev=()=>show(cur-1);
+document.getElementById('nextBtn').onclick=next;
+document.getElementById('prevBtn').onclick=prev;
+document.getElementById('fsBtn').onclick=()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); };
+const menu=document.getElementById('menu');
+document.getElementById('menuBtn').onclick=()=>menu.classList.add('open');
+document.getElementById('menuClose').onclick=()=>menu.classList.remove('open');
+document.addEventListener('click',e=>{ const g=e.target.closest('[data-go]'); if(g){ menu.classList.remove('open'); show(+g.dataset.go);} });
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+  else if(e.key==='Home')show(0); else if(e.key==='End')show(total-1);
+  else if(e.key.toLowerCase()==='f'){ if(!document.fullscreenElement)document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  else if(e.key.toLowerCase()==='m') menu.classList.toggle('open');
+  else if(e.key==='Escape') menu.classList.remove('open');
+});
+// touch swipe
+let tx=0; document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{ const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>60){ dx<0?next():prev(); }});
+// demo play -> try to open a recording if present
+document.addEventListener('click',e=>{ if(e.target.id==='playBtn'){ window.open('assets/demo.mp4','_blank'); }});
+show(0);
+</script>
+</body>
+</html>

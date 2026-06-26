@@ -23,4 +23,7 @@ public interface KeycloakAdminService {
     void updateUser(String userId, Map<String, Object> updatedFields);
 
     void updateUserPassword(String userId, String newPassword);
+
+    /** Verifies a user's password via a Keycloak password grant. true if correct. */
+    boolean verifyPassword(String username, String password);
 }

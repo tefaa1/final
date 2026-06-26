@@ -1,0 +1,52 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{sequencediagram}
+  \newthread{u}{:Doctor/Physio}
+  \newinst[1]{f}{:Frontend}
+  \newinst[1]{g}{:Gateway}
+  \newinst[1]{m}{:medical-fitness}
+  \newinst[1]{db}{:DB}
+
+  \begin{call}{u}{log Injury}{f}{player withdrawn}
+    \begin{call}{f}{POST /injuries}{g}{201}
+      \begin{call}{g}{create(status=active)}{m}{Injury}
+        \begin{call}{m}{persist}{db}{row}\end{call}
+      \end{call}
+    \end{call}
+  \end{call}
+
+  \begin{call}{u}{add Diagnosis}{f}{ok}
+    \begin{call}{f}{POST /diagnoses}{m}{Diagnosis}\end{call}
+  \end{call}
+
+  \begin{call}{u}{add Treatment}{f}{ok}
+    \begin{call}{f}{POST /treatments}{m}{status=recovering}\end{call}
+  \end{call}
+
+  \begin{call}{u}{start Rehabilitation}{f}{ok}
+    \begin{call}{f}{POST /rehabilitations}{m}{Rehabilitation}\end{call}
+  \end{call}
+
+  \begin{call}{u}{add RecoveryProgram}{f}{ok}
+    \begin{call}{f}{POST /recovery-programs}{m}{RecoveryProgram}\end{call}
+  \end{call}
+
+  \begin{sdblock}{Fitness test}{stage read from Injury.status}
+    \begin{call}{u}{run FitnessTest}{f}{result}
+      \begin{call}{f}{POST /fitness-tests}{m}{result\_category}\end{call}
+    \end{call}
+
+    \mess{m}{alt [fail]: status stays recovering}{m}
+
+    \mess{m}{alt [pass]: status=recovered}{m}
+    \begin{call}{m}{restore availability}{db}{matches, lineups, training}\end{call}
+  \end{sdblock}
+
+\end{sequencediagram}%
+}
+
+\end{document}

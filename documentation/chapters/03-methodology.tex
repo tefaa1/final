@@ -1,0 +1,1098 @@
+\chapter{Methodology}
+\label{ch:methodology}
+
+This chapter presents the engineering approach behind the Multi-Sport Club
+Management System (MSCMS), commercially branded \emph{Sportify}. It documents the
+software-development methodology, the elicited functional and non-functional
+requirements, the cloud-native microservices architecture, the decomposition of the
+back-end into domain services, the security and authentication design, the data
+model, the domain (class) model, the technology stack, an overview of the
+representative API surface, and the principal behavioural flows of the platform.
+Whereas earlier chapters motivated the problem and surveyed comparable systems, the
+purpose of the present chapter is to explain \emph{how} the platform was designed and
+constructed so that the artefacts reported in Chapter~\ref{ch:results} can be
+understood as the deliberate outcome of these decisions rather than incidental
+features.
+
+The chapter is organised to move from process to product and from the abstract to
+the concrete. Section~\ref{sec:methodology-process} describes the development
+process and the engineering practices that supported it.
+Section~\ref{sec:requirements} sets out the functional and non-functional
+requirements that defined the target. Sections~\ref{sec:architecture}
+and~\ref{sec:decomposition} describe the macro-architecture and the way the back-end
+was decomposed into autonomous services. Section~\ref{sec:security} treats security
+as a first-class architectural concern. Sections~\ref{sec:data-design}
+and~\ref{sec:domain-model} describe the persistent data model and the in-memory
+domain model that it materialises. Section~\ref{sec:api-surface} surveys the
+representative HTTP surface exposed by each service, and
+Section~\ref{sec:tech-stack} records the technology choices. Finally,
+Section~\ref{sec:flows} develops the system's principal behavioural flows in detail,
+expressing each as a numbered sequence of interactions between the participating
+components.
+
+\section{Development Methodology}
+\label{sec:methodology-process}
+
+MSCMS was developed following an \emph{agile, iterative and incremental} process
+model~\cite{agile}. A purely sequential (waterfall) plan was considered unsuitable
+because the project's scope deliberately evolved over time: the system began as a
+conventional create--read--update--delete (CRUD) club-administration tool and matured
+into a SofaScore/ESPN-style sports platform with live-match coverage, real
+competition data and real-time team communication. An agile model accommodated this
+trajectory, allowing requirements to be reprioritised as the product vision sharpened
+and as feedback was gathered after each working release.
+
+The work was organised into short, time-boxed iterations, each producing a
+demonstrable vertical slice that cut through every architectural layer---from the
+PostgreSQL schema and the Spring Boot service, through the API Gateway, to the
+Next.js user interface. This vertical-slice discipline ensured that every iteration
+ended with an integrated, runnable system rather than a set of disconnected
+components. The principal virtue of the approach for a project of this size was
+\emph{de-risking}: each iteration validated an end-to-end path---authentication
+through the gateway, persistence in the correct database, propagation of a
+cross-domain event, and rendering in a role-appropriate view---so that integration
+defects surfaced early, while a slice was small enough to reason about, rather than
+late, when many subsystems had already been assumed to work. Representative
+iterations are summarised in Table~\ref{tab:iterations}.
+
+\begin{table}[htbp]
+\centering
+\caption{Representative development iterations and their primary deliverables.}
+\label{tab:iterations}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{0.05\textwidth}|p{0.30\textwidth}|p{0.52\textwidth}|}
+\hline
+\textbf{It.} & \textbf{Theme} & \textbf{Primary deliverable} \\
+\hline
+1 & Identity \& foundation & Keycloak realm, JWT login, API Gateway, Eureka and Config Server, the user-management service. \\
+\hline
+2 & Squad \& people & Player-management service: sports, teams, rosters, contracts, transfers, scouting prospects. \\
+\hline
+3 & Training \& matches & Training-match service: sessions, plans, drills, attendance, match fixtures, formations and line-ups. \\
+\hline
+4 & Competitions overhaul & Database-backed La Liga and the new-format UEFA Champions League (league phase plus knockout bracket). \\
+\hline
+5 & Live-match engine & Broadcast-style phase machine, extra time and penalties for knockout ties, in-match injury events. \\
+\hline
+6 & Medical workflow & Treatment Room and the staged per-player injury journey from injury to recovered. \\
+\hline
+7 & Communication & Real-time team group chat over WebSocket, event-driven notifications and the alert centre. \\
+\hline
+8 & Governance \& polish & Per-role RBAC, persistent settings with Keycloak-verified password change, and the Sportify rebrand. \\
+\hline
+\end{tabular}
+\end{table}
+
+Several engineering practices reinforced the iterative process. Version control was
+maintained throughout, with the back-end, front-end and machine-learning code bases
+kept under a single repository to simplify cross-cutting changes. A
+container-first philosophy meant that every service was runnable through Docker
+Compose from the earliest iterations, removing the ``works on my machine'' class of
+defects and giving every iteration a reproducible integration environment. Finally,
+single-source-of-truth artefacts---most notably the front-end permission map and the
+back-end seed-identity constants---were introduced so that cross-cutting concerns
+could evolve consistently without scattering duplicated logic across modules.
+
+Two further practices deserve emphasis because they shaped the architecture as much
+as the process. First, \emph{idempotent seeding} was adopted as a design rule rather
+than a convenience: each service ships a deterministic seeder that brings its
+database to a known baseline on first boot and that can be re-run safely, so a full
+environment---roughly ninety demonstration users, two complete competitions and a
+back-filled history of finished matches each with a real starting eleven---can be
+reconstructed identically on any host. This made the platform demonstrable on demand
+and made defects reproducible against a fixed data set. Second, the project preferred
+\emph{reusing existing routes and seams over adding new ones}. When the
+database-backed competitions were introduced, for example, they were mounted beneath
+an existing gateway route prefix rather than given a new public path, and the
+group-chat subsystem was added under the messaging namespace already owned by the
+notification service. This conservatism kept the public surface of the gateway small
+and stable across iterations, which in turn limited the security and configuration
+review that each change required.
+
+\section{System Requirements}
+\label{sec:requirements}
+
+Requirements were elicited from the problem analysis and refined during the iterations
+described above. They are presented in two parts: functional requirements, organised
+by module and by the user roles they serve, and non-functional requirements, which
+capture the quality attributes the platform must satisfy.
+
+\subsection{Stakeholders and Roles}
+\label{sec:roles}
+
+Before enumerating the requirements it is useful to name the actors the system
+serves, because the functional surface is fundamentally role-shaped: what a user may
+\emph{see} and what a user may \emph{do} are both derived from the user's role. The
+platform recognises a single privileged administrator role and a family of
+operational staff and consumer roles. The \textbf{administrator} provisions and
+governs all accounts and has all-access. The \textbf{sport manager} owns a sport and
+negotiates sponsorship. The \textbf{team manager} administers a specific team's
+roster and logistics. The \textbf{coaching staff}---principally the head coach,
+supported by assistant and fitness coaches---plan training, set formations and run
+matches. The \textbf{medical staff}---doctors and physiotherapists---own the injury
+and recovery workflow. \textbf{Scouts} evaluate external prospects and forward
+recommendations. \textbf{Sponsors} submit and negotiate contract offers.
+\textbf{National-team} records represent external federations that may call up
+players. Finally, \textbf{players} and \textbf{fans} are read-mostly consumers who
+follow the club, its squad, its competitions and its live matches without the ability
+to mutate club data. Each of these roles maps to a realm role in the identity
+provider and to a row in the permission map that governs the interface, as described
+in Section~\ref{sec:security}.
+
+\subsection{Functional Requirements}
+\label{sec:functional-requirements}
+
+MSCMS serves a multi-disciplinary club whose membership spans four football-centric
+operational tiers---administration, sport and team management, coaching and medical
+staff, and read-only consumers such as players and fans. Access is governed by a
+role-based permission map that drives both the navigation a user sees and the
+operations a user may perform. The functional requirements are grouped by module; the
+modules introduced or substantially reworked in the later iterations---competitions,
+live matches, the medical workflow, messaging, notifications, role-based access
+control and settings---are highlighted alongside the established modules.
+
+Table~\ref{tab:fr-core} lists the foundational requirements covering identity,
+administration, squad management and training. Table~\ref{tab:fr-new} lists the
+requirements for the newer modules that distinguish the current system from its
+predecessor. The two tables are followed by a narrative elaboration of the
+requirements that carry the most behavioural complexity, so that the design choices
+made later in the chapter can be traced back to an explicit need.
+
+\begin{table}[htbp]
+\centering
+\caption{Functional requirements: identity, administration, squad and training modules.}
+\label{tab:fr-core}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{0.07\textwidth}|p{0.20\textwidth}|p{0.60\textwidth}|}
+\hline
+\textbf{ID} & \textbf{Module} & \textbf{Requirement} \\
+\hline
+FR-1 & Authentication & The system shall authenticate users against Keycloak using the OAuth~2.0 password grant and issue a JWT access token consumed by the front-end. \\
+\hline
+FR-2 & Authentication & On successful login the system shall redirect each user to a single dashboard whose content is computed from the user's role. \\
+\hline
+FR-3 & User management & The administrator shall create, edit, deactivate and delete user accounts across all roles, provisioned through the Keycloak Admin API. \\
+\hline
+FR-4 & User management & The system shall onboard staff (sport managers, team managers, coaching staff, doctors, physiotherapists, scouts and sponsors) with role assignment. \\
+\hline
+FR-5 & Club hub & The system shall present a club overview comprising identity, coaching staff, stadium, trophy cabinet, squad and results grouped by competition. \\
+\hline
+FR-6 & Players \& teams & Authorised staff shall manage sports, teams, rosters, contracts and transfers (incoming, outgoing and national-team call-ups). \\
+\hline
+FR-7 & Scouting & Scouts shall browse external prospects and author structured scout reports, forwarding recommendations to the sport manager. \\
+\hline
+FR-8 & Training & Coaching staff shall create training plans, drills and sessions, record attendance, and capture post-session player assessments. \\
+\hline
+FR-9 & Sponsors & Sponsors shall submit sponsorship offers; the sport manager shall negotiate, accept or reject them with the decision returned to the sponsor. \\
+\hline
+FR-10 & Reports \& analytics & Analysts shall author match and player analyses and consume the machine-learning predictions for match outcome and player rating. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Functional requirements: competitions, live matches, medical workflow, messaging, notifications, RBAC and settings.}
+\label{tab:fr-new}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{0.07\textwidth}|p{0.20\textwidth}|p{0.60\textwidth}|}
+\hline
+\textbf{ID} & \textbf{Module} & \textbf{Requirement} \\
+\hline
+FR-11 & Competitions & The system shall maintain database-backed competitions, namely La Liga and the new-format UEFA Champions League, each with its teams and fixtures. \\
+\hline
+FR-12 & Competitions & The Champions League shall be presented as a league phase followed by a knockout bracket, with the knockout stage locked until the league phase is complete. \\
+\hline
+FR-13 & Competitions & A completed competition (every fixture played) shall become read-only, displaying a ``completed'' badge; ongoing competitions remain editable until the final result is recorded. \\
+\hline
+FR-14 & Matches & Match creation shall require a starting line-up before the match is persisted, and the scheduled kick-off shall be at least five minutes in the future. \\
+\hline
+FR-15 & Live match & The system shall drive a live match through a broadcast-style phase machine (first half, half-time, second half, full-time), with extra time and a penalty shoot-out for unresolved knockout ties only. \\
+\hline
+FR-16 & Live match & During a live match, staff shall record in-game events (goals, cards, substitutions and injuries), with substitutions limited per sport and the line-up locked at creation. \\
+\hline
+FR-17 & Medical & Medical staff shall manage a Treatment Room that separates currently-injured from recovered players and advances each injured player through a staged journey: injury, diagnosis, treatment, rehabilitation, recovery, fitness test and recovered. \\
+\hline
+FR-18 & Medical & The system shall maintain general medical catalogues (diagnoses, treatments and recovery programmes) referenced by the per-player journey. \\
+\hline
+FR-19 & Messaging & The system shall provide real-time team group chat with a general group for all users, user-created groups with invitations (invited/member states), threaded replies and emoji reactions. \\
+\hline
+FR-20 & Messaging & Chat delivery shall use a WebSocket channel with a polling fallback when the socket is unavailable. \\
+\hline
+FR-21 & Notifications & The system shall generate event-driven alerts (match scheduled or completed, goal scored, result available, injury, transfer and cancelled training) surfaced through a top-bar bell and a notification centre. \\
+\hline
+FR-22 & RBAC & The system shall enforce per-role page access so that each role sees only the navigation and operations permitted to it, with players and fans receiving a read-only surface. \\
+\hline
+FR-23 & Settings & Each user shall manage profile, preference and notification settings with real persistence, and shall change the account password after the current password is verified against Keycloak. \\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{Competitions (FR-11--FR-13).} The competitions module is more than a list
+of fixtures; it is a small rules engine. When a \emph{league} competition is created,
+the back-end pre-generates a complete double round-robin so that every unordered pair
+of teams meets the configured number of times with home and away reversed on
+alternate rounds. The user therefore enters results only for fixtures that genuinely
+exist in the schedule and cannot inflate the standings by replaying the same pairing.
+The Champions League is modelled in its current single-league-phase format: a large
+group of teams plays a single league stage that is then followed by a two-legged
+knockout bracket, and the knockout view is locked until the league phase has been
+fully played. Once every fixture of a competition has a recorded result the
+competition is considered finished and becomes read-only, surfaced with a
+``completed'' badge; deletion by an administrator remains permitted, but result and
+date editing are disabled so that historical tables cannot be silently rewritten.
+
+\paragraph{Matches and the live engine (FR-14--FR-16).} A match without a starting
+eleven is meaningless, so match creation is an \emph{atomic, line-up-mandatory} flow:
+the match, its formation and its starting eleven are persisted together, and the
+database is never allowed to hold a match without a line-up. The scheduled kick-off
+must be at least five minutes in the future, both to make a deliberate scheduling
+decision possible and to give the user time to complete the line-up. At kick-off the
+match transitions to live automatically. During the live phase, staff record events
+whose recordable minute is bounded by the current phase---a first-half goal cannot be
+logged at minute~80, and a regulation half's clock is hard-capped at its length plus
+the admin-set stoppage so the displayed minute never runs away into nonsense. The
+substitution count is bounded per sport, and recording an injury event flips the
+affected player's status, linking the live engine to the medical workflow.
+
+\paragraph{Medical workflow (FR-17--FR-18).} The medical module is organised as a
+Treatment Room that partitions players into the currently injured and the recovered,
+and it advances each open case through an explicit, staged journey. The
+\emph{status of the injury is the single source of truth}: the stage a player is in
+is derived from that status rather than tracked independently in the interface, which
+guarantees that the Treatment Room and the per-player stepper can never disagree.
+General catalogues of diagnoses, treatments and recovery programmes provide reusable
+reference data that the per-player journey draws upon.
+
+\paragraph{Messaging and notifications (FR-19--FR-21).} Messaging is a real-time
+group-chat subsystem backed by persistent groups: a seeded \emph{general} group to
+which every account belongs, plus user-created groups whose invitees remain in an
+\emph{invited} state until they accept and become \emph{members}. Delivery favours a
+WebSocket push but degrades gracefully to authenticated polling. Notifications and
+alerts are event-driven: domain events emitted by the producing services are consumed
+asynchronously and turned into alerts that surface through a top-bar bell and a
+notification centre with unread badges.
+
+\subsection{Non-Functional Requirements}
+\label{sec:nfr}
+
+The non-functional requirements capture the quality attributes that constrain the
+design across all modules. They are summarised in Table~\ref{tab:nfr} and elaborated
+in the architecture, security and data-design sections that follow. Each
+non-functional requirement is paired in the discussion with the concrete mechanism
+that satisfies it, so that the quality attributes are demonstrably met by the design
+rather than merely asserted.
+
+\begin{table}[htbp]
+\centering
+\caption{Non-functional requirements grouped by quality attribute.}
+\label{tab:nfr}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{0.07\textwidth}|p{0.21\textwidth}|p{0.59\textwidth}|}
+\hline
+\textbf{ID} & \textbf{Attribute} & \textbf{Requirement} \\
+\hline
+NFR-1 & Security & Authentication shall be stateless and JWT-based, with tokens issued by Keycloak and verified at the gateway against the Keycloak JWKS endpoint before any request reaches a domain service. \\
+\hline
+NFR-2 & Security & Role-based access control shall be enforced in depth: at Keycloak (identity), at the API Gateway (route authorisation) and at the Next.js middleware (navigation guard). \\
+\hline
+NFR-3 & Scalability & Each domain service shall be independently and horizontally scalable, discoverable through Eureka, with no shared database to create cross-domain contention. \\
+\hline
+NFR-4 & Scalability & High-volume, cross-domain event fan-out (notifications, alerts) shall be decoupled through asynchronous Kafka messaging rather than synchronous calls. \\
+\hline
+NFR-5 & Availability & Every service shall expose health endpoints consumable by the orchestrator, and idempotent seeders shall guarantee a consistent baseline state across redeployments. \\
+\hline
+NFR-6 & Performance & Hot lookups (such as a user profile resolved by Keycloak identifier) shall be cacheable in Redis, and real-time delivery shall favour a WebSocket push over repeated polling. \\
+\hline
+NFR-7 & Maintainability & Each microservice shall be an independently buildable and releasable module with its own database, Dockerfile and configuration sourced from the Config Server. \\
+\hline
+NFR-8 & Maintainability & Cross-cutting concerns shall be governed by single sources of truth (the front-end permission map and the back-end seed identifiers) to avoid duplicated, drifting logic. \\
+\hline
+NFR-9 & Usability & Errors shall be surfaced as friendly, non-technical notifications without exposing stack traces, and the interface shall present a coherent Sportify brand identity. \\
+\hline
+NFR-10 & Portability & The entire platform shall be reproducible from a single container-orchestration definition so it can be brought up identically on any Docker host. \\
+\hline
+\end{tabular}
+\end{table}
+
+The non-functional requirements are not independent of one another; several reinforce
+or tension with their neighbours, and the design resolves those tensions explicitly.
+The stateless-token decision (NFR-1) is what makes horizontal scaling cheap (NFR-3),
+because a request can be served by any instance of a service without consulting shared
+session state. The same decision creates the one genuine exception in the system---the
+real-time chat channel, whose handshake cannot carry a bearer header---which is why
+that channel authenticates at the message layer and is treated as a deliberately
+scoped deviation rather than a hole in the model (Section~\ref{sec:security}).
+Asynchronous messaging (NFR-4) trades immediate consistency for decoupling and
+resilience: a slow or briefly unavailable notification consumer cannot stall the
+user-facing request that produced the event, at the cost of alerts arriving a moment
+later. The single-source-of-truth rule (NFR-8) is the maintainability counterpart of
+the in-depth authorisation rule (NFR-2): because the same permission map drives both
+the rendered navigation and the route guard, the two layers cannot drift apart and
+present contradictory access decisions.
+
+\section{System Architecture}
+\label{sec:architecture}
+
+MSCMS adopts a \emph{cloud-native microservices} architecture~\cite{microservices}
+built on the well-established \emph{API Gateway with Service Discovery and Centralised
+Configuration} pattern recommended for Spring Cloud deployments~\cite{springcloud}.
+The architecture, illustrated conceptually in Figure~\ref{fig:dashboard} for the
+delivered product, separates a single public entry point from a set of privately
+networked domain services, each owning its data and lifecycle.
+
+The principal architectural decision was to decompose the system along
+operational-domain seams rather than to build a single monolith. Each domain---user
+and identity, squad, training and matches, medical, reporting and notifications---has
+its own data ownership, release cadence and access patterns. Decomposition allows the
+high-traffic services to be scaled independently, allows the schema of one domain to
+evolve without coordinating a migration across the entire code base, and allows any
+one service container to be rebuilt and redeployed without disturbing the others.
+These benefits are realised on a foundation of Spring Boot~3.5.6 on Java~21, in which
+each service is an autonomous, embedded-server application~\cite{springboot}.
+
+The seams were chosen along the lines where the domain language and the data change
+together. Identity, the squad, the calendar of training and matches, the medical
+record, analytical reporting and communication each have a distinct vocabulary, a
+distinct set of authoritative tables and a distinct cadence of change, and they are
+operated by distinct groups of users. Cutting the system along those lines keeps each
+service \emph{cohesive}---its operations all concern one domain---and keeps the
+services \emph{loosely coupled}, interacting only through well-defined HTTP contracts
+and asynchronous events rather than through a shared schema. The cost of this choice
+is that relationships which would be foreign keys in a monolith become opaque
+cross-service references (Section~\ref{sec:data-design}); the benefit is that no
+single change touches the whole system and no single database is a bottleneck for all
+traffic.
+
+Three infrastructure services constitute the control plane:
+
+\begin{itemize}
+  \item \textbf{Eureka service registry} (port 8761). Because Docker assigns dynamic
+  container addresses, hard-coded service URLs would be brittle. Every business
+  service registers with Eureka on boot, and inter-service calls resolve targets by
+  logical service identifier rather than by network address.
+
+  \item \textbf{Spring Cloud Config Server} (port 8082). Configuration---database
+  URLs, the JWT issuer, broker addresses---is externalised so that per-environment
+  values can change without rebuilding container images, satisfying the maintainability
+  requirement NFR-7.
+
+  \item \textbf{API Gateway} (port 8080). The gateway is the only externally exposed
+  Spring service. It validates JWT tokens, applies global filters such as CORS and
+  request logging, and routes by URI prefix to the appropriate domain service. This
+  keeps each business service oblivious to authentication concerns and presents a
+  single, stable public surface to the front-end.
+\end{itemize}
+
+The platform components surrounding the services are Keycloak~26 (the identity
+provider hosting the \texttt{mscms} realm), PostgreSQL~14 (one database per service),
+Apache Kafka (the asynchronous event backbone), Redis (caching) and RabbitMQ. The
+front-end is a Next.js application that communicates exclusively with the gateway,
+and two decoupled Python/FastAPI machine-learning services are reached through a
+same-origin proxy rather than through the gateway.
+
+\paragraph{Request lifecycle.} A typical authenticated request follows a uniform path
+that embodies the architectural separation of concerns:
+\begin{enumerate}
+  \item The front-end attaches the JWT from browser storage as an
+  \texttt{Authorization: Bearer} header and issues the request to the gateway.
+  \item The gateway validates the token signature against Keycloak's JWKS endpoint,
+  extracts the realm-role claim, and routes the request by URI prefix (for example,
+  \texttt{/players/**} to the player-management service).
+  \item The selected domain service executes its business logic against its own
+  private PostgreSQL database and returns the response through the gateway.
+  \item For events that other domains care about---an injury reported, a match
+  finished, a goal scored---the originating service publishes a Kafka topic that the
+  notification service consumes to fan out alerts and e-mail, decoupling the producer
+  from the consumers in line with NFR-4.
+\end{enumerate}
+
+\paragraph{Communication topology.} Two distinct planes therefore coexist. On the
+\emph{synchronous} plane, the front-end speaks only to the gateway, the gateway speaks
+to the domain services, and the domain services occasionally speak to one another
+through Eureka-resolved REST calls when an immediate answer is required---for
+example, the notification service asking the user service for the roster of the
+general chat group. On the \emph{asynchronous} plane, producer services publish domain
+events to Kafka and the notification service consumes them, with no producer ever
+blocking on a consumer. The front-end touches one further endpoint outside the
+gateway: the raw WebSocket of the notification service, used for real-time chat, which
+is discussed as a deliberate exception in Section~\ref{sec:security}. The two
+machine-learning services sit on their own plane entirely, reached through a
+same-origin proxy so that the browser never makes a cross-origin call and the gateway
+remains the single Spring entry point.
+
+\section{Microservices Decomposition}
+\label{sec:decomposition}
+
+Beyond the three control-plane services, the system comprises six domain microservices.
+Each owns a dedicated PostgreSQL database and exposes a cohesive set of operations
+behind the gateway. Their responsibilities are summarised in Table~\ref{tab:services}.
+
+\begin{table}[htbp]
+\centering
+\caption{Domain microservices, their databases and responsibilities.}
+\label{tab:services}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{0.27\textwidth}|p{0.13\textwidth}|p{0.06\textwidth}|p{0.40\textwidth}|}
+\hline
+\textbf{Service} & \textbf{Database} & \textbf{Port} & \textbf{Responsibility} \\
+\hline
+user-management & \texttt{mscms\_user} & 8081 & User profiles for every role, Keycloak Admin-API provisioning, authentication endpoints, and national-team records. \\
+\hline
+player-management & \texttt{mscms\_player} & 8084 & Sports, teams, rosters, contracts, scouting prospects, external teams, transfers and national-team call-ups. \\
+\hline
+training-match & \texttt{mscms\_training} & 8087 & Training sessions, plans, drills, attendance and assessments; match fixtures, formations, line-ups, in-game events, reviews, statistics, and the database-backed competitions. \\
+\hline
+medical-fitness & \texttt{mscms\_medical} & 8086 & Injuries, diagnoses, treatments, rehabilitation and recovery programmes, fitness tests and training loads. \\
+\hline
+reports-analytics & \texttt{mscms\_reports} & 8083 & Cross-domain analytics: match, player, team and training analytics, scout reports and sponsor contract offers. \\
+\hline
+notification-mail & \texttt{mscms\_notification} & 8085 & In-app notifications and role-targeted alerts, outbound e-mail, the team group-chat subsystem, and consumption of Kafka domain events. \\
+\hline
+\end{tabular}
+\end{table}
+
+Inter-service communication uses two complementary styles. \emph{Synchronous} REST is
+used where an immediate, transactional answer is required; external traffic passes
+through the gateway, while internal calls resolve their targets through Eureka by
+logical service identifier. \emph{Asynchronous} Kafka topics are used for domain
+events that fan out to interested parties: producer services such as training-match
+and medical-fitness publish events---\texttt{MatchScheduled}, \texttt{MatchResult\-Available},
+\texttt{GoalScored}, \texttt{InjuryReported}, \texttt{TransferApproved} and
+\texttt{TrainingCancelled}---which the notification service consumes to create alerts
+and dispatch e-mail~\cite{kafka}. This separation keeps user-facing requests fast
+while still propagating cross-domain effects reliably.
+
+The newer modules were deliberately placed in the services whose data they extend
+rather than in new services, minimising operational surface area. The
+\emph{competitions} domain and the \emph{live-match engine} live in the training-match
+service because they share the matches and line-ups schema. The staged
+\emph{medical injury workflow} lives in the medical-fitness service alongside the
+injury catalogue. The \emph{team group chat} and the \emph{alert centre} live in the
+notification-mail service, which already owned messages and consumed the events that
+drive alerts.
+
+This placement decision is an application of the cohesion principle introduced above
+and is the reason the public surface stayed small as the system grew. Because the
+competitions endpoints were mounted under a path prefix already routed to the
+training-match service, no new gateway route was required and no new authorisation
+rule had to be reviewed; the same held for the chat-group endpoints under the
+messaging namespace. A new service is justified when a new domain language, a new
+authoritative data set and a new scaling profile appear together; none of the later
+modules met that bar, and adding them to existing services avoided the operational
+overhead---another database, another deployment unit, another registration with the
+registry---that a new service would have incurred for no architectural gain.
+
+\section{Security and Authentication}
+\label{sec:security}
+
+Security is treated as an architectural concern rather than a per-service afterthought.
+Identity is centralised in Keycloak, authentication is stateless and token-based, and
+authorisation is enforced in depth across three layers.
+
+\subsection{Identity Provider and Token Issuance}
+
+Keycloak hosts the \texttt{mscms} realm, bootstrapped at first boot from a realm
+definition that declares the platform's roles, the public OIDC client used by the
+front-end, and the seeded demonstration users~\cite{keycloak}. Authentication uses the
+OAuth~2.0 \emph{resource-owner password-credentials grant}: the front-end submits the
+user's credentials to the gateway, which forwards them to the user-management service;
+that service exchanges them at Keycloak's token endpoint and returns the issued JWT
+access token~\cite{jwt}. The front-end stores the access token for subsequent calls
+and records the user's realm role for the navigation guard.
+
+A refresh token is issued alongside the access token. When an access token expires and
+a request consequently fails, the front-end can exchange the refresh token at the
+token endpoint for a freshly rotated pair and transparently retry the original
+request; only if the refresh token is itself expired or revoked is the user returned
+to the login page with storage cleared. This keeps sessions long-lived from the user's
+perspective without ever extending the lifetime of the short-lived access token that
+the services actually trust.
+
+\subsection{Stateless Verification at the Gateway}
+
+Every subsequent request carries the JWT as an \texttt{Authorization: Bearer} header.
+The gateway validates the token's signature against Keycloak's JWKS (JSON Web Key Set)
+endpoint and extracts the realm-role claim before routing the request. Because
+verification is performed against the published signing keys, no shared session state
+is required and the domain services remain stateless, satisfying NFR-1 and supporting
+the horizontal-scaling requirement NFR-3. The signing keys are fetched once and cached,
+so the common case adds no network round-trip to verification; the gateway re-fetches
+only when it encounters a key identifier it has not seen, which is what allows Keycloak
+to rotate its keys without a coordinated restart of the platform.
+
+\subsection{Role-Based Access Control in Depth}
+
+Authorisation is enforced through role-based access control (RBAC) at three
+layers~\cite{rbac}, providing defence in depth so that the same permission rules apply
+whether a user navigates through the interface or calls the API directly:
+
+\begin{enumerate}
+  \item \textbf{Keycloak} assigns each user one or more realm roles embedded in the
+  JWT.
+  \item \textbf{The API Gateway} authorises routes against the role claim, rejecting
+  requests whose role is not permitted for the requested prefix.
+  \item \textbf{The Next.js middleware} guards navigation client-side using a single
+  permission map---the authoritative table of which roles may reach which dashboard
+  routes---so that unauthorised pages are never rendered.
+\end{enumerate}
+
+The permission map encodes an expert, per-role design: administrators receive
+all-access; coaching, medical, scouting, sponsor and analyst roles each receive a
+tailored subset; and players and fans receive a read-only surface in which add, edit
+and delete controls are suppressed. Because the map is the single source of truth for
+both the sidebar that renders the navigation and the middleware that guards it, the
+two cannot drift apart (NFR-8).
+
+It is important that the three layers are complementary rather than redundant
+substitutes for one another. The middleware guard is a \emph{usability} control: it
+prevents a user from navigating to a page they could not use and avoids rendering a
+view that would only fail on its first API call. It is not, and is not relied upon as,
+a security boundary, because client-side code can always be bypassed. The genuine
+security boundary is the gateway, which rejects an unauthorised API call regardless of
+how it was issued; even a user who forced their browser past the middleware would
+receive a forbidden response from the gateway. Keycloak underpins both by being the
+sole authority on who a user is and which roles they hold. The defence-in-depth posture
+is therefore that the interface declines gracefully, the gateway refuses
+authoritatively, and the identity provider remains the single source of truth for
+identity and role.
+
+\subsection{Real-Time Channel and Password Verification}
+
+Two security-sensitive specifics deserve note. First, the team group chat uses a raw
+WebSocket endpoint exposed directly by the notification service at
+\texttt{ws://\dots/ws/chat}~\cite{websocket}. This path sits deliberately outside the
+\texttt{/messages} REST namespace and is reached on the service's own port rather than
+through the gateway's JWT filter, because the browser WebSocket API cannot attach a
+bearer header during the handshake; the application therefore authenticates the socket
+at the message layer and falls back to authenticated polling when the socket is
+unavailable.
+
+Second, changing the account password is a two-step, Keycloak-verified operation. The
+user-management service first \emph{verifies the current password} by attempting a
+password-grant token exchange against Keycloak with the supplied current credentials;
+only if that exchange succeeds does the service set the new password through the
+Keycloak Admin API's reset-password endpoint. This guarantees that a stolen access
+token alone cannot be used to change a password without knowledge of the existing one.
+Concretely, the service resolves the user's login identifier (preferring the username
+and falling back to the e-mail address), submits it with the supplied current password
+to Keycloak's token endpoint, and proceeds only on a successful exchange; a blank or
+incorrect current password is rejected with a friendly error before any change is
+attempted, and only then is the new password written through the Admin API.
+
+\section{Data Design}
+\label{sec:data-design}
+
+The data layer follows a strict \emph{database-per-service} (polyglot persistence)
+strategy on PostgreSQL~14~\cite{postgres}. Each of the six domain services owns exactly
+one database, and \emph{no physical foreign key crosses a database boundary}. This
+isolation is what makes the services independently deployable and independently
+scalable, and it directly underpins the scalability and maintainability requirements
+NFR-3 and NFR-7.
+
+\subsection{Cross-Service Identifiers}
+
+Because relationships cannot be expressed as cross-database joins, three classes of
+identifier are shared as opaque references across the services:
+
+\begin{itemize}
+  \item \textbf{Keycloak UUID} (\texttt{keycloakId}) --- the canonical identity of a
+  person. Every service stores this string rather than a numeric key into the user
+  database, so that a player, coach or sponsor is referenced consistently everywhere.
+  \item \textbf{Numeric domain identifiers} --- such as \texttt{teamId},
+  \texttt{playerId} and \texttt{matchId}. These are JPA-generated primary keys; the
+  seeders preserve a deterministic insertion order so that, for instance, the team
+  identifier for FC~Barcelona is stable across every service that references it.
+  \item \textbf{Realm role names} --- string identifiers such as \texttt{ADMIN} and
+  \texttt{HEAD\_COACH} carried in the JWT and used uniformly for authorisation.
+\end{itemize}
+
+The consequence of using opaque references rather than enforced foreign keys is that
+referential integrity \emph{across} services becomes an application responsibility
+rather than a database guarantee. The design accepts this trade deliberately: the
+alternative---a shared schema with real foreign keys---would couple the services back
+into a distributed monolith and defeat the independence the decomposition was meant to
+achieve. Within a single database, by contrast, ordinary foreign keys are used freely,
+so each service still enjoys full relational integrity over the data it owns. The
+deterministic seeding rule is the practical safeguard that keeps the cross-service
+numeric identifiers aligned, and the use of the Keycloak UUID for people means that
+the one identifier most often shared---the identity of a person---is globally unique by
+construction and never depends on insertion order at all.
+
+\subsection{Entity-Relationship Model}
+
+Within each database the schema is a conventional relational model managed through
+Spring Data JPA and Hibernate. Table~\ref{tab:schema} summarises the principal tables
+per database; the complete entity-relationship model is maintained as a dedicated
+diagram in the project's documentation.
+
+\begin{table}[htbp]
+\centering
+\caption{Principal tables per service database.}
+\label{tab:schema}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{0.24\textwidth}|p{0.68\textwidth}|}
+\hline
+\textbf{Database} & \textbf{Principal tables} \\
+\hline
+\texttt{mscms\_user} & \texttt{user}, plus a per-role profile extension (player, head\_coach, doctor, physiotherapist, fitness\_coach, team\_manager, sport\_manager, scout, sponsor, fan, national\_team). \\
+\hline
+\texttt{mscms\_player} & \texttt{sports}, \texttt{teams}, \texttt{rosters}, \texttt{player\_contracts}, \texttt{outer\_teams}, \texttt{outer\_players}, \texttt{player\_transfer\_incoming}, \texttt{player\_transfer\_outgoing}, \texttt{player\_call\_up\_requests}. \\
+\hline
+\texttt{mscms\_training} & \texttt{training\_sessions}, \texttt{training\_plans}, \texttt{training\_drills}, \texttt{training\_attendance}, \texttt{player\_training\_assessments}, \texttt{matches}, \texttt{match\_formations}, \texttt{match\_lineups}, \texttt{match\_events}, \texttt{player\_match\_statistics}, and the competition tables (\texttt{competition}, \texttt{competition\_team}, \texttt{competition\_fixture}). \\
+\hline
+\texttt{mscms\_medical} & \texttt{injuries}, \texttt{diagnoses}, \texttt{treatments}, \texttt{rehabilitations}, \texttt{recovery\_programs}, \texttt{fitness\_tests}, \texttt{training\_loads}. \\
+\hline
+\texttt{mscms\_notification} & \texttt{notifications}, \texttt{alerts}, \texttt{messages}, and the group-chat tables (\texttt{chat\_group}, \texttt{chat\_group\_member}). \\
+\hline
+\texttt{mscms\_reports} & \texttt{match\_analysis}, \texttt{player\_analytics}, \texttt{team\_analytics}, \texttt{training\_analytics}, \texttt{scout\_reports}, \texttt{sponsor\_contract\_offers}. \\
+\hline
+\end{tabular}
+\end{table}
+
+The schema accommodates the newer modules with minimal disruption. In the user
+database, the central \texttt{user} entity is specialised by a one-to-one profile
+extension per role, so role-specific attributes (a coach's licence level, a player's
+preferred position and market value) live with their role without polluting the common
+record. In the training database, the competition tables relate a competition to its
+participating teams and to its ordered fixtures, where a fixture's round
+distinguishes the Champions League league phase from its knockout rounds. In the
+notification database, a chat group owns its members, each carrying an invited or
+member status, and the general group is seeded so that every account belongs to it on
+arrival.
+
+\subsection{Per-Service Schema Walk-through}
+\label{sec:schema-walkthrough}
+
+It is worth describing the principal entities and relationships of each database in a
+little more depth, because the shape of the data explains the shape of the operations.
+
+\paragraph{User and identity (\texttt{mscms\_user}).} The common \texttt{user} record
+holds the \texttt{keycloakId}, the human-readable identifiers (username, e-mail), basic
+demographics and the role. Each role then has a one-to-one extension table that
+\emph{extends} the user with its own attributes: a player extension records date of
+birth, nationality, preferred position, market value, kit number and the player's
+current status, together with the roster and contract identifiers that point into the
+player database; a head-coach extension records the sport and team served, the staff
+role, years of experience and coaching licence level; a national-team extension records
+the federation name, country and contact. This vertical-extension pattern keeps the
+common identity in one place while letting each role carry exactly the fields it needs.
+
+\paragraph{Squad (\texttt{mscms\_player}).} A \texttt{sport} owns many \texttt{teams},
+and a team owns many \texttt{rosters}, each roster row binding a player (by Keycloak
+UUID) to a team for a season. Contracts are held per player by Keycloak UUID with start
+and end dates, salary and release clause. The transfer market is modelled with two
+symmetric tables: \texttt{player\_transfer\_incoming} links an external player belonging
+to an external team to one of the club's teams, while \texttt{player\_transfer\_outgoing}
+moves one of the club's players to an external team; both carry a status that walks
+through pending, accepted and declined. External teams and their external players are
+first-class so that scouting and transfers have concrete targets, and a separate
+call-up table records national-team requests for a player.
+
+\paragraph{Training and matches (\texttt{mscms\_training}).} A \texttt{training\_session}
+owns its \texttt{training\_drills}, its \texttt{training\_attendance} rows (one per
+player, with a present/absent/late/excused/injured status) and its per-player
+\texttt{player\_training\_assessments}. Training plans group sessions toward a goal over
+a date range. On the match side, a \texttt{match} records the home team, the external
+opponent, type, status, sport, venue, competition, season, the score and the kick-off
+and finish times. A \texttt{match\_formation} captures the chosen shape and tactical
+approach, and it owns the \texttt{match\_lineup} rows that place each player in a
+position with a starting, substitute or reserve status and record whether and when they
+were substituted. \texttt{match\_event} rows record the in-game timeline---type, minute
+and any stoppage---and \texttt{player\_match\_statistics} captures per-player numbers
+with sport-specific columns. The competition tables sit alongside: a \texttt{competition}
+owns its \texttt{competition\_team} rows and its ordered \texttt{competition\_fixture}
+rows, where each fixture carries its two teams, an optional group, a matchday, a round
+label and, once played, a score.
+
+\paragraph{Medical (\texttt{mscms\_medical}).} The \texttt{injury} is the aggregate
+root: it owns its \texttt{diagnoses}, \texttt{treatments} and \texttt{rehabilitations},
+and a rehabilitation in turn owns its \texttt{recovery\_programs}. The injury carries
+the status that drives the entire workflow (active, recovering, recovered) together with
+the injured body part, severity and dates. Independent of a specific injury, the
+database also stores \texttt{fitness\_tests} and \texttt{training\_loads}, which record
+objective measurements (test results, session intensity and load, heart-rate figures)
+used both in fitness assessment and as input to analytics.
+
+\paragraph{Reporting (\texttt{mscms\_reports}).} This database holds derived and authored
+artefacts rather than transactional state. \texttt{match\_analysis}, \texttt{player\_analytics},
+\texttt{team\_analytics} and \texttt{training\_analytics} aggregate the operational data
+of other domains over a period, several of them storing sport-specific or trend data as
+embedded JSON so the schema does not need a column per sport. \texttt{scout\_reports}
+attach structured ratings and a sign-or-not recommendation to an external player, and
+\texttt{sponsor\_contract\_offers} record a sponsor's offer to a team with an amount,
+duration, terms and a negotiation status.
+
+\paragraph{Communication (\texttt{mscms\_notification}).} A \texttt{notification} is a
+per-recipient item with a type, category, title, body and read state; an \texttt{alert}
+is a higher-level, optionally role-targeted item with a priority, an acknowledgement
+state and a resolution state. A \texttt{message} belongs to a chat group, carries its
+sender by Keycloak UUID, and may reference a parent message to form a thread. The
+\texttt{chat\_group} and \texttt{chat\_group\_member} tables model membership, the latter
+carrying the invited-or-member status and who issued the invitation.
+
+\section{Domain and Class Model}
+\label{sec:domain-model}
+
+The relational schema described above is materialised in the running services as a set
+of JPA entity classes, related by composition and reference. Describing the model at
+the class level clarifies which relationships are owning (a parent that contains and
+manages the lifecycle of its children) and which are mere references (a foreign-key-like
+pointer that the application resolves on demand).
+
+In the \textbf{squad} model, \texttt{Sport} composes many \texttt{Team} objects, and a
+\texttt{Team} composes many \texttt{Roster} entries. \texttt{PlayerContract},
+\texttt{OuterTeam} and \texttt{OuterPlayer} round out the domain, with an
+\texttt{OuterTeam} composing its \texttt{OuterPlayer} squad. The two transfer types,
+\texttt{PlayerTransferIncoming} and \texttt{PlayerTransferOutgoing}, reference the teams
+and players involved and carry a \texttt{RequestStatus}, expressing the market as a pair
+of directed, status-bearing associations rather than as mutable fields on the player.
+
+In the \textbf{match and training} model, \texttt{TrainingSession} composes its
+\texttt{TrainingDrill}, \texttt{TrainingAttendance} and assessment children, while
+\texttt{Match} composes its \texttt{MatchEvent} and \texttt{PlayerMatchStatistics}
+children. Crucially, \texttt{MatchFormation} composes the \texttt{MatchLineup} entries:
+the starting eleven is owned by the formation, which is why creating a match, its
+formation and its line-up is a single atomic act and why a match cannot exist without a
+line-up. \texttt{MatchEvent} carries the enumerated event type and the minute, which the
+live engine bounds to the current phase.
+
+In the \textbf{medical} model the composition hierarchy directly encodes the recovery
+journey: \texttt{Injury} composes its \texttt{Diagnosis}, \texttt{Treatment} and
+\texttt{Rehabilitation} children, and a \texttt{Rehabilitation} composes its
+\texttt{RecoveryProgram}. Because the stage of recovery is read from the injury's status
+rather than tracked separately, the aggregate root remains the single source of truth and
+the staged journey is a projection of that one field. \texttt{FitnessTest} and
+\texttt{TrainingLoad} stand apart from the injury hierarchy as independent measurement
+entities.
+
+Throughout the model, relationships that would cross a service boundary are expressed not
+as object references but as the opaque identifiers described in
+Section~\ref{sec:data-design}---a \texttt{playerKeycloakId} string or a numeric
+\texttt{teamId}---so the in-memory object graph of any one service never reaches into the
+data of another. This is the class-level expression of the database-per-service rule and
+is what keeps the services genuinely independent at runtime.
+
+\section{API Surface Overview}
+\label{sec:api-surface}
+
+Each domain service exposes a cohesive REST surface behind the gateway, organised by
+resource and following conventional HTTP semantics: a collection path supports listing
+and creation, an item path supports retrieval, update and deletion, and purpose-built
+sub-paths express domain operations that are not pure CRUD~\cite{restapi}.
+Table~\ref{tab:api} summarises representative endpoints per service; the prefixes shown
+are those routed by the gateway.
+
+\begin{table}[htbp]
+\centering
+\caption{Representative API endpoints per service (selected, not exhaustive).}
+\label{tab:api}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|p{0.26\textwidth}|p{0.66\textwidth}|}
+\hline
+\textbf{Service / prefix} & \textbf{Representative endpoints} \\
+\hline
+user-management \newline \texttt{/auth}, \texttt{/users}, \texttt{/staff} &
+\texttt{POST /auth/login}, \texttt{POST /auth/refresh}, \texttt{POST /auth/admin/create-user}; \texttt{GET/POST /users}, \texttt{GET/PUT/DELETE /users/\{id\}}, \texttt{PUT /users/\{id\}/password} (current-password verified); role collections such as \texttt{/players}, \texttt{/staff}, \texttt{/national-teams}. \\
+\hline
+player-management \newline \texttt{/players area} &
+\texttt{GET/POST /sports}, \texttt{/teams}, \texttt{/rosters}, \texttt{/player-contracts}; \texttt{/outer-teams}, \texttt{/outer-players}; transfer flows \texttt{/transfers/incoming}, \texttt{/transfers/outgoing} and \texttt{/call-ups}, each with status transitions. \\
+\hline
+training-match \newline \texttt{/training\dots}, \texttt{/matches} &
+training: \texttt{/training-sessions}, \texttt{/training-plans}, \texttt{/training-drills}, \texttt{/training-attendance}, \texttt{/player-training-assessments}; matches: \texttt{/matches}, \texttt{/match-formations}, \texttt{/match-lineups}, \texttt{/match-events}, \texttt{/player-match-statistics}; external sync \texttt{POST /matches/sync-external} and standings \texttt{GET /matches/standings/\{code\}}; competitions under \texttt{/matches/leagues} (\texttt{GET/POST}, \texttt{GET /\{id\}}, \texttt{POST /import}, \texttt{POST /\{id\}/fixtures} and \texttt{/fixtures/bulk}, \texttt{PUT /\{id\}/fixtures/\{fid\}}). \\
+\hline
+medical-fitness \newline \texttt{/injuries} area &
+\texttt{GET/POST /injuries}, \texttt{GET/PUT/DELETE /injuries/\{id\}}; the staged children \texttt{/diagnoses}, \texttt{/treatments}, \texttt{/rehabilitations}, \texttt{/recovery-programs}; plus \texttt{/fitness-tests} and \texttt{/training-loads}. \\
+\hline
+reports-analytics \newline \texttt{/analytics} area &
+\texttt{/match-analysis}, \texttt{/player-analytics}, \texttt{/team-analytics}, \texttt{/training-analytics}; \texttt{/scout-reports}; \texttt{/sponsor-contract-offers} with accept/reject transitions. \\
+\hline
+notification-mail \newline \texttt{/notifications}, \texttt{/alerts}, \texttt{/messages} &
+\texttt{/notifications} and \texttt{/alerts} (with \texttt{GET /alerts/target/\{keycloakId\}} and \texttt{GET /alerts/unacknowledged}); messaging \texttt{/messages}; chat groups under \texttt{/messages/groups} (\texttt{GET ?user=}, \texttt{POST}, \texttt{GET /\{id\}/members}, \texttt{GET /invitations}, \texttt{POST /\{id\}/accept}, \texttt{/decline}, \texttt{/invite}); the raw WebSocket \texttt{ws://\dots/ws/chat} sits outside the gateway. \\
+\hline
+\end{tabular}
+\end{table}
+
+Three conventions in this surface are worth highlighting because they recur across
+services. First, \emph{literal sub-paths take precedence over identifier patterns}: the
+chat-group routes are mounted at the literal \texttt{/messages/groups} so that they are
+matched ahead of the \texttt{/messages/\{id\}} item route, which lets a new feature reuse
+an existing gateway route without ambiguity. Second, \emph{state transitions are modelled
+as explicit endpoints} rather than as opaque field updates---accepting an invitation,
+declining it, recording a fixture result, or acknowledging an alert each has its own
+verb-bearing path, which makes the API self-describing and keeps authorisation rules
+crisp. Third, \emph{external data enters only through the back-end}: the external-sync and
+standings endpoints on the training-match service are the sole points at which
+third-party data is ingested, after which the front-end reads it from the platform's own
+model like any other resource (Section~\ref{sec:tech-stack}).
+
+\section{Technology Stack}
+\label{sec:tech-stack}
+
+The platform is assembled from a coherent set of mainstream, well-supported
+technologies, summarised in Table~\ref{tab:stack}. The choices reflect the
+non-functional priorities: a battle-tested back-end framework with first-class cloud
+support, a modern reactive front-end, and standard infrastructure that runs identically
+inside containers~\cite{docker}.
+
+\begin{table}[htbp]
+\centering
+\caption{Technology stack across the back-end, front-end and infrastructure tiers.}
+\label{tab:stack}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{0.18\textwidth}|p{0.32\textwidth}|p{0.40\textwidth}|}
+\hline
+\textbf{Tier} & \textbf{Technology} & \textbf{Role in MSCMS} \\
+\hline
+Back-end & Spring Boot 3.5.6 / Java 21~\cite{springboot} & Domain microservices and embedded application servers. \\
+\hline
+Back-end & Spring Cloud (Gateway, Eureka, Config)~\cite{springcloud} & Routing, service discovery and centralised configuration. \\
+\hline
+Back-end & Spring Data JPA / Hibernate & Object-relational mapping over PostgreSQL. \\
+\hline
+Identity & Keycloak 26~\cite{keycloak} & OIDC/OAuth~2.0 identity provider, realm \texttt{mscms}, JWT issuance~\cite{jwt}. \\
+\hline
+Front-end & Next.js 16 (App Router)~\cite{nextjs} & Server- and client-rendered user interface and route middleware. \\
+\hline
+Front-end & React 19~\cite{react} & Component model for the dashboard and interactive views. \\
+\hline
+Front-end & Tailwind CSS v4 & Utility-first styling and the Sportify visual identity. \\
+\hline
+Real-time & Native WebSocket~\cite{websocket} & Team group chat with a polling fallback. \\
+\hline
+Data & PostgreSQL 14~\cite{postgres} & One isolated relational database per domain service. \\
+\hline
+Messaging & Apache Kafka~\cite{kafka} & Asynchronous domain-event backbone for alerts and notifications. \\
+\hline
+Cache / queue & Redis, RabbitMQ & Hot-lookup caching and transactional messaging. \\
+\hline
+External data & football-data.org REST API~\cite{footballdata,restapi} & Source of real competition fixtures, results and standings, ingested by the back-end. \\
+\hline
+Machine learning & Python 3, FastAPI & Decoupled match-outcome and player-rating prediction services. \\
+\hline
+Platform & Docker \& Docker Compose~\cite{docker} & Reproducible container orchestration of the full stack. \\
+\hline
+\end{tabular}
+\end{table}
+
+A noteworthy data-integration decision is that the back-end is the sole consumer of
+the external football data: the training-match service ingests fixtures, results and
+standings from the football-data.org REST API on a schedule and persists them into the
+matches schema~\cite{footballdata,restapi}, so the front-end never contacts the
+external service directly. This keeps the platform's data model authoritative,
+shields the user interface from third-party rate limits and outages, and preserves the
+single-public-surface property of the gateway architecture. The ingestion is
+defensive in practice: it pulls the competition match and standings collections rather
+than per-team endpoints (which the free tier rejects), filters to the club's fixtures,
+de-duplicates against an external identifier so re-runs do not create duplicate matches,
+and reads standings through without storing them so that the live table always reflects
+the source.
+
+\section{Behavioural Flows and Sequence Designs}
+\label{sec:flows}
+
+The static architecture described above is exercised by a number of behavioural flows.
+This section develops the most important of them in detail. Each flow is presented as a
+short narrative followed by a numbered sequence of interactions among the participating
+components, so that the cooperation between the front-end, the gateway, the domain
+services, Keycloak and Kafka is explicit. The flows are illustrated through the
+delivered interface in Chapter~\ref{ch:results}.
+
+\subsection{Authentication and Session Establishment}
+\label{sec:flow-login}
+
+Authentication establishes a stateless session: the user proves their identity once,
+and a signed token thereafter authorises every request without any server-side session
+store.
+
+\begin{enumerate}
+  \item The user submits a username and password on the Sportify sign-in page.
+  \item The front-end issues \texttt{POST /auth/login} to the gateway with the
+  credentials.
+  \item The gateway forwards the request to the user-management service.
+  \item The user-management service performs an OAuth~2.0 password-grant exchange at
+  Keycloak's token endpoint (\texttt{/realms/mscms/protocol/openid-connect/token},
+  \texttt{grant\_type=password}).
+  \item Keycloak validates the credentials and returns an access token, a refresh token
+  and an expiry.
+  \item The user-management service returns the access token and the user's role to the
+  gateway, which relays them to the front-end.
+  \item The front-end decodes the token to read the subject (the Keycloak UUID) and the
+  realm roles, stores the access token and the Keycloak UUID, and records the role both
+  in local storage and in a cookie that the route middleware can read.
+  \item The user is redirected to the single \texttt{/dashboard} route, whose content is
+  then computed from the stored role.
+  \item On every subsequent request the front-end attaches the token as
+  \texttt{Authorization: Bearer}; the gateway verifies the signature against Keycloak's
+  cached JWKS, checks expiry, extracts the realm-role claim, and routes the request---no
+  server-side session is consulted at any point.
+\end{enumerate}
+
+When an access token expires, a request fails with an unauthorised status; the
+front-end then exchanges the refresh token for a rotated pair and retries the original
+request, or, if the refresh token is itself invalid, clears storage and returns the user
+to the login page. The result is a session that feels continuous to the user while the
+tokens the services actually trust remain short-lived.
+
+\subsection{Scheduling an Official Match from a Competition Fixture}
+\label{sec:flow-schedule}
+
+Scheduling an official match is a guarded, atomic flow that begins from a real
+competition fixture and ends with a persisted match, formation and starting eleven and a
+result written back to the source fixture.
+
+\begin{enumerate}
+  \item From a competition view the user selects an unplayed fixture of a still-running
+  competition and chooses to schedule it. The interface deep-links into match creation,
+  carrying the competition and fixture identifiers and the two teams' names so the
+  team-selection steps are pre-filled and skipped.
+  \item The user sets a kick-off time. The interface validates that the time parses and is
+  at least five minutes in the future, nudging the picker's minimum accordingly, and
+  rejects a past or too-soon kick-off with a friendly message.
+  \item The user builds the line-up formation-first, choosing a shape and then placing the
+  starting eleven by drag-and-drop, with substitutes and reserves designated.
+  \item Only once the line-up is complete is the match persisted. The front-end creates the
+  match, then its formation, then its line-up rows in one logical act, so the database
+  never holds a match without a starting eleven. The fixture's competition and identifier
+  are recorded with the match so the result can later be written back.
+  \item Because the kick-off is in the future, the match is stored as scheduled and shows a
+  live countdown on its card.
+  \item At the exact kick-off moment the match transitions to live automatically---the user
+  never flips it manually---and the live-match engine takes over its phase machine
+  (Section~\ref{sec:flow-live}).
+  \item When the match ends, the engine writes the final score back to the originating
+  competition fixture, marking it played, so the standings recompute and the fixture is
+  shown as completed.
+\end{enumerate}
+
+\subsection{Live-Match Phase Progression with Extra Time and Penalties}
+\label{sec:flow-live}
+
+The live engine drives a match through a broadcast-style sequence of phases. Control is
+gated until kick-off; thereafter an authorised user advances the phases and records
+events, while the displayed clock is derived from the kick-off timestamp so the timeline
+and the clock always agree.
+
+\begin{enumerate}
+  \item At kick-off the match enters \textsc{First Half}. The clock counts from zero, and
+  the regulation minute is hard-capped at 45 plus any admin-set stoppage so the display
+  reads, for example, ``45+3''' rather than running away into nonsense.
+  \item Events recorded during a phase are bounded to that phase's minute range: a
+  first-half event must fall in minutes 1--45 (plus stoppage), a second-half event in
+  46--90 (plus stoppage). The event is persisted through the match-events endpoint.
+  \item The user advances to \textsc{Half Time} (no running clock), then to
+  \textsc{Second Half} (counting from minute 45 with its own stoppage), then to
+  \textsc{Full Time}.
+  \item For an ordinary (league or friendly) match, \textsc{Full Time} ends the match.
+  Recording the end posts a result-available alert and writes the score back to the
+  source fixture.
+  \item For a \emph{knockout} tie that is level at \textsc{Full Time}, the engine continues
+  into \textsc{Extra Time}: a first extra period (minutes 91--105), an extra-time
+  half-time interval, and a second extra period (minutes 106--120), each a playing phase
+  with its own bounded minute range.
+  \item If the tie is still level after extra time, the engine enters \textsc{Penalties}, a
+  shoot-out with no running clock; the user records the shoot-out outcome.
+  \item Throughout, recording a goal posts a real goal-scored alert, and ending the game
+  posts a result-available alert and persists the final score. Recording an in-match injury
+  event flips the affected player's status to injured, opening a case in the medical
+  workflow (Section~\ref{sec:flow-medical}). The substitution count is bounded per sport.
+\end{enumerate}
+
+This phase machine is the reason the extra-time and penalty logic is confined to knockout
+ties: only a tie that must produce a winner can progress beyond full time, so the engine
+checks both the match type and the level scoreline before offering the extra-time
+transition. The same minute-bounding logic also lets the system reconstruct the correct
+phase for any stored event when a live match is reloaded, by mapping the event's minute
+back to the phase whose range contains it.
+
+\subsection{The Injury-to-Recovery Medical Workflow}
+\label{sec:flow-medical}
+
+The medical workflow advances an injured player through a staged journey whose stage is
+always derived from the injury's status, so the Treatment Room and the per-player stepper
+cannot disagree.
+
+\begin{enumerate}
+  \item An injury is opened---either logged directly by medical staff or raised as an
+  in-match injury event by the live engine. A case is created in the medical-fitness
+  service with an active status, and the player appears in the Treatment Room's
+  currently-injured list.
+  \item Opening the case publishes an injury event to Kafka; the notification service
+  consumes it and raises an alert for the relevant staff (Section~\ref{sec:flow-notify}).
+  \item Medical staff record a \textsc{Diagnosis} against the injury, drawing on the general
+  diagnosis catalogue and adding notes and recommendations.
+  \item A \textsc{Treatment} is started, with a type, description and date range; the
+  injury's status moves to recovering.
+  \item A \textsc{Rehabilitation} plan is created and run by a physiotherapist, owning one or
+  more \textsc{Recovery Programs} drawn from the recovery catalogue.
+  \item A final \textsc{Fitness Test} confirms readiness, recording an objective result and a
+  result category.
+  \item On success the injury's status is set to recovered; because the stage is read from
+  that status, the player automatically moves from the currently-injured list to the
+  recovered list and the stepper shows the journey complete.
+\end{enumerate}
+
+The workflow demonstrates the platform's defining characteristics together: a domain-owned
+aggregate whose status is the single source of truth, an event published across a service
+boundary to drive an alert, and a role-restricted surface in which only medical staff may
+advance the stages while everyone else sees the outcome read-only.
+
+\subsection{Real-Time Group Messaging over WebSocket with Polling Fallback}
+\label{sec:flow-chat}
+
+Group messaging combines a persistent group model with a real-time delivery channel that
+degrades gracefully when the socket is unavailable.
+
+\begin{enumerate}
+  \item On opening the messages view, the front-end requests the user's groups
+  (\texttt{GET /messages/groups?user=}); the response always includes the seeded general
+  group plus every group in which the user is a confirmed member.
+  \item For the general group the member roster resolves to every user in the system; the
+  service attempts an internal call to the user service and, if that call is rejected, the
+  front-end resolves the roster from its own user directory so the general group is never
+  empty.
+  \item The front-end opens a WebSocket to the notification service at
+  \texttt{ws://\dots/ws/chat}. Because the browser WebSocket handshake cannot carry a bearer
+  header, the channel is authenticated at the message layer rather than at the gateway.
+  \item While the socket is open, sent messages are delivered in real time and incoming
+  messages are pushed to all participants. Messages are de-duplicated on arrival (by server
+  identifier, then client identifier, then sender-and-content) so a message is never rendered
+  twice.
+  \item If the socket cannot be established or drops, the client falls back to authenticated
+  polling of the messages endpoint, so conversation continues---more slowly---without the
+  socket.
+  \item A user may create a group, becoming its first member, and invite others; invitees
+  remain in an invited state and appear in their pending-invitations list until they accept,
+  at which point they become members; declining removes the membership. Replies reference a
+  parent message to form threads, and emoji reactions are attached to individual messages.
+\end{enumerate}
+
+\subsection{Event-Driven Notification Creation via Kafka}
+\label{sec:flow-notify}
+
+Notifications and alerts are produced asynchronously so that a user-facing request is never
+delayed by the work of informing other parties.
+
+\begin{enumerate}
+  \item A producing service performs a domain action with cross-domain significance---the
+  training-match service schedules or completes a match or records a goal, the medical service
+  opens an injury, the player service approves a transfer, or a training session is cancelled.
+  \item Having committed its own transaction, the producer publishes a corresponding domain
+  event (for example \texttt{MatchScheduled}, \texttt{GoalScored},
+  \texttt{MatchResultAvailable}, \texttt{InjuryReported}, \texttt{TransferApproved} or
+  \texttt{TrainingCancelled}) to a Kafka topic and returns to its caller immediately.
+  \item The notification service's event consumer reads the event from Kafka independently of
+  the original request.
+  \item The consumer creates an alert of the appropriate type and priority, targeting either a
+  specific user (by Keycloak UUID) or a role, and persists it; where configured it also queues
+  an outbound e-mail.
+  \item The front-end's notification centre, opened from the top-bar bell, polls for alerts and
+  notifications on a short interval, showing unread badges and letting the user acknowledge an
+  alert or mark a notification read.
+\end{enumerate}
+
+Because the producer never blocks on the consumer, a slow or briefly unavailable notification
+path cannot stall the action that generated the event; the alert simply arrives a moment
+later. This is the concrete realisation of the asynchronous-decoupling requirement NFR-4 and is
+the mechanism that lets a single live-match goal both update the score and, independently,
+inform every interested user.

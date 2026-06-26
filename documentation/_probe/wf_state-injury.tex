@@ -1,0 +1,35 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=24mm, on grid,
+    every edge/.style={draw=dLine, thick, -{Stealth[length=2.4mm]}}]
+
+  % top-level states driven by Injury.status
+  \node[st,initial,initial text={injury opened}] (act) {Active\\\scriptsize(active)};
+  \node[st] (diag) [right=of act] {Diag-\\nosis};
+  \node[st] (treat) [right=of diag] {Treat-\\ment};
+  \node[st] (rec) [right=of treat] {Recove-\\ring\\\scriptsize(recovering)};
+  \node[st] (rehab) [below=22mm of rec] {Rehabili-\\tation};
+  \node[st] (prog) [left=of rehab] {Recovery\\Program};
+  \node[st] (fit) [left=of prog] {Fitness\\Test};
+  \node[st,accepting] (recd) [left=of fit] {Recove-\\red\\\scriptsize(recovered)};
+
+  % journey path: status stays active through diagnosis, flips to recovering on treatment
+  \path (act)  edge node[lbl,above]{diagnose} (diag)
+        (diag) edge node[lbl,above]{start treatment} (treat)
+        (treat) edge node[lbl,above]{status $\rightarrow$ recovering} (rec)
+        (rec)  edge node[lbl,right]{plan rehab} (rehab)
+        (rehab) edge node[lbl,above]{run programme} (prog)
+        (prog) edge node[lbl,above]{schedule test} (fit)
+        (fit)  edge node[lbl,above]{passed: status $\rightarrow$ recovered,\\player Available} (recd);
+
+  % failed fitness test loops back to recovering (self-loop on the test stage)
+  \path (fit) edge[loop below] node[lbl,below]{failed test} (fit);
+
+\end{tikzpicture}%
+}
+
+\end{document}

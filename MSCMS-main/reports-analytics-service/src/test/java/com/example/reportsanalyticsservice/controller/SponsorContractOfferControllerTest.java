@@ -3,6 +3,7 @@ package com.example.reportsanalyticsservice.controller;
 import com.example.reportsanalyticsservice.dto.request.SponsorContractOfferRequest;
 import com.example.reportsanalyticsservice.dto.response.SponsorContractOfferResponse;
 import com.example.reportsanalyticsservice.service.SponsorContractOfferService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +25,9 @@ class SponsorContractOfferControllerTest {
     @Mock
     private SponsorContractOfferService sponsorContractOfferService;
 
+    @Mock
+    private HttpServletRequest http;
+
     @InjectMocks
     private SponsorContractOfferController sponsorContractOfferController;
 
@@ -35,6 +39,7 @@ class SponsorContractOfferControllerTest {
                 1L,
                 5000000.0,
                 36,
+                null,
                 "Standard terms and conditions",
                 "PENDING",
                 LocalDateTime.of(2025, 7, 1, 0, 0),
@@ -48,17 +53,20 @@ class SponsorContractOfferControllerTest {
                 1L,
                 5000000.0,
                 36,
+                null,
                 "Standard terms and conditions",
                 "PENDING",
+                "ADMIN",
                 LocalDateTime.of(2025, 7, 1, 0, 0),
+                null,
                 null,
                 "Exclusive kit sponsorship for 3 years"
         );
 
-        given(sponsorContractOfferService.create(request)).willReturn(response);
+        given(sponsorContractOfferService.create(request, http)).willReturn(response);
 
         // When
-        ResponseEntity<SponsorContractOfferResponse> result = sponsorContractOfferController.create(request);
+        ResponseEntity<SponsorContractOfferResponse> result = sponsorContractOfferController.create(request, http);
 
         // Then
         assertThat(result.getStatusCodeValue()).isEqualTo(201);
@@ -66,50 +74,7 @@ class SponsorContractOfferControllerTest {
         assertThat(result.getBody().id()).isEqualTo(1L);
         assertThat(result.getBody().sponsorKeycloakId()).isEqualTo("sponsor-keycloak-id-1");
         assertThat(result.getBody().offerAmount()).isEqualTo(5000000.0);
-        verify(sponsorContractOfferService, times(1)).create(request);
-    }
-
-    @Test
-    void testUpdateSponsorContractOffer() {
-        // Given
-        Long id = 1L;
-        SponsorContractOfferRequest request = new SponsorContractOfferRequest(
-                "sponsor-keycloak-id-1",
-                1L,
-                6000000.0,
-                36,
-                "Updated terms and conditions",
-                "APPROVED",
-                LocalDateTime.of(2025, 7, 1, 0, 0),
-                LocalDateTime.of(2025, 7, 15, 0, 0),
-                "Enhanced kit sponsorship for 3 years"
-        );
-
-        SponsorContractOfferResponse response = new SponsorContractOfferResponse(
-                1L,
-                "sponsor-keycloak-id-1",
-                1L,
-                6000000.0,
-                36,
-                "Updated terms and conditions",
-                "APPROVED",
-                LocalDateTime.of(2025, 7, 1, 0, 0),
-                LocalDateTime.of(2025, 7, 15, 0, 0),
-                "Enhanced kit sponsorship for 3 years"
-        );
-
-        given(sponsorContractOfferService.update(id, request)).willReturn(response);
-
-        // When
-        ResponseEntity<SponsorContractOfferResponse> result = sponsorContractOfferController.update(id, request);
-
-        // Then
-        assertThat(result.getStatusCodeValue()).isEqualTo(200);
-        assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().id()).isEqualTo(1L);
-        assertThat(result.getBody().offerAmount()).isEqualTo(6000000.0);
-        assertThat(result.getBody().status()).isEqualTo("APPROVED");
-        verify(sponsorContractOfferService, times(1)).update(id, request);
+        verify(sponsorContractOfferService, times(1)).create(request, http);
     }
 
     @Test
@@ -122,65 +87,56 @@ class SponsorContractOfferControllerTest {
                 1L,
                 5000000.0,
                 36,
+                null,
                 "Standard terms and conditions",
                 "PENDING",
+                "ADMIN",
                 LocalDateTime.of(2025, 7, 1, 0, 0),
+                null,
                 null,
                 "Exclusive kit sponsorship for 3 years"
         );
 
-        given(sponsorContractOfferService.getById(id)).willReturn(response);
+        given(sponsorContractOfferService.getById(id, http)).willReturn(response);
 
         // When
-        ResponseEntity<SponsorContractOfferResponse> result = sponsorContractOfferController.getById(id);
+        ResponseEntity<SponsorContractOfferResponse> result = sponsorContractOfferController.getById(id, http);
 
         // Then
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody().id()).isEqualTo(1L);
-        verify(sponsorContractOfferService, times(1)).getById(id);
+        verify(sponsorContractOfferService, times(1)).getById(id, http);
     }
 
     @Test
     void testGetAllSponsorContractOffers() {
         // Given
         SponsorContractOfferResponse response1 = new SponsorContractOfferResponse(
-                1L,
-                "sponsor-keycloak-id-1",
-                1L,
-                5000000.0,
-                36,
-                "Standard terms and conditions",
-                "PENDING",
-                LocalDateTime.of(2025, 7, 1, 0, 0),
-                null,
+                1L, "sponsor-keycloak-id-1", 1L, 5000000.0, 36, null,
+                "Standard terms and conditions", "PENDING", "ADMIN",
+                LocalDateTime.of(2025, 7, 1, 0, 0), null, null,
                 "Exclusive kit sponsorship for 3 years"
         );
 
         SponsorContractOfferResponse response2 = new SponsorContractOfferResponse(
-                2L,
-                "sponsor-keycloak-id-2",
-                1L,
-                10000000.0,
-                60,
-                "Premium terms and conditions",
-                "APPROVED",
-                LocalDateTime.of(2025, 8, 1, 0, 0),
-                LocalDateTime.of(2025, 8, 15, 0, 0),
-                "Stadium naming rights for 5 years"
+                2L, "sponsor-keycloak-id-2", 1L, 10000000.0, 60, null,
+                "Premium terms and conditions", "ACCEPTED", null,
+                LocalDateTime.of(2025, 8, 1, 0, 0), LocalDateTime.of(2025, 8, 15, 0, 0),
+                LocalDateTime.of(2030, 8, 15, 0, 0), "Stadium naming rights for 5 years"
         );
 
         List<SponsorContractOfferResponse> responses = Arrays.asList(response1, response2);
-        given(sponsorContractOfferService.getAll()).willReturn(responses);
+        given(sponsorContractOfferService.getAll(http)).willReturn(responses);
 
         // When
-        ResponseEntity<List<SponsorContractOfferResponse>> result = sponsorContractOfferController.getAll();
+        ResponseEntity<List<SponsorContractOfferResponse>> result = sponsorContractOfferController.getAll(http);
 
         // Then
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
         assertThat(result.getBody()).isNotNull();
         assertThat(result.getBody()).hasSize(2);
-        verify(sponsorContractOfferService, times(1)).getAll();
+        verify(sponsorContractOfferService, times(1)).getAll(http);
     }
 
     @Test

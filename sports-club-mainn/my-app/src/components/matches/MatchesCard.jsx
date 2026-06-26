@@ -5,7 +5,7 @@ import { AiFillEdit } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import { api } from "@/src/lib/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   lookupTeam,
   lookupOuterTeam,
@@ -13,6 +13,7 @@ import {
   displayOuterTeamName,
 } from "@/src/lib/teamDirectory";
 import { hasKickedOff, countdownLabel, msUntilKickoff } from "@/src/components/matches/liveClock";
+import { parseFixtureSource } from "@/src/components/matches/fixtureSource";
 
 const MatchesCard = ({ match, onRefresh, onViewDetails, onPlanLineup, onEdit, onGoLive }) => {
   const router = useRouter();
@@ -30,11 +31,58 @@ const MatchesCard = ({ match, onRefresh, onViewDetails, onPlanLineup, onEdit, on
     return () => clearInterval(t);
   }, [fastTick]);
 
+  // ── AUTO GO-LIVE (the card flips the match BY ITSELF) ────────────────────
+  // The instant a SCHEDULED match's kickoff arrives while the hub is open, we
+  // persist status=LIVE once (PUT) and refresh the list so the card turns into a
+  // live "Watch Live" card — no manual click required. Guarded so it fires once.
+  const wentLive = useRef(false);
+  useEffect(() => {
+    if (wentLive.current) return;
+    if (!isScheduled) return;
+    if (!hasKickedOff(match.kickoffTime, now)) return;
+    wentLive.current = true;
+    (async () => {
+      try {
+        await api.updateMatch(match.id, {
+          homeTeamScore: match.homeTeamScore ?? 0,
+          awayTeamScore: match.awayTeamScore ?? 0,
+          status: "LIVE",
+        });
+        onRefresh?.();
+      } catch (e) {
+        console.error("Auto go-live failed for match", match.id, e);
+        wentLive.current = false; // allow a retry on the next tick
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isScheduled, now, match.id, match.kickoffTime]);
+
   const handleDelete = async (e) => {
     e.stopPropagation();
     if (!confirm("Delete this match?")) return;
     try {
       setDeleting(true);
+      // If this is an OFFICIAL match created from a competition fixture, its
+      // notes carry a "[FIXTURE comp=<id> fix=<fid>]" tag linking it back to a
+      // La Liga / Champions League fixture (a played match wrote its result
+      // into that fixture). Deleting the match must REVERT that fixture to
+      // UNPLAYED so it returns to the competition's "to play" list and the
+      // standings recompute (they exclude unplayed fixtures). The backend sets
+      // played = (homeScore != null && awayScore != null), so sending NULL
+      // scores clears it. Friendly / non-linked matches just delete as before.
+      const src = parseFixtureSource(match.notes);
+      if (src) {
+        try {
+          await api.competitions.recordResult(src.compId, src.fixtureId, {
+            homeScore: null,
+            awayScore: null,
+            playedAt: null,
+          });
+        } catch (revertErr) {
+          // Don't block the delete if the revert fails — just log it.
+          console.error("Fixture revert failed for match", match.id, revertErr);
+        }
+      }
       await api.deleteMatch(match.id);
       onRefresh?.();
     } catch (err) {
@@ -155,7 +203,6 @@ const MatchesCard = ({ match, onRefresh, onViewDetails, onPlanLineup, onEdit, on
         // A scheduled match whose kickoff time has arrived clearly invites
         // opening it live (it auto-goes-live in the live view).
         const arrived = st === "SCHEDULED" && hasKickedOff(match.kickoffTime, now);
-        const label = finished ? "📊 Match Details" : "📋 Plan Lineup";
         return (
           <div className="flex gap-2">
             {live ? (
@@ -166,23 +213,26 @@ const MatchesCard = ({ match, onRefresh, onViewDetails, onPlanLineup, onEdit, on
               <button onClick={() => onGoLive?.(match)} className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1.5 animate-pulse">
                 <span className="w-1.5 h-1.5 rounded-full bg-white" /> Match Starting — Open Live
               </button>
+            ) : finished ? (
+              <button
+                onClick={() => router.push(`/dashboard/matches/${match.id}`)}
+                className="flex-1 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all"
+              >
+                📊 Match Details
+              </button>
             ) : (
-              <>
-                <button
-                  onClick={() => {
-                    // "Match Details" → full details PAGE (not a modal). Lineup
-                    // planning still routes to the dedicated lineup builder.
-                    if (finished) return router.push(`/dashboard/matches/${match.id}`);
-                    return onPlanLineup ? onPlanLineup(match) : router.push(`/dashboard/matches/${match.id}`);
-                  }}
-                  className={`flex-1 py-2.5 ${finished ? "bg-slate-700 hover:bg-slate-600" : "bg-emerald-600 hover:bg-emerald-500"} text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all`}
-                >
-                  {label}
-                </button>
-                {!finished && onGoLive && (
-                  <button onClick={() => onGoLive(match)} title="Go to the live control panel" className="px-3 py-2.5 bg-red-600/15 border border-red-500/40 text-red-400 hover:bg-red-600 hover:text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all">▶ Live</button>
-                )}
-              </>
+              // SCHEDULED, pre-kickoff: a SINGLE full-width button into the
+              // match live/control page. That page stays LOCKED behind a
+              // countdown until kickoff, so this is NOT a "Live" action — it's
+              // the match center entry point. The old "View Lineup" button was
+              // removed: the lineup is set once at creation and is read-only.
+              <button
+                onClick={() => onGoLive?.(match)}
+                title="Open the match center (locked with a countdown until kickoff)"
+                className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1.5"
+              >
+                Open Match Center
+              </button>
             )}
           </div>
         );

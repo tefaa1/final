@@ -1,0 +1,407 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.6.24)  24 JUN 2026 11:05
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**./review.tex
+(review.tex
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo
+File: size10.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count275
+\c@section=\count276
+\c@subsection=\count277
+\c@subsubsection=\count278
+\c@paragraph=\count279
+\c@subparagraph=\count280
+\c@figure=\count281
+\c@table=\count282
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen148
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdfpages\pdfpages.sty
+Package: pdfpages 2026/03/30 v0.6h Insert pages of external PDF documents (AM)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty
+Package: calc 2025/03/01 v4.3b Infix arithmetic (KKT,FJ)
+\calc@Acount=\count283
+\calc@Bcount=\count284
+\calc@Adimen=\dimen149
+\calc@Bdimen=\dimen150
+\calc@Askip=\skip51
+\calc@Bskip=\skip52
+LaTeX Info: Redefining \setlength on input line 86.
+LaTeX Info: Redefining \addtolength on input line 87.
+\calc@Ccount=\count285
+\calc@Cskip=\skip53
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKT
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdfpages\pppdftex.def
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-p
+dftex.def)
+No file review.aux.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.
+mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf
+-base.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys
+.cfg))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape.s
+ty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape-n
+ometadata.sty
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\lscape.sty))
+) [1 <./wf_arch-overview.pdf{C:/Users/Best By/AppData/Local/MiKTeX/fonts/map/pd
+ftex/pdftex.map}>] [2 <./wf_class-match.pdf>] [3 <./wf_er-training.pdf>]
+[4 <./wf_seq-schedule.pdf>] [5 <./wf_seq-messaging.pdf>] [6 <./wf_state-injury.
+pdf>] [7 <./wf_uc-medical.pdf>] (review.aux) )<C:/Users/Best By/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Best By/AppD
+ata/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Users/Be
+st By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C
+:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cm
+r12.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsf
+onts/cm/cmr8.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fon
+ts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Best By/AppData/Local/Programs/
+MiKTeX/fonts/type1/public/amsfonts/cm/cmti8.pfb><C:/Users/Best By/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/Best By/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on review.pdf (7 pages, 207215 bytes).
+Transcript written on review.log.
+pdflatex: major issue: So far, you have not checked for MiKTeX updates.
+016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+)
+\Gin@req@height=\dimen153
+\Gin@req@width=\dimen154
+)
+\AM@pagewidth=\dimen155
+\AM@pageheight=\dimen156
+\AM@fboxrule=\dimen157
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdfpages\pppdftex.def
+File: pppdftex.def 2026/03/30 v0.6h Pdfpages driver for pdfTeX (AM)
+)
+\pdfpages@includegraphics@status=\count287
+\AM@pagebox=\box53
+\AM@global@opts=\toks18
+\AM@pagecnt=\count288
+\AM@toc@title=\toks19
+\AM@lof@heading=\toks20
+\c@AM@survey=\count289
+\AM@templatesizebox=\box54
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-p
+dftex.def
+File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count290
+)
+No file review.aux.
+\openout1 = `review.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 1.
+LaTeX Font Info:    ... okay on input line 1.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.
+mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count291
+\scratchdimen=\dimen158
+\scratchbox=\box55
+\nofMPsegments=\count292
+\nofMParguments=\count293
+\everyMPshowfont=\toks21
+\MPscratchCnt=\count294
+\MPscratchDim=\dimen159
+\MPnumerator=\count295
+\makeMPintoPDFobject=\count296
+\everyMPtoPDFconversion=\toks22
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf
+-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys
+.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape.s
+ty
+Package: pdflscape 2022-10-27 v0.13 Display of landscape pages in PDF
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/pdflscape\pdflscape-n
+ometadata.sty
+Package: pdflscape-nometadata 2022-10-28 v0.13 Display of landscape pages in PD
+F (HO)
+
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+)
+(C:\Users\Best By\AppData\Local\Programs\MiKTeX\tex/latex/graphics\lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+))
+<wf_arch-overview.pdf, id=1, 597.50829pt x 845.0471pt>
+File: wf_arch-overview.pdf Graphic file (type pdf)
+<use wf_arch-overview.pdf>
+Package pdftex.def Info: wf_arch-overview.pdf  used on input line 2.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<wf_arch-overview.pdf, id=3, page=1, 597.50829pt x 845.0471pt>
+File: wf_arch-overview.pdf Graphic file (type pdf)
+<use wf_arch-overview.pdf, page 1>
+Package pdftex.def Info: wf_arch-overview.pdf , page1 used on input line 2.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: wf_arch-overview.pdf Graphic file (type pdf)
+<use wf_arch-overview.pdf, page 1>
+Package pdftex.def Info: wf_arch-overview.pdf , page1 used on input line 2.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_arch-overview.pdf Graphic file (type pdf)
+<use wf_arch-overview.pdf, page 1>
+Package pdftex.def Info: wf_arch-overview.pdf , page1 used on input line 2.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_arch-overview.pdf Graphic file (type pdf)
+<use wf_arch-overview.pdf, page 1>
+Package pdftex.def Info: wf_arch-overview.pdf , page1 used on input line 2.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_arch-overview.pdf Graphic file (type pdf)
+<use wf_arch-overview.pdf, page 1>
+Package pdftex.def Info: wf_arch-overview.pdf , page1 used on input line 2.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [1
+
+
+ <./wf_arch-overview.pdf{C:/Users/Best By/AppData/Local/MiKTeX/fonts/map/pdftex
+/pdftex.map}>]
+<wf_class-match.pdf, id=45, 597.50829pt x 845.0471pt>
+File: wf_class-match.pdf Graphic file (type pdf)
+<use wf_class-match.pdf>
+Package pdftex.def Info: wf_class-match.pdf  used on input line 3.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<wf_class-match.pdf, id=47, page=1, 597.50829pt x 845.0471pt>
+File: wf_class-match.pdf Graphic file (type pdf)
+<use wf_class-match.pdf, page 1>
+Package pdftex.def Info: wf_class-match.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: wf_class-match.pdf Graphic file (type pdf)
+<use wf_class-match.pdf, page 1>
+Package pdftex.def Info: wf_class-match.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_class-match.pdf Graphic file (type pdf)
+<use wf_class-match.pdf, page 1>
+Package pdftex.def Info: wf_class-match.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_class-match.pdf Graphic file (type pdf)
+<use wf_class-match.pdf, page 1>
+Package pdftex.def Info: wf_class-match.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_class-match.pdf Graphic file (type pdf)
+<use wf_class-match.pdf, page 1>
+Package pdftex.def Info: wf_class-match.pdf , page1 used on input line 3.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [2
+
+ <./wf_class-match.pdf>]
+<wf_er-training.pdf, id=72, 597.50829pt x 845.0471pt>
+File: wf_er-training.pdf Graphic file (type pdf)
+<use wf_er-training.pdf>
+Package pdftex.def Info: wf_er-training.pdf  used on input line 4.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<wf_er-training.pdf, id=74, page=1, 597.50829pt x 845.0471pt>
+File: wf_er-training.pdf Graphic file (type pdf)
+<use wf_er-training.pdf, page 1>
+Package pdftex.def Info: wf_er-training.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: wf_er-training.pdf Graphic file (type pdf)
+<use wf_er-training.pdf, page 1>
+Package pdftex.def Info: wf_er-training.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_er-training.pdf Graphic file (type pdf)
+<use wf_er-training.pdf, page 1>
+Package pdftex.def Info: wf_er-training.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_er-training.pdf Graphic file (type pdf)
+<use wf_er-training.pdf, page 1>
+Package pdftex.def Info: wf_er-training.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_er-training.pdf Graphic file (type pdf)
+<use wf_er-training.pdf, page 1>
+Package pdftex.def Info: wf_er-training.pdf , page1 used on input line 4.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [3
+
+ <./wf_er-training.pdf>]
+<wf_seq-schedule.pdf, id=95, 597.50829pt x 845.0471pt>
+File: wf_seq-schedule.pdf Graphic file (type pdf)
+<use wf_seq-schedule.pdf>
+Package pdftex.def Info: wf_seq-schedule.pdf  used on input line 5.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<wf_seq-schedule.pdf, id=97, page=1, 597.50829pt x 845.0471pt>
+File: wf_seq-schedule.pdf Graphic file (type pdf)
+<use wf_seq-schedule.pdf, page 1>
+Package pdftex.def Info: wf_seq-schedule.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: wf_seq-schedule.pdf Graphic file (type pdf)
+<use wf_seq-schedule.pdf, page 1>
+Package pdftex.def Info: wf_seq-schedule.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_seq-schedule.pdf Graphic file (type pdf)
+<use wf_seq-schedule.pdf, page 1>
+Package pdftex.def Info: wf_seq-schedule.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_seq-schedule.pdf Graphic file (type pdf)
+<use wf_seq-schedule.pdf, page 1>
+Package pdftex.def Info: wf_seq-schedule.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_seq-schedule.pdf Graphic file (type pdf)
+<use wf_seq-schedule.pdf, page 1>
+Package pdftex.def Info: wf_seq-schedule.pdf , page1 used on input line 5.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+
+[4
+
+ <./wf_seq-schedule.pdf>]
+<wf_seq-messaging.pdf, id=116, 597.50829pt x 845.0471pt>
+File: wf_seq-messaging.pdf Graphic file (type pdf)
+<use wf_seq-messaging.pdf>
+Package pdftex.def Info: wf_seq-messaging.pdf  used on input line 6.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<wf_seq-messaging.pdf, id=118, page=1, 597.50829pt x 845.0471pt>
+File: wf_seq-messaging.pdf Graphic file (type pdf)
+<use wf_seq-messaging.pdf, page 1>
+Package pdftex.def Info: wf_seq-messaging.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: wf_seq-messaging.pdf Graphic file (type pdf)
+<use wf_seq-messaging.pdf, page 1>
+Package pdftex.def Info: wf_seq-messaging.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_seq-messaging.pdf Graphic file (type pdf)
+<use wf_seq-messaging.pdf, page 1>
+Package pdftex.def Info: wf_seq-messaging.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_seq-messaging.pdf Graphic file (type pdf)
+<use wf_seq-messaging.pdf, page 1>
+Package pdftex.def Info: wf_seq-messaging.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_seq-messaging.pdf Graphic file (type pdf)
+<use wf_seq-messaging.pdf, page 1>
+Package pdftex.def Info: wf_seq-messaging.pdf , page1 used on input line 6.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [5
+
+ <./wf_seq-messaging.pdf>]
+<wf_state-injury.pdf, id=135, 597.50829pt x 845.0471pt>
+File: wf_state-injury.pdf Graphic file (type pdf)
+<use wf_state-injury.pdf>
+Package pdftex.def Info: wf_state-injury.pdf  used on input line 7.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<wf_state-injury.pdf, id=137, page=1, 597.50829pt x 845.0471pt>
+File: wf_state-injury.pdf Graphic file (type pdf)
+<use wf_state-injury.pdf, page 1>
+Package pdftex.def Info: wf_state-injury.pdf , page1 used on input line 7.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: wf_state-injury.pdf Graphic file (type pdf)
+<use wf_state-injury.pdf, page 1>
+Package pdftex.def Info: wf_state-injury.pdf , page1 used on input line 7.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_state-injury.pdf Graphic file (type pdf)
+<use wf_state-injury.pdf, page 1>
+Package pdftex.def Info: wf_state-injury.pdf , page1 used on input line 7.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_state-injury.pdf Graphic file (type pdf)
+<use wf_state-injury.pdf, page 1>
+Package pdftex.def Info: wf_state-injury.pdf , page1 used on input line 7.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_state-injury.pdf Graphic file (type pdf)
+<use wf_state-injury.pdf, page 1>
+Package pdftex.def Info: wf_state-injury.pdf , page1 used on input line 7.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [6
+
+ <./wf_state-injury.pdf>]
+<wf_uc-medical.pdf, id=156, 597.50829pt x 845.0471pt>
+File: wf_uc-medical.pdf Graphic file (type pdf)
+<use wf_uc-medical.pdf>
+Package pdftex.def Info: wf_uc-medical.pdf  used on input line 8.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+<wf_uc-medical.pdf, id=158, page=1, 597.50829pt x 845.0471pt>
+File: wf_uc-medical.pdf Graphic file (type pdf)
+<use wf_uc-medical.pdf, page 1>
+Package pdftex.def Info: wf_uc-medical.pdf , page1 used on input line 8.
+(pdftex.def)             Requested size: 597.50682pt x 845.04504pt.
+File: wf_uc-medical.pdf Graphic file (type pdf)
+<use wf_uc-medical.pdf, page 1>
+Package pdftex.def Info: wf_uc-medical.pdf , page1 used on input line 8.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_uc-medical.pdf Graphic file (type pdf)
+<use wf_uc-medical.pdf, page 1>
+Package pdftex.def Info: wf_uc-medical.pdf , page1 used on input line 8.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_uc-medical.pdf Graphic file (type pdf)
+<use wf_uc-medical.pdf, page 1>
+Package pdftex.def Info: wf_uc-medical.pdf , page1 used on input line 8.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+File: wf_uc-medical.pdf Graphic file (type pdf)
+<use wf_uc-medical.pdf, page 1>
+Package pdftex.def Info: wf_uc-medical.pdf , page1 used on input line 8.
+(pdftex.def)             Requested size: 562.12285pt x 795.00201pt.
+ [7
+
+ <./wf_uc-medical.pdf>] (review.aux)
+ ***********
+LaTeX2e <2025-11-01>
+L3 programming layer <2025-12-24>
+ ***********
+ ) 
+Here is how much of TeX's memory you used:
+ 3158 strings out of 467870
+ 51836 string characters out of 5417351
+ 460532 words of memory out of 5000000
+ 32042 multiletter control sequences out of 15000+600000
+ 627721 words of font info for 40 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 72i,17n,90p,285b,445s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
+m/cmbx10.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/amsfonts/cm/cmbx8.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmr10.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Best By/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Best By/AppData/L
+ocal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/Best B
+y/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Us
+ers/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti8.
+pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
+/cm/cmtt10.pfb><C:/Users/Best By/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmtt8.pfb>
+Output written on review.pdf (7 pages, 207215 bytes).
+PDF statistics:
+ 188 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 106 words of extra memory for PDF output out of 10000 (max. 10000000)
+

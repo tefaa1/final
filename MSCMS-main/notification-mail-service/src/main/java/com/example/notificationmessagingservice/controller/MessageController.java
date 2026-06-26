@@ -21,10 +21,11 @@ public class MessageController {
 
     private final MessageService messageService;
 
-    // Anyone in the club can take part in chat (players included) — restricting
-    // create to managers/coaches meant a PLAYER's group message was rejected.
+    // Every internal club member (players included) can take part in team chat.
+    // FANS are spectators and are intentionally EXCLUDED — the General group is
+    // members-only, matched by the frontend route guard + locked chat screen.
     private static final String CHAT_ROLES =
-            "hasAnyRole('ADMIN','TEAM_MANAGER','HEAD_COACH','ASSISTANT_COACH','SPECIFIC_COACH','SPORT_MANAGER','DOCTOR','PHYSIOTHERAPIST','FITNESS_COACH','PERFORMANCE_ANALYST','PLAYER','SCOUT','SPONSOR','FAN','NATIONAL_TEAM')";
+            "hasAnyRole('ADMIN','TEAM_MANAGER','HEAD_COACH','ASSISTANT_COACH','SPECIFIC_COACH','SPORT_MANAGER','DOCTOR','PHYSIOTHERAPIST','FITNESS_COACH','PERFORMANCE_ANALYST','PLAYER','SCOUT','SPONSOR','NATIONAL_TEAM')";
 
     @PostMapping
     @PreAuthorize(CHAT_ROLES)

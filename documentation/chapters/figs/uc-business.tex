@@ -1,0 +1,55 @@
+% auto-generated figure: uc-business (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}
+  % ---- actors (left column) ----
+  \UCactor{0}{3.0}{Scout}
+  \UCactor{0}{-3.4}{Sponsor}
+  % ---- actors (right column) ----
+  \UCactor{15.5}{3.0}{Player}
+  \UCactor{15.5}{-3.4}{Fan}
+
+  % ---- use cases : Scout ----
+  \node[usecase] (s1) at (5.0,4.6){Browse external\\ prospects};
+  \node[usecase] (s2) at (5.0,2.9){Author scout report};
+  \node[usecase] (s3) at (5.0,1.2){Forward recommendation\\ to Sport Manager};
+  % ---- use cases : Sponsor ----
+  \node[usecase] (o1) at (5.0,-2.6){Submit offer};
+  \node[usecase] (o2) at (5.0,-4.3){Negotiate offer};
+
+  % ---- use cases : Player (read-only) ----
+  \node[usecase] (p1) at (11.0,4.6){View own profile};
+  \node[usecase] (p2) at (11.0,2.9){View own schedule};
+  \node[usecase] (p3) at (11.0,1.2){View own\\ medical status};
+  % ---- use cases : Fan (read-only) ----
+  \node[usecase] (f1) at (11.0,-2.6){View Club Hub};
+  \node[usecase] (f2) at (11.0,-4.3){View matches\\ \& standings};
+
+  % ---- read-only surface boundary (behind ellipses) ----
+  \begin{scope}[on background layer]
+    \node[draw=dRed!60, dashed, rounded corners=4pt,
+          fit=(p1)(p2)(p3)(f1)(f2), inner sep=8pt,
+          label={[font=\scriptsize\itshape, text=dRed!75]above:Read-only surface (FR-22)}] {};
+  \end{scope}
+
+  % ---- Scout associations ----
+  \draw[dLine] (0.55,2.6) -- (s1);
+  \draw[dLine] (0.55,2.6) -- (s2);
+  \draw[dLine] (0.55,2.6) -- (s3);
+  % ---- Sponsor associations ----
+  \draw[dLine] (0.55,-3.8) -- (o1);
+  \draw[dLine] (0.55,-3.8) -- (o2);
+
+  % ---- Player associations (read-only) ----
+  \draw[dLine] (14.95,2.6) -- (p1);
+  \draw[dLine] (14.95,2.6) -- (p2);
+  \draw[dLine] (14.95,2.6) -- (p3);
+  % ---- Fan associations (read-only) ----
+  \draw[dLine] (14.95,-3.8) -- (f1);
+  \draw[dLine] (14.95,-3.8) -- (f2);
+\end{tikzpicture}%
+}
+\caption{Use-case diagram for the scouting and sponsorship workflows alongside the read-only player and fan surfaces, where scouts browse prospects and author reports, sponsors submit and negotiate offers, and players and fans are confined to read-only views (FR-7, FR-9, FR-22).}
+\label{fig-uc-business}
+\end{figure}

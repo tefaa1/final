@@ -1,0 +1,23 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{sequencediagram}
+  \newthread{ds}{:training-match}
+  \newinst[1]{k}{:Kafka}
+  \newinst[1]{nm}{:notification-mail}
+  \newinst[1]{db}{:DB}
+  \newinst[1]{fe}{:Recipient (FE)}
+  \begin{call}{ds}{publish(MatchResultAvailable)}{k}{ack (committed)}
+  \end{call}
+  \mess{k}{consume event (async)}{nm}
+  \begin{call}{nm}{persist(notification)}{db}{saved}
+  \end{call}
+  \begin{call}{fe}{GET /notifications/recipient/\{id\}}{nm}{unread alerts + bell badge}
+  \end{call}
+\end{sequencediagram}%
+}
+
+\end{document}

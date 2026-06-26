@@ -11,6 +11,7 @@ import { setPlayerDragImage } from "@/src/components/matches/dragGhost";
 import { formatKickoff } from "@/src/components/matches/liveClock";
 import { loadDraftMatch, clearDraftMatch } from "@/src/components/matches/draftMatch";
 import { isInjured } from "@/src/lib/playerStatus";
+import { lookupTeam } from "@/src/lib/teamDirectory";
 import { FiArrowLeft, FiCheck, FiAlertTriangle, FiGrid, FiZap } from "react-icons/fi";
 
 const unwrapArr = (r) => r?.data || r?.content || (Array.isArray(r) ? r : []);
@@ -219,6 +220,14 @@ export default function DraftLineupBuilderPage() {
   }
 
   const oppName = payload.opponentName || "Opponent";
+  // Home side follows the chosen team (any club team), not always Barça. Prefer
+  // the team directory, then the "Home vs …" matchSummary, then a safe default.
+  const homeName =
+    lookupTeam(payload.homeTeamId)?.name ||
+    (typeof payload.matchSummary === "string" && payload.matchSummary.includes(" vs ")
+      ? payload.matchSummary.split(" vs ")[0].trim()
+      : "") ||
+    "FC Barcelona";
   const formationChosen = !isFootball || formation != null;
 
   return (
@@ -235,7 +244,7 @@ export default function DraftLineupBuilderPage() {
             <img src={BARCA_CREST} alt="" className="w-9 h-9 object-contain" />
             <div>
               <h1 className="font-black text-white text-2xl md:text-3xl uppercase tracking-tight leading-none">Lineup &amp; Formation</h1>
-              <p className="text-[11px] text-slate-400 uppercase tracking-[0.22em] mt-2">FC Barcelona vs {oppName} · {titleSport(payload.sportType)} · {formatKickoff(payload.kickoffTime)}</p>
+              <p className="text-[11px] text-slate-400 uppercase tracking-[0.22em] mt-2">{homeName} vs {oppName} · {titleSport(payload.sportType)} · {formatKickoff(payload.kickoffTime)}</p>
             </div>
           </div>
         </div>

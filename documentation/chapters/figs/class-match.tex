@@ -1,0 +1,97 @@
+% auto-generated figure: class-match (source: wf)
+\begin{figure}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=8mm,
+   comp/.style={->,>={Stealth[length=2.4mm,open]},draw=dLine,thick}]
+
+  %====================== MATCH SIDE ======================
+  \UmlClass{match}{Match}{%
+    - homeTeamId : Long\\
+    - opponent : String\\
+    - type\\
+    - status : MatchStatus\\
+    - sport\\
+    - venue\\
+    - competitionId : Long\\
+    - season\\
+    - homeScore : int\\
+    - awayScore : int\\
+    - kickoffTime\\
+    - finishTime}{}
+
+  \UmlClass[right=24mm of match.north east,anchor=north west]{form}{MatchFormation}{%
+    - shape\\
+    - tacticalApproach}{}
+
+  \UmlClass[below=14mm of form]{line}{MatchLineup}{%
+    - playerKeycloakId\\
+    - position\\
+    - status :\\
+    \ \ starting/substitute/reserve\\
+    - substituted : bool\\
+    - subMinute : int}{}
+
+  \UmlClass[below=20mm of line]{event}{MatchEvent}{%
+    - type : EventType\\
+    - minute : int\\
+    - stoppage : int}{}
+
+  \UmlClass[below=12mm of event]{stat}{PlayerMatchStatistics}{%
+    - playerKeycloakId\\
+    - sport-specific stats}{}
+
+  %====================== TRAINING SIDE ======================
+  \UmlClass[below=26mm of match.south west,anchor=north west]{plan}{TrainingPlan}{%
+    - name\\
+    - goal\\
+    - period}{}
+
+  \UmlClass[right=22mm of plan.north east,anchor=north west]{sess}{TrainingSession}{%
+    - teamId : Long\\
+    - sessionType\\
+    - status\\
+    - scheduledDate\\
+    - durationMinutes}{}
+
+  \UmlClass[right=24mm of sess.north east,anchor=north west]{drill}{TrainingDrill}{%
+    - name\\
+    - category\\
+    - intensity\\
+    - duration}{}
+
+  \UmlClass[below=10mm of drill]{att}{TrainingAttendance}{%
+    - playerKeycloakId\\
+    - status :\\
+    \ \ present/absent/late/\\
+    \ \ excused/injured\\
+    - performanceScore}{}
+
+  \UmlClass[below=12mm of att]{assess}{PlayerTrainingAssessment}{%
+    - playerKeycloakId\\
+    - rating\\
+    - notes}{}
+
+  %====================== COMPOSITIONS ======================
+  % filled diamond at the OWNER (whole) end = UML composition
+  \tikzset{comp/.style={{Diamond[length=3mm]}-,draw=dLine,thick}}
+
+  % Match owns formation, events, statistics
+  \draw[comp] (match.east) -- node[lbl,pos=0.55]{\itshape 1} (form.west);
+  \draw[comp] (match.east) -- node[lbl,pos=0.6]{\itshape 0..*} (event.west);
+  \draw[comp] (match.south east) to[out=-20,in=180] node[lbl,pos=0.72]{\itshape 0..*} (stat.west);
+
+  % Formation OWNS the starting XI (atomic match+formation+lineup)
+  \draw[comp] (form.south) -- node[lbl,pos=0.5]{\itshape owns 11..*} (line.north);
+
+  % TrainingPlan groups sessions; TrainingSession owns its children
+  \draw[comp] (plan.east) -- node[lbl,pos=0.5]{\itshape groups 0..*} (sess.west);
+  \draw[comp] (sess.east) -- node[lbl,pos=0.5]{\itshape 1..*} (drill.west);
+  \draw[comp] (sess.east) -- node[lbl,pos=0.62]{\itshape 0..*} (att.west);
+  \draw[comp] (sess.east) to[out=-25,in=180] node[lbl,pos=0.72]{\itshape 0..*} (assess.west);
+
+\end{tikzpicture}%
+}
+\caption{Class model of the training-match service, showing how a Match owns its MatchFormation, MatchEvents and PlayerMatchStatistics while the formation in turn owns the starting-eleven MatchLineup, and how a TrainingPlan groups TrainingSessions that own their drills, attendance and player assessments.}
+\label{fig-class-match}
+\end{figure}

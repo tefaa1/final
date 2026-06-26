@@ -1,0 +1,208 @@
+\contentsline {chapter}{Acknowledgment}{2}{chapter*.1}%
+\contentsline {chapter}{Summary}{3}{chapter*.2}%
+\contentsline {chapter}{List of Figures}{10}{chapter*.3}%
+\contentsline {chapter}{List of Tables}{17}{chapter*.4}%
+\contentsline {chapter}{List of Abbreviations}{19}{chapter*.6}%
+\contentsline {chapter}{\numberline {1}Introduction}{21}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Context}{22}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Motivation}{24}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Scope}{26}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Problem Definition}{27}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Goals and Objectives}{29}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Solutions}{30}{section.1.6}%
+\contentsline {subsection}{\numberline {1.6.1}Traditional Solutions}{30}{subsection.1.6.1}%
+\contentsline {subsection}{\numberline {1.6.2}Technological Solution}{31}{subsection.1.6.2}%
+\contentsline {chapter}{\numberline {2}Literature Review}{33}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Overview}{34}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Sports-Data and Live-Score Platforms}{34}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Elite Performance and Analysis Suites}{35}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Generic Club and Team Administration Tools}{36}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Technical Foundations in the Literature}{37}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Microservices Architecture}{37}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Role-Based Access Control}{37}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Event-Driven Architecture and Messaging}{38}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Real-Time Web Communication}{38}{subsection.2.5.4}%
+\contentsline {section}{\numberline {2.6}Architectural Perspective on Existing Products}{38}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Comparative Positioning}{39}{section.2.7}%
+\contentsline {section}{\numberline {2.8}Research Gap and Positioning}{41}{section.2.8}%
+\contentsline {chapter}{\numberline {3}Methodology}{42}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Development Methodology}{43}{section.3.1}%
+\contentsline {section}{\numberline {3.2}System Requirements}{45}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Stakeholders and Roles}{45}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Functional Requirements}{46}{subsection.3.2.2}%
+\contentsline {paragraph}{Competitions (FR-11--FR-13).}{46}{section*.11}%
+\contentsline {paragraph}{Matches and the live engine (FR-14--FR-16).}{46}{section*.12}%
+\contentsline {paragraph}{Medical workflow (FR-17--FR-18).}{49}{section*.13}%
+\contentsline {paragraph}{Messaging and notifications (FR-19--FR-21).}{49}{section*.14}%
+\contentsline {subsection}{\numberline {3.2.3}Non-Functional Requirements}{49}{subsection.3.2.3}%
+\contentsline {section}{\numberline {3.3}System Architecture}{51}{section.3.3}%
+\contentsline {paragraph}{Request lifecycle.}{52}{section*.16}%
+\contentsline {paragraph}{Communication topology.}{53}{section*.17}%
+\contentsline {section}{\numberline {3.4}Microservices Decomposition}{53}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Security and Authentication}{55}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Identity Provider and Token Issuance}{55}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Stateless Verification at the Gateway}{55}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Role-Based Access Control in Depth}{56}{subsection.3.5.3}%
+\contentsline {subsection}{\numberline {3.5.4}Real-Time Channel and Password Verification}{57}{subsection.3.5.4}%
+\contentsline {section}{\numberline {3.6}Data Design}{57}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Cross-Service Identifiers}{57}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Entity-Relationship Model}{58}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}Per-Service Schema Walk-through}{60}{subsection.3.6.3}%
+\contentsline {paragraph}{User and identity (\texttt {mscms\_user}).}{60}{section*.20}%
+\contentsline {paragraph}{Squad (\texttt {mscms\_player}).}{60}{section*.21}%
+\contentsline {paragraph}{Training and matches (\texttt {mscms\_training}).}{60}{section*.22}%
+\contentsline {paragraph}{Medical (\texttt {mscms\_medical}).}{61}{section*.23}%
+\contentsline {paragraph}{Reporting (\texttt {mscms\_reports}).}{61}{section*.24}%
+\contentsline {paragraph}{Communication (\texttt {mscms\_notification}).}{61}{section*.25}%
+\contentsline {section}{\numberline {3.7}Domain and Class Model}{61}{section.3.7}%
+\contentsline {section}{\numberline {3.8}API Surface Overview}{62}{section.3.8}%
+\contentsline {section}{\numberline {3.9}Technology Stack}{64}{section.3.9}%
+\contentsline {section}{\numberline {3.10}Behavioural Flows and Sequence Designs}{64}{section.3.10}%
+\contentsline {subsection}{\numberline {3.10.1}Authentication and Session Establishment}{66}{subsection.3.10.1}%
+\contentsline {subsection}{\numberline {3.10.2}Scheduling an Official Match from a Competition Fixture}{66}{subsection.3.10.2}%
+\contentsline {subsection}{\numberline {3.10.3}Live-Match Phase Progression with Extra Time and Penalties}{67}{subsection.3.10.3}%
+\contentsline {subsection}{\numberline {3.10.4}The Injury-to-Recovery Medical Workflow}{68}{subsection.3.10.4}%
+\contentsline {subsection}{\numberline {3.10.5}Real-Time Group Messaging over WebSocket with Polling Fallback}{69}{subsection.3.10.5}%
+\contentsline {subsection}{\numberline {3.10.6}Event-Driven Notification Creation via Kafka}{70}{subsection.3.10.6}%
+\contentsline {chapter}{\numberline {4}System Design and Models}{72}{chapter.4}%
+\contentsline {section}{\numberline {4.1}System Architecture}{73}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Use-Case Models}{75}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Class and Domain Models}{79}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Entity-Relationship (Database) Models}{85}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Behavioural Sequence Models}{90}{section.4.5}%
+\contentsline {section}{\numberline {4.6}State and Lifecycle Models}{97}{section.4.6}%
+\contentsline {chapter}{\numberline {5}Results and Analysis}{99}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Onboarding and Authentication}{100}{section.5.1}%
+\contentsline {paragraph}{User experience.}{101}{section*.59}%
+\contentsline {paragraph}{Back-end realisation.}{101}{section*.60}%
+\contentsline {paragraph}{Key logic.}{101}{section*.61}%
+\contentsline {paragraph}{Validation and recovery.}{101}{section*.62}%
+\contentsline {section}{\numberline {5.2}Role-Aware Dashboard}{102}{section.5.2}%
+\contentsline {paragraph}{User experience.}{102}{section*.64}%
+\contentsline {paragraph}{Back-end realisation.}{102}{section*.65}%
+\contentsline {paragraph}{Key logic and resilience.}{103}{section*.66}%
+\contentsline {section}{\numberline {5.3}Club Hub}{103}{section.5.3}%
+\contentsline {paragraph}{User experience.}{103}{section*.68}%
+\contentsline {paragraph}{Back-end realisation and the single-source-of-truth principle.}{104}{section*.69}%
+\contentsline {paragraph}{Edge cases.}{104}{section*.70}%
+\contentsline {section}{\numberline {5.4}Squad and Player Profiles}{105}{section.5.4}%
+\contentsline {paragraph}{User experience.}{105}{section*.72}%
+\contentsline {paragraph}{Back-end realisation and data model.}{105}{section*.73}%
+\contentsline {paragraph}{Key logic.}{105}{section*.74}%
+\contentsline {section}{\numberline {5.5}Competitions}{105}{section.5.5}%
+\contentsline {paragraph}{Data model.}{107}{section*.77}%
+\contentsline {paragraph}{Scope and user experience.}{107}{section*.78}%
+\contentsline {paragraph}{The read-only completed-competition rule.}{107}{section*.79}%
+\contentsline {subsection}{\numberline {5.5.1}La~Liga: Standings and Fixtures}{107}{subsection.5.5.1}%
+\contentsline {paragraph}{Standings computation.}{108}{section*.81}%
+\contentsline {paragraph}{Ingestion pipeline.}{108}{section*.82}%
+\contentsline {paragraph}{Working within the provider's constraints.}{108}{section*.83}%
+\contentsline {subsection}{\numberline {5.5.2}Champions League: League Phase and Knockout Bracket}{109}{subsection.5.5.2}%
+\contentsline {paragraph}{Why the round label matters.}{109}{section*.85}%
+\contentsline {subsection}{\numberline {5.5.3}Creating a Competition}{110}{subsection.5.5.3}%
+\contentsline {paragraph}{La~Liga generation: the double round-robin.}{110}{section*.87}%
+\contentsline {paragraph}{Champions League generation: the league-phase rotation algorithm.}{110}{section*.88}%
+\contentsline {paragraph}{Persistence and atomicity.}{111}{section*.89}%
+\contentsline {section}{\numberline {5.6}Head-to-Head Records}{112}{section.5.6}%
+\contentsline {paragraph}{User experience.}{112}{section*.91}%
+\contentsline {paragraph}{Back-end realisation and logic.}{112}{section*.92}%
+\contentsline {section}{\numberline {5.7}World Cup}{113}{section.5.7}%
+\contentsline {paragraph}{User experience.}{113}{section*.94}%
+\contentsline {paragraph}{Back-end realisation.}{113}{section*.95}%
+\contentsline {paragraph}{Edge cases.}{113}{section*.96}%
+\contentsline {section}{\numberline {5.8}Trophy Room}{113}{section.5.8}%
+\contentsline {paragraph}{User experience.}{113}{section*.98}%
+\contentsline {paragraph}{Realisation.}{114}{section*.99}%
+\contentsline {section}{\numberline {5.9}Match Hub}{115}{section.5.9}%
+\contentsline {paragraph}{User experience.}{115}{section*.101}%
+\contentsline {paragraph}{Self-cleaning behaviour.}{115}{section*.102}%
+\contentsline {subsection}{\numberline {5.9.1}Scheduling a Match}{116}{subsection.5.9.1}%
+\contentsline {paragraph}{Kickoff validation.}{116}{section*.104}%
+\contentsline {paragraph}{Lineup is mandatory.}{116}{section*.105}%
+\contentsline {subsection}{\numberline {5.9.2}The Lineup Builder}{116}{subsection.5.9.2}%
+\contentsline {paragraph}{User experience.}{116}{section*.107}%
+\contentsline {paragraph}{Back-end realisation and data model.}{117}{section*.108}%
+\contentsline {paragraph}{Why this matters.}{117}{section*.109}%
+\contentsline {section}{\numberline {5.10}The Live-Match Engine}{117}{section.5.10}%
+\contentsline {subsection}{\numberline {5.10.1}Gating and Auto Go-Live}{118}{subsection.5.10.1}%
+\contentsline {subsection}{\numberline {5.10.2}The Phase Machine}{118}{subsection.5.10.2}%
+\contentsline {paragraph}{Resolving knockout from points authoritatively.}{118}{section*.111}%
+\contentsline {subsection}{\numberline {5.10.3}The Clock, Stoppage Time and Phase-Bounded Minutes}{119}{subsection.5.10.3}%
+\contentsline {subsection}{\numberline {5.10.4}Events, Scoring and Substitutions}{119}{subsection.5.10.4}%
+\contentsline {subsection}{\numberline {5.10.5}The In-Match Injury Bridge}{120}{subsection.5.10.5}%
+\contentsline {subsection}{\numberline {5.10.6}Alerts and Result Write-Back}{120}{subsection.5.10.6}%
+\contentsline {subsection}{\numberline {5.10.7}Match Details: Events, Statistics and Reviews}{121}{subsection.5.10.7}%
+\contentsline {section}{\numberline {5.11}Medical and Fitness}{121}{section.5.11}%
+\contentsline {paragraph}{The Treatment Room.}{122}{section*.114}%
+\contentsline {paragraph}{Back-end realisation and data model.}{122}{section*.115}%
+\contentsline {subsection}{\numberline {5.11.1}The Injury Journey}{122}{subsection.5.11.1}%
+\contentsline {paragraph}{Status as the single source of truth.}{123}{section*.117}%
+\contentsline {paragraph}{Ordered progression.}{123}{section*.118}%
+\contentsline {subsection}{\numberline {5.11.2}General Medical Catalogs}{124}{subsection.5.11.2}%
+\contentsline {paragraph}{Copy, not link.}{124}{section*.120}%
+\contentsline {section}{\numberline {5.12}Team Communication}{124}{section.5.12}%
+\contentsline {paragraph}{Group and invitation model.}{124}{section*.122}%
+\contentsline {paragraph}{Reactions and de-duplication.}{125}{section*.123}%
+\contentsline {paragraph}{Real-time delivery over WebSocket.}{125}{section*.124}%
+\contentsline {section}{\numberline {5.13}Notifications and Alerts}{126}{section.5.13}%
+\contentsline {paragraph}{The event pipeline.}{126}{section*.126}%
+\contentsline {paragraph}{The notification centre.}{127}{section*.127}%
+\contentsline {paragraph}{Why event-driven.}{127}{section*.128}%
+\contentsline {section}{\numberline {5.14}Training}{127}{section.5.14}%
+\contentsline {paragraph}{User experience.}{127}{section*.130}%
+\contentsline {paragraph}{Integration with availability.}{127}{section*.131}%
+\contentsline {section}{\numberline {5.15}Scouting}{129}{section.5.15}%
+\contentsline {paragraph}{Realisation and integration.}{129}{section*.133}%
+\contentsline {section}{\numberline {5.16}Sponsors}{129}{section.5.16}%
+\contentsline {paragraph}{Realisation.}{130}{section*.135}%
+\contentsline {section}{\numberline {5.17}Reports and Analytics}{131}{section.5.17}%
+\contentsline {paragraph}{Cross-domain insight.}{131}{section*.137}%
+\contentsline {section}{\numberline {5.18}Settings}{131}{section.5.18}%
+\contentsline {paragraph}{Persisted preferences.}{131}{section*.139}%
+\contentsline {paragraph}{Keycloak-verified password change.}{132}{section*.140}%
+\contentsline {section}{\numberline {5.19}Analysis and Evaluation}{132}{section.5.19}%
+\contentsline {subsection}{\numberline {5.19.1}Functional Requirements Coverage}{133}{subsection.5.19.1}%
+\contentsline {subsection}{\numberline {5.19.2}Non-Functional Requirements Coverage}{133}{subsection.5.19.2}%
+\contentsline {subsection}{\numberline {5.19.3}Design Decisions That Worked Well}{134}{subsection.5.19.3}%
+\contentsline {subsection}{\numberline {5.19.4}Performance and User-Experience Observations}{134}{subsection.5.19.4}%
+\contentsline {subsection}{\numberline {5.19.5}Testing and Validation Approach}{135}{subsection.5.19.5}%
+\contentsline {subsection}{\numberline {5.19.6}Summary}{136}{subsection.5.19.6}%
+\contentsline {chapter}{\numberline {6}Conclusions and Recommendations}{137}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Conclusion}{138}{section.6.1}%
+\contentsline {section}{\numberline {6.2}What Was Delivered}{139}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Lessons Learned}{142}{section.6.3}%
+\contentsline {paragraph}{Contract drift is the dominant cost of distributed development.}{142}{section*.142}%
+\contentsline {paragraph}{Asynchronous, event-driven design pays for itself as features grow.}{142}{section*.143}%
+\contentsline {paragraph}{Centralised identity simplifies everything downstream.}{142}{section*.144}%
+\contentsline {paragraph}{Idempotent, deterministic seeding makes a distributed system safe to operate.}{143}{section*.145}%
+\contentsline {paragraph}{A container-first discipline removes a whole category of integration pain.}{143}{section*.146}%
+\contentsline {paragraph}{Teamwork lessons.}{143}{section*.147}%
+\contentsline {section}{\numberline {6.4}Limitations}{143}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Future Work and Recommendations}{145}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Product Extensions}{145}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Platform Extensions}{146}{subsection.6.5.2}%
+\contentsline {chapter}{\numberline {A}Functional and Non-Functional Requirements Catalogue}{148}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Functional Requirements}{149}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Non-Functional Requirements}{152}{section.A.2}%
+\contentsline {chapter}{\numberline {B}REST API Reference}{154}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Gateway and Authentication}{155}{section.B.1}%
+\contentsline {section}{\numberline {B.2}User Management Service}{155}{section.B.2}%
+\contentsline {section}{\numberline {B.3}Player Management Service}{156}{section.B.3}%
+\contentsline {section}{\numberline {B.4}Training and Match Service}{156}{section.B.4}%
+\contentsline {section}{\numberline {B.5}Medical and Fitness Service}{157}{section.B.5}%
+\contentsline {section}{\numberline {B.6}Reports and Analytics Service}{158}{section.B.6}%
+\contentsline {section}{\numberline {B.7}Notification and Mail Service}{158}{section.B.7}%
+\contentsline {chapter}{\numberline {C}Database Schema Reference}{159}{appendix.C}%
+\contentsline {section}{\numberline {C.1}\texttt {mscms\_user} --- User Management}{160}{section.C.1}%
+\contentsline {section}{\numberline {C.2}\texttt {mscms\_player} --- Player Management}{160}{section.C.2}%
+\contentsline {section}{\numberline {C.3}\texttt {mscms\_training} --- Training and Match}{161}{section.C.3}%
+\contentsline {section}{\numberline {C.4}\texttt {mscms\_medical} --- Medical and Fitness}{162}{section.C.4}%
+\contentsline {section}{\numberline {C.5}\texttt {mscms\_reports} and \texttt {mscms\_notification}}{162}{section.C.5}%
+\contentsline {chapter}{\numberline {D}Technology Stack and Versions}{164}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Deployment and Run Guide}{167}{appendix.E}%
+\contentsline {section}{\numberline {E.1}Prerequisites}{168}{section.E.1}%
+\contentsline {section}{\numberline {E.2}Build and Run}{168}{section.E.2}%
+\contentsline {section}{\numberline {E.3}Ports and Access}{169}{section.E.3}%
+\contentsline {section}{\numberline {E.4}Demonstration Login}{169}{section.E.4}%
+\contentsline {section}{\numberline {E.5}Real-Fixture Ingestion}{169}{section.E.5}%
+\contentsline {chapter}{References}{170}{section.E.5}%

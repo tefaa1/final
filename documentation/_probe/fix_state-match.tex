@@ -1,0 +1,28 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[node distance=14mm and 16mm,
+    every edge/.style={draw=dLine,thick,-{Stealth[length=2.4mm]}}]
+  \node (start) {};
+  \node[stbox, right=8mm of start] (sch) {Scheduled};
+  \node[stbox, right=of sch] (h1) {First\\Half};
+  \node[stbox, right=of h1]  (ht) {Half\\Time};
+  \node[stbox, right=of ht]  (h2) {Second\\Half};
+  \node[stbox, right=of h2]  (ft) {Full\\Time};
+  \node[stbox, below=14mm of ft]  (et)  {Extra\\Time};
+  \node[stbox, below=14mm of et]  (pen) {Penalties};
+  \node[stbox, below=14mm of pen, fill=dFill2, draw=dLine2] (fin) {Finished};
+  \draw (start) edge (sch);
+  \draw (sch) edge node[lbl,above]{kick-off} (h1);
+  \draw (h1)  edge node[lbl,above]{45$'$} (ht);
+  \draw (ht)  edge node[lbl,above]{resume} (h2);
+  \draw (h2)  edge node[lbl,above]{90$'$} (ft);
+  \draw (ft)  edge node[lbl,left]{knockout \& level} (et);
+  \draw (et)  edge node[lbl,left]{still level} (pen);
+  \draw (pen) edge node[lbl,left]{shoot-out} (fin);
+  \draw (ft)  to[out=0,in=0,looseness=1.5] node[lbl,right]{league / draw OK} (fin);
+\end{tikzpicture}%
+}
+\end{document}

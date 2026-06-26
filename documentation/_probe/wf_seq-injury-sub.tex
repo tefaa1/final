@@ -1,0 +1,37 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\input{../preamble-diagrams.tex}
+\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{sequencediagram}
+  \newthread{op}{:Operator}
+  \newinst[1]{fe}{:Frontend}
+  \newinst[1]{gw}{:Gateway}
+  \newinst[1]{tm}{:training-match}
+  \newinst[1]{mf}{:medical-fitness}
+  \newinst[1]{db}{:DB}
+  \begin{call}{op}{record INJURY event(player, minute)}{fe}{substitution required}
+    \begin{call}{fe}{POST /match-events}{gw}{201}
+      \begin{call}{gw}{create(event\_type=INJURY)}{tm}{event}
+        \begin{call}{tm}{persist match\_event}{db}{ok}
+        \end{call}
+        \begin{call}{tm}{POST /injuries(player, status=INJURED)}{mf}{injury}
+          \begin{call}{mf}{persist injury (player flipped injured)}{db}{ok}
+          \end{call}
+        \end{call}
+      \end{call}
+    \end{call}
+  \end{call}
+  \begin{call}{op}{record SUBSTITUTION(out=injured, in=sub, minute)}{fe}{updated}
+    \begin{call}{fe}{POST /match-events + PUT /match-lineups}{gw}{200}
+      \begin{call}{gw}{updateLineup(playerOut@minute, subIn)}{tm}{lineup}
+        \begin{call}{tm}{persist match\_event + match\_lineups}{db}{ok}
+        \end{call}
+      \end{call}
+    \end{call}
+  \end{call}
+\end{sequencediagram}%
+}
+
+\end{document}

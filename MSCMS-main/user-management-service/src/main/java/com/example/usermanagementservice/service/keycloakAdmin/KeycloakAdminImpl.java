@@ -111,6 +111,33 @@ public class KeycloakAdminImpl implements KeycloakAdminService {
         }
     }
 
+    @Override
+    public boolean verifyPassword(String username, String password) {
+        if (username == null || username.isBlank() || password == null || password.isBlank()) {
+            return false;
+        }
+        try {
+            Map<String, String> params = new HashMap<>();
+            params.put("client_id", managedClientId); // mscms-frontend (direct-access-grants on)
+            params.put("username", username);
+            params.put("password", password);
+            params.put("grant_type", "password");
+
+            String url = keycloakServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+            Map<String, Object> response = restClient.post()
+                    .uri(url)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(buildFormUrlencodedBody(params))
+                    .retrieve()
+                    .body(Map.class);
+            return response != null && response.get("access_token") != null;
+        } catch (Exception ex) {
+            // 401/invalid_grant (wrong password) lands here -> not verified
+            log.debug("Password verification failed for {}: {}", username, ex.getMessage());
+            return false;
+        }
+    }
+
     private Map fetchToken(String url, String formBody) {
         return restClient.post()
                 .uri(url)

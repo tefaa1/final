@@ -11,7 +11,9 @@ public record SponsorContractOfferResponse(
         Double negotiatedAmount,
         String terms,
         String status,
+        String currentTurn,
         LocalDateTime offeredAt,
         LocalDateTime respondedAt,
+        LocalDateTime endDate,
         String notes
 ) {}
