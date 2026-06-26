@@ -1,8 +1,8 @@
 import zipfile, shutil, re, os, sys
 src = sys.argv[1] if len(sys.argv) > 1 else "Sportify-MSCMS-Overview.pptx"
 tmp = src + ".tmp"
-# A gentle "push" gives visible motion between slides when presenting.
-TRANS = '<p:transition spd="med"><p:push dir="l"/></p:transition>'
+# A clean, consistent Fade gives a premium, seamless flow between slides.
+TRANS = '<p:transition spd="med"><p:fade/></p:transition>'
 zin = zipfile.ZipFile(src, "r")
 zout = zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED)
 n = 0
